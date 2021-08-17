@@ -1,0 +1,39 @@
+/* custom CSS for PcPatrEditor */
+/*
+ * Copyright (c) 2021 SIL International
+ *  This software is licensed under the LGPL, version 2.1 or later
+ * (http://www.gnu.org/licenses/lgpl-2.1.html)
+ *
+ */
+
+.toolbarbutton {
+    -fx-background-color: transparent, transparent, transparent, transparent;
+}
+
+.buttonpressed {
+    -fx-base: #F3F3F3;
+    -fx-effect:innershadow(three-pass-box, rgba(10,20,30,0.8), 10, 0, 4, 4);
+}
+.buttonunpressed {
+    -fx-base: white;
+   /* -fx-effect:dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0); */
+}
+.tooltip {
+   -fx-text-fill: black;
+   -fx-background-color: #f5deb3;
+}
+/* = */
+.t1 {
+   -fx-text-fill: black;	
+   -fx-font-size:14pt;
+}
+/* Let */
+.t3 {
+   -fx-fill: red;
+   -fx-font-size:14pt;
+}
+/* = */
+.t4 {
+   -fx-fill: blue;	
+   -fx-font-size:14pt;
+}
