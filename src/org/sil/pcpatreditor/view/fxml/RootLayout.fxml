@@ -94,6 +94,9 @@
 					<Button fx:id="buttonToolbarFileOpen" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleOpenDocument" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Button fx:id="buttonToolbarFileSave" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleSaveDocument" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+					<Button fx:id="buttonToolbarEditUndo" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleUndo" prefHeight="23.0" prefWidth="17.0" text="" />
+					<Button fx:id="buttonToolbarEditRedo" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleRedo" prefHeight="23.0" prefWidth="17.0" text="" />
+					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
 					<Button fx:id="buttonToolbarEditCut" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleCut" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Button fx:id="buttonToolbarEditCopy" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleCopy" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Button fx:id="buttonToolbarEditPaste" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handlePaste" prefHeight="23.0" prefWidth="17.0" text="" />

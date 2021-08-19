@@ -115,6 +115,10 @@ public class RootLayoutController implements Initializable {
 	private Button buttonToolbarEditCopy;
 	@FXML
 	private Button buttonToolbarEditPaste;
+	@FXML
+	private Button buttonToolbarEditUndo;
+	@FXML
+	private Button buttonToolbarEditRedo;
 
 	@FXML
 	private MenuBar menuBar;
@@ -159,6 +163,10 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditCopy;
 	@FXML
 	private Tooltip tooltipToolbarEditPaste;
+	@FXML
+	private Tooltip tooltipToolbarEditUndo;
+	@FXML
+	private Tooltip tooltipToolbarEditRedo;
 
 	@FXML
 	private VBox centerVBox;
@@ -216,21 +224,38 @@ public class RootLayoutController implements Initializable {
 				}
 				switch (sCharacter) {
 				case "(":
-					// the ( is not in the tree description yet. It is after the
-					// key is released, so we handle this in onKeyReleased
-					// TODO: is there a better way to do this?
 					if (grammar.isEditable()) {
 						fOpenParenJustTyped = true;
 					}
 					markAsDirty();
 					break;
-
 				case ")":
-					// The ) is not in the tree description yet. It is after the
-					// key is released, so we handle this in onKeyReleased
-					// TODO: is there a better way to do this?
 					if (grammar.isEditable()) {
 						fCloseParenJustTyped = true;
+					}
+					markAsDirty();
+					break;
+				case "[":
+					if (grammar.isEditable()) {
+						fOpenBracketJustTyped = true;
+					}
+					markAsDirty();
+					break;
+				case "]":
+					if (grammar.isEditable()) {
+						fCloseBracketJustTyped = true;
+					}
+					markAsDirty();
+					break;
+				case "<":
+					if (grammar.isEditable()) {
+						fOpenWedgeJustTyped = true;
+					}
+					markAsDirty();
+					break;
+				case ">":
+					if (grammar.isEditable()) {
+						fCloseWedgeJustTyped = true;
 					}
 					markAsDirty();
 					break;
@@ -574,6 +599,16 @@ public class RootLayoutController implements Initializable {
 				bundle.getString("tooltip.paste"), Constants.RESOURCE_SOURCE_LOCATION);
 		tooltipToolbarEditPaste.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.paste"));
+		tooltipToolbarEditUndo = ControllerUtilities.createToolbarButtonWithImage(
+				"undoAction.png", buttonToolbarEditUndo, tooltipToolbarEditUndo,
+				bundle.getString("tooltip.undo"), Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarEditUndo.textProperty().bind(
+				RESOURCE_FACTORY.getStringBinding("tooltip.undo"));
+		tooltipToolbarEditRedo = ControllerUtilities.createToolbarButtonWithImage(
+				"redoAction.png", buttonToolbarEditRedo, tooltipToolbarEditRedo,
+				bundle.getString("tooltip.redo"), Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarEditRedo.textProperty().bind(
+				RESOURCE_FACTORY.getStringBinding("tooltip.redo"));
 //		tooltipToolbarDrawTree = ControllerUtilities.createToolbarButtonWithImage("drawTree.png",
 //				buttonToolbarDrawTree, tooltipToolbarDrawTree,
 //				bundle.getString("tooltip.drawtree"), Constants.RESOURCE_SOURCE_LOCATION);
