@@ -9,18 +9,33 @@ package org.sil.pcpatreditor.view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EventListener;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.sil.utility.view.ObservableResourceFactory;
 import org.sil.utility.ClipboardUtilities;
 import org.sil.utility.StringUtilities;
@@ -30,16 +45,19 @@ import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
+import org.reactfx.Subscription;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.concurrent.Worker.State;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ChoiceDialog;
@@ -55,6 +73,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -75,11 +94,13 @@ public class RootLayoutController implements Initializable {
 	boolean fOpenWedgeJustTyped = false;
 	boolean fCloseWedgeJustTyped = false;
 	protected Clipboard systemClipboard = Clipboard.getSystemClipboard();
+    private ExecutorService executor;
+    private Subscription cleanupWhenDone;
 
 	@FXML
 	BorderPane mainPane;
 	@FXML
-	InlineCssTextArea grammar;
+	CodeArea grammar;
 	@FXML
 	Pane messageArea;
 	@FXML
@@ -140,6 +161,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditPaste;
 
 	@FXML
+	private VBox centerVBox;
+	@FXML
 	private Text statusBar;
 	
 	// following lines from
@@ -158,6 +181,30 @@ public class RootLayoutController implements Initializable {
 		createToolbarButtons(bundle);
 		initMenuItemsForLocalization();
 		statusBar.textProperty().bind(RESOURCE_FACTORY.getStringBinding("label.key"));
+
+        executor = Executors.newSingleThreadExecutor();
+        grammar = new CodeArea();
+        grammar.setPrefHeight(1200.0);
+        grammar.setPrefWidth(1000.0);
+        VirtualizedScrollPane<CodeArea> vsPane = new VirtualizedScrollPane<CodeArea>(grammar);
+        centerVBox.getChildren().add(0, vsPane);
+        grammar.setParagraphGraphicFactory(LineNumberFactory.get(grammar));
+        cleanupWhenDone = grammar.multiPlainChanges()
+                .successionEnds(Duration.ofMillis(500))
+                .supplyTask(this::computeHighlightingAsync)
+                .awaitLatest(grammar.multiPlainChanges())
+                .filterMap(t -> {
+                    if(t.isSuccess()) {
+                        return Optional.of(t.get());
+                    } else {
+                        t.getFailure().printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .subscribe(this::applyHighlighting);
+
+        // call when no longer need it: `cleanupWhenFinished.unsubscribe();`
+
 
 		grammar.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
@@ -320,7 +367,7 @@ public class RootLayoutController implements Initializable {
 				}
 
 				// TODO: is this the best place for this?
-				computeHighlighting();
+//				computeHighlighting();
 
 			}
 		});
@@ -341,12 +388,84 @@ public class RootLayoutController implements Initializable {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				computeHighlighting();
+//				computeHighlighting();
 				grammar.requestFocus();
 				grammar.moveTo(0);
 			}
 		});
-}
+	}
+
+
+    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
+        String text = grammar.getText();
+        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+            @Override
+            protected StyleSpans<Collection<String>> call() throws Exception {
+                return computeHighlighting(text);
+            }
+        };
+        executor.execute(task);
+        return task;
+    }
+    private static final String[] KEYWORDS = new String[] {
+			"BE", "Be", "be", "CONSTRAINT", "Constraint", "constraint", "DEFINE", "Define", "define", "LET", "Let",
+			"let", "LEXICON", "Lexicon", "lexicon", "PARAMETER", "Parameter", "parameter", "RULE", "Rule", "rule"
+			};
+
+    private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+    private static final String PAREN_PATTERN = "\\(|\\)";
+    private static final String BRACE_PATTERN = "\\{|\\}";
+    private static final String BRACKET_PATTERN = "\\[|\\]";
+    private static final String SLASH_PATTERN = "/";
+    private static final String EQUALS_PATTERN = "=";
+    private static final String WEDGE_PATTERN = "\\<|\\>";
+//    private static final String SEMICOLON_PATTERN = "\\;";
+//    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String COMMENT_PATTERN = "\\|[^\n]*";// + "|" + "/\\*(.|\\R)*?\\*/";
+
+    private static final Pattern PATTERN = Pattern.compile(
+            "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+            + "|(?<PAREN>" + PAREN_PATTERN + ")"
+            + "|(?<BRACE>" + BRACE_PATTERN + ")"
+            + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
+            + "|(?<WEDGE>" + WEDGE_PATTERN + ")"
+            + "|(?<SLASH>" + SLASH_PATTERN + ")"
+            + "|(?<EQUALS>" + EQUALS_PATTERN + ")"
+//            + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
+//            + "|(?<STRING>" + STRING_PATTERN + ")"
+            + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
+    );
+
+    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = PATTERN.matcher(text);
+        int lastKwEnd = 0;
+        StyleSpansBuilder<Collection<String>> spansBuilder
+                = new StyleSpansBuilder<>();
+        while(matcher.find()) {
+            String styleClass =
+                    matcher.group("KEYWORD") != null ? "keyword" :
+                    matcher.group("PAREN") != null ? "paren" :
+                    matcher.group("BRACE") != null ? "brace" :
+                    matcher.group("BRACKET") != null ? "bracket" :
+                    matcher.group("EQUALS") != null ? "equals" :
+                    matcher.group("SLASH") != null ? "slash" :
+                    matcher.group("WEDGE") != null ? "wedge" :
+//                    matcher.group("SEMICOLON") != null ? "semicolon" :
+//                    matcher.group("STRING") != null ? "string" :
+                    matcher.group("COMMENT") != null ? "comment" :
+                    null; /* never happens */ assert styleClass != null;
+            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
+    }
+
+    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+        grammar.setStyleSpans(0, highlighting);
+    }
+
 
 	private void initMenuItemsForLocalization() {
 		menuFile.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.file"));
@@ -526,10 +645,12 @@ public class RootLayoutController implements Initializable {
 	 * Closes the application.
 	 */
 	@FXML
-	private void handleExit() {
+	public void handleExit() {
 //		if (fIsDirty) {
 //			askAboutSaving();
 //		}
+		cleanupWhenDone.unsubscribe();
+        executor.shutdown();
 		System.out.println("file exit");
 		System.exit(0);
 	}
@@ -560,8 +681,18 @@ public class RootLayoutController implements Initializable {
 				Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS);
 		if (file != null) {
 			mainApp.loadDocument(file);
-//			String sDirectoryPath = file.getParent();
-//			applicationPreferences.setLastOpenedDirectoryPath(sDirectoryPath);
+			try {
+				String content = new String(Files.readAllBytes(file.toPath()),
+						StandardCharsets.UTF_8);
+		        grammar.replaceText(content);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String sDirectoryPath = file.getParent();
+			applicationPreferences.setLastOpenedDirectoryPath(sDirectoryPath);
 		} else if (fCloseIfCanceled) {
 			// probably first time running and user chose to open a file
 			// but then canceled. We quit.
@@ -579,17 +710,37 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	public void handleSaveDocument() throws IOException {
 		System.out.println("file save");
+		System.out.print(grammar.getText());
 //		updateTreeDataToBackEndProvider();
 		File file = mainApp.getDocumentFile();
 		if (file != null) {
-			mainApp.saveDocument(file);
-//			markAsClean();
+			writeGrammarToFile(file);
+		} else {
+			handleSaveDocumentAs();
 		}
-//		} else {
-//			handleSaveTreeAs();
-//		}
 
-//		grammar.requestFocus();
+		grammar.requestFocus();
+	}
+
+
+	/**
+	 * @param file
+	 * @throws IOException
+	 */
+	private void writeGrammarToFile(File file) throws IOException {
+		Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.WRITE);
+		markAsClean();
+	}
+
+	@FXML
+	private void handleSaveDocumentAs() throws IOException {
+		File file = ControllerUtilities.doFileSaveAs(mainApp, currentLocale, false, pcPatrEditorFilterDescription,
+				null, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION,
+				Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS, Constants.RESOURCE_LOCATION);
+		if (file != null) {
+			writeGrammarToFile(file);
+		}
+		markAsClean();
 	}
 
 	@FXML
@@ -601,7 +752,7 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	protected void handleCut() {
 		grammar.cut();
-		computeHighlighting();
+//		computeHighlighting();
 	}
 
 	@FXML
@@ -609,20 +760,20 @@ public class RootLayoutController implements Initializable {
 		ClipboardUtilities.removeAnyFinalNullFromStringOnClipboard();
 		// now our possibly adjusted string is on the clipboard; do a paste
 		grammar.paste();
-		computeHighlighting();
+//		computeHighlighting();
 		grammar.requestFocus();
 	}
 
 	@FXML
 	protected void handleUndo() {
 		grammar.undo();
-		computeHighlighting();
+//		computeHighlighting();
 	}
 
 	@FXML
 	protected void handleRedo() {
 		grammar.redo();
-		computeHighlighting();
+//		computeHighlighting();
 	}
 
 	@FXML
@@ -664,9 +815,11 @@ public class RootLayoutController implements Initializable {
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
 		this.applicationPreferences = mainApp.getApplicationPreferences();
+		grammar.replaceText(mainApp.getContent());
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
 
+	// TODO: remove this
 	public void computeHighlighting() {
 		CharStream input = CharStreams.fromString(grammar.getText());
 		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
@@ -723,7 +876,7 @@ public class RootLayoutController implements Initializable {
 			if (token.getType() != -1) { // -1 is EOF
 				int iStart = token.getStartIndex();
 				int iStop = token.getStopIndex() + 1;
-				grammar.setStyle(iStart, iStop, cssStyleClass);
+//				grammar.setStyle(iStart, iStop, cssStyleClass);
 				grammar.getStyleClass().add("t1");
 				grammar.getStyleClass().add("t3");
 				grammar.getStyleClass().add("t4");

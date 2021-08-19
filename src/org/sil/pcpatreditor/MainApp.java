@@ -7,6 +7,10 @@ package org.sil.pcpatreditor;
 	
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -25,7 +29,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
 
-
 public class MainApp extends Application  implements MainAppUtilities {
 	private static final String kApplicationIconResource = "file:resources/images/PcPatrEditor128x128.png";
 
@@ -38,6 +41,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 	private final String sOperatingSystem = System.getProperty("os.name");
 	static String[] userArgs;
 	File documentFile;
+	String content;
 	
 	/**
 	 * @return the documentFile
@@ -58,6 +62,20 @@ public class MainApp extends Application  implements MainAppUtilities {
 		this.documentFile = documentFile;
 	}
 
+	/**
+	 * @return the content
+	 */
+	public String getContent() {
+		return content;
+	}
+
+	/**
+	 * @param content the content to set
+	 */
+	public void setContent(String content) {
+		this.content = content;
+	}
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -65,6 +83,12 @@ public class MainApp extends Application  implements MainAppUtilities {
 			locale = new Locale(applicationPreferences.getLastLocaleLanguage());
 			locale = new Locale("en");
 			
+			String docPath = applicationPreferences.getLastOpenedFilePath();
+			File file = new File(docPath);
+			if (file.exists() && !file.isDirectory()) {
+				content = new String(Files.readAllBytes(file.toPath()),
+						StandardCharsets.UTF_8);
+			}
 //			doc = new Document();
 //			xmlBackEndProvider = new XMLBackEndProvider(doc, locale);
 			
@@ -77,7 +101,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 
 //			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("view/fxml/RootLayout.fxml"));
 //			Scene scene = new Scene(root,400,400);
-//			scene.getStylesheets().add(getClass().getResource("view/fxml/XLingPaper.css").toExternalForm());
+//			scene.getStylesheets().add(getClass().getResource("view/fxml/PcPatrEditor.css").toExternalForm());
 //			primaryStage.setScene(scene);
 //			primaryStage.show();
 		} catch(Exception e) {
@@ -87,12 +111,14 @@ public class MainApp extends Application  implements MainAppUtilities {
 	
 	@Override
 	public void stop() throws IOException {
+		System.out.println("stop in MainApp");
 		applicationPreferences.setLastWindowParameters(ApplicationPreferences.LAST_WINDOW,
 				primaryStage);
 		applicationPreferences.setLastLocaleLanguage(locale.getLanguage());
 //		if (controller.isDirty()) {
 //			controller.askAboutSaving();
 //		}
+		controller.handleExit();
 	}
 
 	public static void main(String[] args) {
@@ -112,6 +138,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 
 			// Show the scene containing the root layout.
 			Scene scene = new Scene(rootLayout);
+			scene.getStylesheets().add(getClass().getResource("view/fxml/PcPatrEditor.css").toExternalForm());
 
 			// Because we see the ALT character in the tree description when the
 			// tree description node has focus (which it normally does), we need

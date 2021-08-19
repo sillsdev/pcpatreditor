@@ -4,6 +4,7 @@ module org.sil.pcpatreditor {
 	exports org.sil.pcpatreditor.view;
 
 	opens org.sil.pcpatreditor.view to javafx.fxml;
+	opens org.sil.pcpatreditor.view.fxml to richtextfx.fat;
 	// Java
 	requires java.desktop;
 	requires java.prefs;

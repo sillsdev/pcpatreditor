@@ -10,6 +10,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.sil.pcpatreditor.MainApp;
 
@@ -28,7 +29,7 @@ import javafx.util.Duration;
  */
 public class GrammarUIService {
 
-	private static InlineCssTextArea treeDescription;
+	private static CodeArea grammarArea;
 	private static ResourceBundle bundle;
 	private static Image mainIcon;
 	private static List<KeyEvent> itemsKeyedDuringPause;
@@ -40,7 +41,7 @@ public class GrammarUIService {
 	// TODO: is treating these as static the best way to go?
 	// should we use a singleton pattern instead?
 	/**
-	 * @param description
+	 * @param grammar
 	 *            = tree description text area
 	 * @param iRightParenthesis
 	 *            = position of right parenthesis to use when searching for
@@ -55,25 +56,25 @@ public class GrammarUIService {
 	 * @param image
 	 *            = image used in message
 	 */
-	public static void processRightParenthesis(InlineCssTextArea description,
+	public static void processRightParenthesis(CodeArea grammar,
 			int iRightParenthesis, boolean fCaretAfterParen, double pause, ResourceBundle resource,
 			Image image) {
-		treeDescription = description;
+		grammarArea = grammar;
 		bundle = resource;
 		mainIcon = image;
-		treeDescription.setEditable(false);
+		grammarArea.setEditable(false);
 		int iLeftParenthesis = findMatchingLeftParenthesisAndHighlightIt(iRightParenthesis);
 		if (iLeftParenthesis > -1) {
 			// sleep and then reset the caret
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(pause), event -> {
 				removeMatchingLeftParenthesisHighlightAndRestoreCaret(iLeftParenthesis,
 						iRightParenthesis + (fCaretAfterParen ? 1 : 0));
-				treeDescription.setEditable(true);
+				grammarArea.setEditable(true);
 				processAnyItemsKeyedDuringPause();
 			}));
 			timeline.play();
 		} else {
-			treeDescription.setEditable(true);
+			grammarArea.setEditable(true);
 		}
 	}
 
@@ -82,18 +83,18 @@ public class GrammarUIService {
 			try {
 				for (KeyEvent keyEvent : itemsKeyedDuringPause) {
 					if (keyEvent.getCharacter().equals("(")) {
-						int i = treeDescription.getCaretPosition();
-						treeDescription.insertText(i, "(");
+						int i = grammarArea.getCaretPosition();
+						grammarArea.insertText(i, "(");
 					} else if (keyEvent.getCharacter().equals(")")) {
-						int i = treeDescription.getCaretPosition();
-						treeDescription.insertText(i, ")");
+						int i = grammarArea.getCaretPosition();
+						grammarArea.insertText(i, ")");
 					} else {
 						KeyEvent newEvent = new KeyEvent(keyEvent.getSource(),
 								keyEvent.getTarget(), keyEvent.getEventType(),
 								keyEvent.getCharacter(), keyEvent.getText(), keyEvent.getCode(),
 								keyEvent.isShiftDown(), keyEvent.isControlDown(),
 								keyEvent.isAltDown(), keyEvent.isMetaDown());
-						treeDescription.fireEvent(newEvent);
+						grammarArea.fireEvent(newEvent);
 					}
 				}
 			} catch (ConcurrentModificationException e) {
@@ -108,8 +109,8 @@ public class GrammarUIService {
 
 	private static Object removeMatchingLeftParenthesisHighlightAndRestoreCaret(
 			int iLeftParenthesis, int iRightParenthesis) {
-		treeDescription.requestFollowCaret();
-		treeDescription.moveTo(iRightParenthesis);
+		grammarArea.requestFollowCaret();
+		grammarArea.moveTo(iRightParenthesis);
 		return null;
 	}
 
@@ -117,7 +118,7 @@ public class GrammarUIService {
 	// need to return an integer here...
 	// is public for unit testing
 	public static int findMatchingLeftParenthesisAndHighlightIt(int iRightParenthesis) {
-		String sDescription = treeDescription.getText();
+		String sDescription = grammarArea.getText();
 		int iMax = sDescription.length() - 1;
 		int iIndex = iRightParenthesis - 1;
 		if (iIndex > iMax) {
@@ -137,9 +138,9 @@ public class GrammarUIService {
 			iIndex--;
 		}
 		if (iIndex >= 0) {
-			treeDescription.requestFollowCaret();
-			treeDescription.moveTo(iIndex);
-			treeDescription.selectRange(iIndex, iIndex + 1);
+			grammarArea.requestFollowCaret();
+			grammarArea.moveTo(iIndex);
+			grammarArea.selectRange(iIndex, iIndex + 1);
 			return iIndex;
 		} else {
 			if (bundle != null) {
@@ -170,13 +171,13 @@ public class GrammarUIService {
 	 * @param image
 	 *            = image used in message
 	 */
-	public static void processLeftParenthesis(InlineCssTextArea description, boolean fShowMsg,
+	public static void processLeftParenthesis(CodeArea description, boolean fShowMsg,
 			double pause, ResourceBundle resource, Image image) {
-		treeDescription = description;
+		grammarArea = description;
 		bundle = resource;
 		mainIcon = image;
-		int iLeftParenthesis = treeDescription.getCaretPosition();
-		treeDescription.setEditable(false);
+		int iLeftParenthesis = grammarArea.getCaretPosition();
+		grammarArea.setEditable(false);
 		int iRightParenthesis = findMatchingRightParenthesisAndHighlightIt(iLeftParenthesis,
 				fShowMsg);
 		if (iRightParenthesis > -1) {
@@ -184,19 +185,19 @@ public class GrammarUIService {
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(pause), event -> {
 				removeMatchingRightParenthesisHighlightAndRestoreCaret(iLeftParenthesis,
 						iRightParenthesis);
-				treeDescription.setEditable(true);
+				grammarArea.setEditable(true);
 				processAnyItemsKeyedDuringPause();
 			}));
 			timeline.play();
 		} else {
-			treeDescription.setEditable(true);
+			grammarArea.setEditable(true);
 		}
 	}
 
 	private static Object removeMatchingRightParenthesisHighlightAndRestoreCaret(
 			int iLeftParenthesis, int iRightParenthesis) {
-		treeDescription.requestFollowCaret();
-		treeDescription.moveTo(iLeftParenthesis);
+		grammarArea.requestFollowCaret();
+		grammarArea.moveTo(iLeftParenthesis);
 		return null;
 	}
 
@@ -214,7 +215,7 @@ public class GrammarUIService {
 	public static int findMatchingRightParenthesisAndHighlightIt(int iLeftParenthesis,
 			boolean fShowMsg) {
 		int iIndex;
-		String sDescription = treeDescription.getText();
+		String sDescription = grammarArea.getText();
 		int iEnd = sDescription.length();
 		int iOpenParen = 0;
 		iIndex = iLeftParenthesis;
@@ -231,9 +232,9 @@ public class GrammarUIService {
 			iIndex++;
 		}
 		if (iIndex < iEnd) {
-			treeDescription.requestFollowCaret();
-			treeDescription.moveTo(iIndex);
-			treeDescription.selectRange(iIndex, iIndex + 1);
+			grammarArea.requestFollowCaret();
+			grammarArea.moveTo(iIndex);
+			grammarArea.selectRange(iIndex, iIndex + 1);
 			return iIndex;
 		} else {
 			if (fShowMsg && bundle != null) {
@@ -248,10 +249,6 @@ public class GrammarUIService {
 				alert.showAndWait();
 			}
 		}
-		// rtbTreeDescription.Select(Math.max(0, iCurrent - 1), 1);
-		// rtbTreeDescription.SelectionFont = m_fntSynTagmeme;
-		// rtbTreeDescription.SelectionColor = m_clrSynTagmeme;
-		// rtbTreeDescription.Select(iCurrent, 0);
 		return -1;
 	}
 

@@ -22,18 +22,51 @@
    -fx-text-fill: black;
    -fx-background-color: #f5deb3;
 }
-/* = */
-.t1 {
-   -fx-text-fill: black;	
-   -fx-font-size:14pt;
+
+
+/* from richtextfx */
+.code-area {
+	-fx-font-size: 14pt;
 }
-/* Let */
-.t3 {
-   -fx-fill: red;
-   -fx-font-size:14pt;
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
 }
-/* = */
-.t4 {
-   -fx-fill: blue;	
-   -fx-font-size:14pt;
+/*.semicolon {
+    -fx-font-weight: bold;
+} */
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: teal;
+    -fx-font-weight: bold;
+}
+/*.string {
+    -fx-fill: blue;
+}*/
+.slash {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.equals {
+    -fx-fill: brown;
+    -fx-font-weight: bold;
+}
+.wedge {
+    -fx-fill: brown;
+    -fx-font-weight: bold;
+}
+
+.comment {
+	-fx-fill: green; /*cadetblue;*/
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
 }
