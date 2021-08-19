@@ -89,6 +89,8 @@ public class RootLayoutController implements Initializable {
 	boolean fIsDirty;
 	boolean fOpenBracketJustTyped = false;
 	boolean fCloseBracketJustTyped = false;
+	boolean fOpenBraceJustTyped = false;
+	boolean fCloseBraceJustTyped = false;
 	boolean fOpenParenJustTyped = false;
 	boolean fCloseParenJustTyped = false;
 	boolean fOpenWedgeJustTyped = false;
@@ -197,6 +199,7 @@ public class RootLayoutController implements Initializable {
         VirtualizedScrollPane<CodeArea> vsPane = new VirtualizedScrollPane<CodeArea>(grammar);
         centerVBox.getChildren().add(0, vsPane);
         grammar.setParagraphGraphicFactory(LineNumberFactory.get(grammar));
+		grammar.setWrapText(false);
         cleanupWhenDone = grammar.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
@@ -210,9 +213,6 @@ public class RootLayoutController implements Initializable {
                     }
                 })
                 .subscribe(this::applyHighlighting);
-
-        // call when no longer need it: `cleanupWhenFinished.unsubscribe();`
-
 
 		grammar.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
@@ -244,6 +244,18 @@ public class RootLayoutController implements Initializable {
 				case "]":
 					if (grammar.isEditable()) {
 						fCloseBracketJustTyped = true;
+					}
+					markAsDirty();
+					break;
+				case "{":
+					if (grammar.isEditable()) {
+						fOpenBraceJustTyped = true;
+					}
+					markAsDirty();
+					break;
+				case "}":
+					if (grammar.isEditable()) {
+						fCloseBraceJustTyped = true;
 					}
 					markAsDirty();
 					break;
@@ -304,9 +316,27 @@ public class RootLayoutController implements Initializable {
 							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
 				} else if (fOpenParenJustTyped) {
 					fOpenParenJustTyped = false;
-					insertMatchingClosingParenthesis();
+					insertMatchingClosingItem(")");
 					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-					GrammarUIService.processLeftParenthesis(grammar, false,
+					GrammarUIService.processLeftItem(grammar, false,
+							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+				} else if (fOpenBracketJustTyped) {
+					fOpenBracketJustTyped = false;
+					insertMatchingClosingItem("]");
+					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+					GrammarUIService.processLeftItem(grammar, false,
+							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+				} else if (fOpenWedgeJustTyped) {
+					fOpenWedgeJustTyped = false;
+					insertMatchingClosingItem(">");
+					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+					GrammarUIService.processLeftItem(grammar, false,
+							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+				} else if (fOpenBraceJustTyped) {
+					fOpenBraceJustTyped = false;
+					insertMatchingClosingItem("}");
+					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+					GrammarUIService.processLeftItem(grammar, false,
 							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
 				}
 				switch (event.getCode()) {
@@ -359,7 +389,7 @@ public class RootLayoutController implements Initializable {
 						} else if (grammar.getText(index, index + 1).equals("(")) {
 							GrammarUIService
 									.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-							GrammarUIService.processLeftParenthesis(grammar, false,
+							GrammarUIService.processLeftItem(grammar, false,
 									applicationPreferences.getShowMatchingParenDelay(), bundle,
 									mainIcon);
 						}
@@ -373,7 +403,7 @@ public class RootLayoutController implements Initializable {
 						if (grammar.getText(Math.max(0, index - 1), index).equals("(")) {
 							GrammarUIService
 									.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-							GrammarUIService.processLeftParenthesis(grammar, true,
+							GrammarUIService.processLeftItem(grammar, true,
 									applicationPreferences.getShowMatchingParenDelay(), bundle,
 									mainIcon);
 						} else if (grammar.getText(Math.max(0, index - 1), index).equals(
@@ -396,11 +426,6 @@ public class RootLayoutController implements Initializable {
 
 			}
 		});
-
-		// If we decide we want to show line numbers, we do it like this:
-		// grammar.setParagraphGraphicFactory(LineNumberFactory.get(grammar));
-
-		grammar.setWrapText(true);
 
 		// catch control-V for fixing nulls in clipboard
 		// This comes from https://stackoverflow.com/questions/61072150/how-to-overwrite-system-default-keyboard-shortcuts-like-ctrlc-ctrlv-by-using
@@ -919,10 +944,13 @@ public class RootLayoutController implements Initializable {
 		}
 	}
 
-	private void insertMatchingClosingParenthesis() {
+	/**
+	 * @param closingItem
+	 */
+	private void insertMatchingClosingItem(String closingItem) {
 		int i = grammar.getCaretPosition();
 		String contents = grammar.getText();
-		contents = contents.substring(0, i) + " )" + contents.substring(i);
+		contents = contents.substring(0, i) + closingItem + contents.substring(i);
 		grammar.replaceText(contents);
 		grammar.moveTo(i);
 	}
