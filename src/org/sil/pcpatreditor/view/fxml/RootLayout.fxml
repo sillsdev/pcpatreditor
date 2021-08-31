@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -72,8 +73,8 @@
 				  <items>
 <!-- 					<MenuItem fx:id="menuItemDescriptionFontSize" mnemonicParsing="true" onAction="#handleMenuDescriptionFontSize" text="%menu.descriptionfontsize" /> -->
 <!-- 					<CheckMenuItem fx:id="menuItemDrawAsType" mnemonicParsing="true" onAction="#handleMenuDrawAsType" text="%menu.drawastype" /> -->
-					<CheckMenuItem fx:id="menuItemShowMatchingParenWithArrowKeys" mnemonicParsing="true" onAction="#handleMenuShowMatchingParenWithArrowKeys" text="%menu.showmatchingparenwitharrowkeys" />
-					<MenuItem fx:id="menuItemShowMatchingParenDelay" mnemonicParsing="true" onAction="#handleMenuShowMatchingParenDelay" text="%menu.showmatchingparendelay" />
+					<CheckMenuItem fx:id="menuItemShowMatchingItemWithArrowKeys" mnemonicParsing="true" onAction="#handleMenuShowMatchingItemWithArrowKeys" text="%menu.showmatchingitemwitharrowkeys" />
+					<MenuItem fx:id="menuItemShowMatchingItemDelay" mnemonicParsing="true" onAction="#handleMenuShowMatchingItemDelay" text="%menu.showmatchingitemdelay" />
 <!-- 					<SeparatorMenuItem /> -->
 <!-- 					<MenuItem fx:id="menuItemChangeInterfaceLanguage" mnemonicParsing="true" onAction="#handleChangeInterfaceLanguage" text="%menu.changeinterfacelanguage" /> -->
 				  </items>
@@ -105,7 +106,7 @@
 <!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
 <!-- 	                <ToggleButton fx:id="toggleButtonUseFlatTree" onAction="#handleUseFlatTree" text="%label.useflattree" /> -->
 <!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
-<!-- 	                <ToggleButton fx:id="toggleButtonShowMatchingParenWithArrowKeys" onAction="#handleShowMatchingParenWithArrowKeys" text="→(  )←" /> -->
+	                <ToggleButton fx:id="toggleButtonShowMatchingItemWithArrowKeys" onAction="#handleShowMatchingItemWithArrowKeys" text="→(  )←" />
 <!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
 <!-- 	                <ToggleButton fx:id="toggleButtonSaveAsPng" onAction="#handleSaveAsPng" text="PNG" /> -->
 <!-- 	                <ToggleButton fx:id="toggleButtonSaveAsSVG" onAction="#handleSaveAsSVG" text="SVG" /> -->

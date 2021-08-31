@@ -30,7 +30,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
 
 public class MainApp extends Application  implements MainAppUtilities {
-	private static final String kApplicationIconResource = "file:resources/images/PcPatrEditor128x128.png";
+	private static final String kApplicationIconResource = "file:resources/images/PcPatrEditor256x256.png";
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
@@ -81,7 +81,6 @@ public class MainApp extends Application  implements MainAppUtilities {
 		try {
 			applicationPreferences = new ApplicationPreferences(this);
 			locale = new Locale(applicationPreferences.getLastLocaleLanguage());
-			locale = new Locale("en");
 			
 			String docPath = applicationPreferences.getLastOpenedFilePath();
 			File file = new File(docPath);

@@ -65,6 +65,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
@@ -98,6 +99,8 @@ public class RootLayoutController implements Initializable {
 	protected Clipboard systemClipboard = Clipboard.getSystemClipboard();
     private ExecutorService executor;
     private Subscription cleanupWhenDone;
+	private final String kPressedStyle = "buttonpressed";
+	private final String kUnPressedStyle = "buttonunpressed";
 
 	@FXML
 	BorderPane mainPane;
@@ -121,6 +124,8 @@ public class RootLayoutController implements Initializable {
 	private Button buttonToolbarEditUndo;
 	@FXML
 	private Button buttonToolbarEditRedo;
+	@FXML
+	private ToggleButton toggleButtonShowMatchingItemWithArrowKeys;
 
 	@FXML
 	private MenuBar menuBar;
@@ -149,9 +154,9 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemEditPaste;
 	@FXML
-	private CheckMenuItem menuItemShowMatchingParenWithArrowKeys;
+	private CheckMenuItem menuItemShowMatchingItemWithArrowKeys;
 	@FXML
-	private MenuItem menuItemShowMatchingParenDelay;
+	private MenuItem menuItemShowMatchingItemDelay;
 
 	@FXML
 	private Tooltip tooltipToolbarFileOpen;
@@ -169,6 +174,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditUndo;
 	@FXML
 	private Tooltip tooltipToolbarEditRedo;
+	@FXML
+	private Tooltip tooltipToolbarShowMatchingItemWithArrowKeys;
 
 	@FXML
 	private VBox centerVBox;
@@ -311,33 +318,33 @@ public class RootLayoutController implements Initializable {
 					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
 					// we use caret position - 1 because the caret is after
 					// the inserted ')'
-					GrammarUIService.processRightParenthesis(grammar,
+					GrammarUIService.processRightItem(grammar,
 							grammar.getCaretPosition() - 1, true,
-							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+							applicationPreferences.getShowMatchingItemDelay(), '(', ')', bundle, mainIcon);
 				} else if (fOpenParenJustTyped) {
 					fOpenParenJustTyped = false;
 					insertMatchingClosingItem(")");
 					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
 					GrammarUIService.processLeftItem(grammar, false,
-							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+							'(', ')', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				} else if (fOpenBracketJustTyped) {
 					fOpenBracketJustTyped = false;
 					insertMatchingClosingItem("]");
 					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
 					GrammarUIService.processLeftItem(grammar, false,
-							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+							'[', ']', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				} else if (fOpenWedgeJustTyped) {
 					fOpenWedgeJustTyped = false;
 					insertMatchingClosingItem(">");
 					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
 					GrammarUIService.processLeftItem(grammar, false,
-							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+							'<', '>', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				} else if (fOpenBraceJustTyped) {
 					fOpenBraceJustTyped = false;
 					insertMatchingClosingItem("}");
 					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
 					GrammarUIService.processLeftItem(grammar, false,
-							applicationPreferences.getShowMatchingParenDelay(), bundle, mainIcon);
+							'{', '}', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				}
 				switch (event.getCode()) {
 				// ignore these for redisplaying the tree
@@ -375,45 +382,100 @@ public class RootLayoutController implements Initializable {
 				case LEFT:
 				case KP_LEFT:
 //					fContentJustChangedSoDrawTree = false;
-					if (menuItemShowMatchingParenWithArrowKeys.isSelected()) {
+					if (menuItemShowMatchingItemWithArrowKeys.isSelected()) {
 						index = grammar.getCaretPosition();
-						if (grammar.getText(index, index + 1).equals(")")) {
-							GrammarUIService
-									.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-							// we use caret position because the caret is
-							// before the ')' we are checking
-							GrammarUIService.processRightParenthesis(grammar,
-									index, false,
-									applicationPreferences.getShowMatchingParenDelay(), bundle,
-									mainIcon);
-						} else if (grammar.getText(index, index + 1).equals("(")) {
-							GrammarUIService
-									.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+						String item = grammar.getText(index, index + 1);
+						switch (item) {
+						case ")":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index, false,
+									applicationPreferences.getShowMatchingItemDelay(), '(', ')', bundle, mainIcon);
+							break;
+						case "(":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
 							GrammarUIService.processLeftItem(grammar, false,
-									applicationPreferences.getShowMatchingParenDelay(), bundle,
-									mainIcon);
+									'(', ')', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+							break;
+						case "}":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index, false,
+									applicationPreferences.getShowMatchingItemDelay(), '{', '}', bundle, mainIcon);
+							break;
+						case "{":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, false,
+									'{', '}', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+							break;
+						case "]":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index, false,
+									applicationPreferences.getShowMatchingItemDelay(), '[', ']', bundle, mainIcon);
+							break;
+						case "[":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, false,
+									'[', ']', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+							break;
+						case ">":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index, false,
+									applicationPreferences.getShowMatchingItemDelay(), '<', '>', bundle, mainIcon);
+							break;
+						case "<":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, false,
+									'<', '>', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+							break;
 						}
 					}
 					break;
 				case KP_RIGHT:
 				case RIGHT:
 //					fContentJustChangedSoDrawTree = false;
-					if (menuItemShowMatchingParenWithArrowKeys.isSelected()) {
+					if (menuItemShowMatchingItemWithArrowKeys.isSelected()) {
 						index = grammar.getCaretPosition();
-						if (grammar.getText(Math.max(0, index - 1), index).equals("(")) {
-							GrammarUIService
-									.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-							GrammarUIService.processLeftItem(grammar, true,
-									applicationPreferences.getShowMatchingParenDelay(), bundle,
-									mainIcon);
-						} else if (grammar.getText(Math.max(0, index - 1), index).equals(
-								")")) {
-							GrammarUIService
-									.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-							GrammarUIService.processRightParenthesis(grammar,
-									index - 1, true,
-									applicationPreferences.getShowMatchingParenDelay(), bundle,
-									mainIcon);
+						String item = grammar.getText(Math.max(0, index - 1), index);
+						switch (item) {
+						case ")":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index - 1, true,
+									applicationPreferences.getShowMatchingItemDelay(), '(', ')', bundle, mainIcon);
+							break;
+						case "(":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, true, '(', ')',
+									applicationPreferences.getShowMatchingItemDelay(), true, bundle, mainIcon);
+							break;
+						case "}":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index - 1, true,
+									applicationPreferences.getShowMatchingItemDelay(), '{', '}', bundle, mainIcon);
+							break;
+						case "{":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, true, '{', '}',
+									applicationPreferences.getShowMatchingItemDelay(), true, bundle, mainIcon);
+							break;
+						case "]":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index - 1, true,
+									applicationPreferences.getShowMatchingItemDelay(), '[', ']', bundle, mainIcon);
+							break;
+						case "[":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, true, '[', ']',
+									applicationPreferences.getShowMatchingItemDelay(), true, bundle, mainIcon);
+							break;
+						case ">":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processRightItem(grammar, index - 1, true,
+									applicationPreferences.getShowMatchingItemDelay(), '<', '>', bundle, mainIcon);
+							break;
+						case "<":
+							GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+							GrammarUIService.processLeftItem(grammar, true, '<', '>',
+									applicationPreferences.getShowMatchingItemDelay(), true, bundle, mainIcon);
+							break;
 						}
 					}
 					break;
@@ -555,10 +617,10 @@ public class RootLayoutController implements Initializable {
 //				RESOURCE_FACTORY.getStringBinding("menu.descriptionfontsize"));
 //		menuItemDrawAsType.textProperty()
 //				.bind(RESOURCE_FACTORY.getStringBinding("menu.drawastype"));
-		menuItemShowMatchingParenWithArrowKeys.textProperty().bind(
-				RESOURCE_FACTORY.getStringBinding("menu.showmatchingparenwitharrowkeys"));
-		menuItemShowMatchingParenDelay.textProperty().bind(
-				RESOURCE_FACTORY.getStringBinding("menu.showmatchingparendelay"));
+		menuItemShowMatchingItemWithArrowKeys.textProperty().bind(
+				RESOURCE_FACTORY.getStringBinding("menu.showmatchingitemwitharrowkeys"));
+		menuItemShowMatchingItemDelay.textProperty().bind(
+				RESOURCE_FACTORY.getStringBinding("menu.showmatchingitemdelay"));
 //		menuItemChangeInterfaceLanguage.textProperty().bind(
 //				RESOURCE_FACTORY.getStringBinding("menu.changeinterfacelanguage"));
 //		menuHelp.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.help"));
@@ -634,6 +696,15 @@ public class RootLayoutController implements Initializable {
 				bundle.getString("tooltip.redo"), Constants.RESOURCE_SOURCE_LOCATION);
 		tooltipToolbarEditRedo.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.redo"));
+
+		toggleButtonShowMatchingItemWithArrowKeys.getStyleClass().add(kUnPressedStyle);
+		tooltipToolbarShowMatchingItemWithArrowKeys = new Tooltip(RESOURCE_FACTORY
+				.getStringBinding("tooltip.showmatchingitemwitharrowkeys").get());
+		tooltipToolbarShowMatchingItemWithArrowKeys.textProperty().bind(
+				RESOURCE_FACTORY.getStringBinding("tooltip.showmatchingitemwitharrowkeys"));
+		toggleButtonShowMatchingItemWithArrowKeys
+				.setTooltip(tooltipToolbarShowMatchingItemWithArrowKeys);
+
 //		tooltipToolbarDrawTree = ControllerUtilities.createToolbarButtonWithImage("drawTree.png",
 //				buttonToolbarDrawTree, tooltipToolbarDrawTree,
 //				bundle.getString("tooltip.drawtree"), Constants.RESOURCE_SOURCE_LOCATION);
@@ -681,22 +752,13 @@ public class RootLayoutController implements Initializable {
 	}
 
 	@FXML
-	private void handleMenuShowMatchingParenWithArrowKeys() {
-//		toggleButtonShowMatchingParenWithArrowKeys = setToggleButtonStyle(
-//				menuItemShowMatchingParenWithArrowKeys, toggleButtonShowMatchingParenWithArrowKeys);
-		applicationPreferences
-				.setShowMatchingParenWithArrowKeys(menuItemShowMatchingParenWithArrowKeys
-						.isSelected());
-	}
-
-	@FXML
-	private void handleShowMatchingParenWithArrowKeys() {
-		menuItemShowMatchingParenWithArrowKeys.setSelected(!menuItemShowMatchingParenWithArrowKeys
+	private void handleShowMatchingItemWithArrowKeys() {
+		menuItemShowMatchingItemWithArrowKeys.setSelected(!menuItemShowMatchingItemWithArrowKeys
 				.isSelected());
-//		toggleButtonShowMatchingParenWithArrowKeys = setToggleButtonStyle(
-//				menuItemShowMatchingParenWithArrowKeys, toggleButtonShowMatchingParenWithArrowKeys);
+		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
+				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		applicationPreferences
-				.setShowMatchingParenWithArrowKeys(menuItemShowMatchingParenWithArrowKeys
+				.setShowMatchingItemWithArrowKeys(menuItemShowMatchingItemWithArrowKeys
 						.isSelected());
 		grammar.requestFocus();
 	}
@@ -847,12 +909,12 @@ public class RootLayoutController implements Initializable {
 				.get());
 		dialog.setContentText(RESOURCE_FACTORY.getStringBinding("showmatchingparendelay.choose")
 				.get());
-		dialog.setSelectedItem(applicationPreferences.getShowMatchingParenDelay());
+		dialog.setSelectedItem(applicationPreferences.getShowMatchingItemDelay());
 		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(mainApp.getNewMainIconImage());
 		Optional<Double> result = dialog.showAndWait();
 		if (result.isPresent()) {
-			applicationPreferences.setShowMatchingParenDelay(result.get());
+			applicationPreferences.setShowMatchingItemDelay(result.get());
 		}
 	}
 
@@ -875,6 +937,10 @@ public class RootLayoutController implements Initializable {
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
 		this.applicationPreferences = mainApp.getApplicationPreferences();
+		menuItemShowMatchingItemWithArrowKeys.setSelected(applicationPreferences
+				.getShowMatchingItemWithArrowKeys());
+		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
+				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		grammar.replaceText(mainApp.getContent());
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
@@ -953,6 +1019,52 @@ public class RootLayoutController implements Initializable {
 		contents = contents.substring(0, i) + closingItem + contents.substring(i);
 		grammar.replaceText(contents);
 		grammar.moveTo(i);
+	}
+
+	private ToggleButton setToggleButtonStyle(CheckMenuItem menuItem, ToggleButton toggleButton) {
+		if (menuItem.isSelected()) {
+			int i = toggleButton.getStyleClass().indexOf(kUnPressedStyle);
+			if (i >= 0) {
+				toggleButton.getStyleClass().remove(i);
+			}
+			toggleButton.getStyleClass().add(kPressedStyle);
+		} else {
+			int i = toggleButton.getStyleClass().indexOf(kPressedStyle);
+			if (i >= 0) {
+				toggleButton.getStyleClass().remove(i);
+			}
+			toggleButton.getStyleClass().add(kUnPressedStyle);
+		}
+		return toggleButton;
+	}
+
+	@FXML
+	private void handleMenuShowMatchingItemDelay() {
+		final Double[] fontSizes = new Double[] { 125d, 250d, 375d, 500d, 625d, 750d, 875d, 1000d,
+				1125d, 1250d, 1375d, 1500d, 1625d, 1750d, 1875d, 2000d, 2125d, 2250d, 2375d, 2500d,
+				2625d, 2750d, 2875d, 3000d, 3125d, 3250d, 3375d, 3500d, 3625d, 3750d, 3875d, 4000d };
+		ChoiceDialog<Double> dialog = new ChoiceDialog<>(750d, fontSizes);
+		dialog.setTitle(RESOURCE_FACTORY.getStringBinding("showmatchingitemdelay.header").get());
+		dialog.setHeaderText(RESOURCE_FACTORY.getStringBinding("showmatchingitemdelay.content")
+				.get());
+		dialog.setContentText(RESOURCE_FACTORY.getStringBinding("showmatchingitemdelay.choose")
+				.get());
+		dialog.setSelectedItem(applicationPreferences.getShowMatchingItemDelay());
+		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(mainApp.getNewMainIconImage());
+		Optional<Double> result = dialog.showAndWait();
+		if (result.isPresent()) {
+			applicationPreferences.setShowMatchingItemDelay(result.get());
+		}
+	}
+
+	@FXML
+	private void handleMenuShowMatchingItemWithArrowKeys() {
+		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
+				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
+		applicationPreferences
+				.setShowMatchingItemWithArrowKeys(menuItemShowMatchingItemWithArrowKeys
+						.isSelected());
 	}
 
 	// code taken from

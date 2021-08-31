@@ -48,8 +48,8 @@ public class GrammarUIServiceTest {
 
 	private void checkMatchingLeft(int iRightPos, int iLeftExpected) {
 		grammar.moveTo(iRightPos);
-		GrammarUIService.processRightParenthesis(grammar, iRightPos, true, 750.0, null, null);
-		int iLeftPos = GrammarUIService.findMatchingLeftItemAndHighlightIt(iRightPos, ')', '(');
+		GrammarUIService.processRightItem(grammar, iRightPos, true, 750.0, '(', ')', null, null);
+		int iLeftPos = GrammarUIService.findMatchingLeftItemAndHighlightIt(iRightPos, '(', ')');
 		assertEquals(iLeftExpected, iLeftPos);
 	}
 
@@ -70,7 +70,7 @@ public class GrammarUIServiceTest {
 
 	private void checkMatchingRight(int iLeftPos, int iRightExpected) {
 		grammar.moveTo(iLeftPos);
-		GrammarUIService.processLeftItem(grammar, false, 125.0, null, null);
+		GrammarUIService.processLeftItem(grammar, false, '(', ')', 125.0, false, null, null);
 		int iRightPos = GrammarUIService.findMatchingRightItemAndHighlightIt(iLeftPos, false, '(', ')');
 		assertEquals(iRightExpected, iRightPos);
 	}

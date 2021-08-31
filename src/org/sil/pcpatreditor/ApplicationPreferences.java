@@ -16,8 +16,8 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	static final String LAST_OPENED_DIRECTORY_PATH = "lastOpenedDirectoryPath";
 	static final String LAST_LOCALE_LANGUAGE = "lastLocaleLanguage";
 	static final String DRAW_AS_TYPE = "drawastype";
-	static final String SHOW_MATCHING_PAREN_DELAY = "showmatchingparendelay";
-	static final String SHOW_MATCHING_PAREN_WITH_ARROW_KEYS = "showmatchingparenwitharrowkeys";
+	static final String SHOW_MATCHING_ITEM_DELAY = "showmatchingitemdelay";
+	static final String SHOW_MATCHING_ITEM_WITH_ARROW_KEYS = "showmatchingitemwitharrowkeys";
 	static final String GRAMMAR_FONT_SIZE = "grammarfontsize";
 	// Not trying to be anglo-centric, but we have to start with something...
 	static final String DEFAULT_LOCALE_LANGUAGE = "en";
@@ -82,20 +82,20 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		setPreferencesKey(LAST_OPENED_DIRECTORY_PATH, directoryPath);
 	}
 
-	public double getShowMatchingParenDelay() {
-		return prefs.getDouble(SHOW_MATCHING_PAREN_DELAY, 750.0);
+	public double getShowMatchingItemDelay() {
+		return prefs.getDouble(SHOW_MATCHING_ITEM_DELAY, 750.0);
 	}
 
-	public void setShowMatchingParenDelay(double dSize) {
-		setPreferencesKey(SHOW_MATCHING_PAREN_DELAY, dSize);
+	public void setShowMatchingItemDelay(double dSize) {
+		setPreferencesKey(SHOW_MATCHING_ITEM_DELAY, dSize);
 	}
 
-	public boolean getShowMatchingParenWithArrowKeys() {
-		return prefs.getBoolean(SHOW_MATCHING_PAREN_WITH_ARROW_KEYS, false);
+	public boolean getShowMatchingItemWithArrowKeys() {
+		return prefs.getBoolean(SHOW_MATCHING_ITEM_WITH_ARROW_KEYS, false);
 	}
 
-	public void setShowMatchingParenWithArrowKeys(boolean fShowMatchingParenWithArrowKeys) {
-		setPreferencesKey(SHOW_MATCHING_PAREN_WITH_ARROW_KEYS, fShowMatchingParenWithArrowKeys);
+	public void setShowMatchingItemWithArrowKeys(boolean fShowMatchingItemWithArrowKeys) {
+		setPreferencesKey(SHOW_MATCHING_ITEM_WITH_ARROW_KEYS, fShowMatchingItemWithArrowKeys);
 	}
 
 	public double getGrammarFontSize() {

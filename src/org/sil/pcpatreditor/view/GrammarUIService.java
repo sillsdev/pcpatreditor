@@ -42,32 +42,34 @@ public class GrammarUIService {
 	/**
 	 * @param grammar
 	 *            = tree description text area
-	 * @param iRightParenthesis
-	 *            = position of right parenthesis to use when searching for
-	 *            matching left parenthesis
-	 * @param fCaretAfterParen
-	 *            = whether the current cart is before the paren (left-arrow was
-	 *            keyed) or after the paren (a ')' was keyed)
+	 * @param iRightItem
+	 *            = position of right item to use when searching for
+	 *            matching left item
+	 * @param fCaretAfterItem
+	 *            = whether the current caret is before the item (left-arrow was
+	 *            keyed) or after the item (a closing item was keyed)
 	 * @param pause
-	 *            = number of milliseconds to sleep while showing matching paren
+	 *            = number of milliseconds to sleep while showing matching item
+	 * @param leftItem TODO
+	 * @param rightItem TODO
 	 * @param resource
 	 *            = resources used in message
 	 * @param image
 	 *            = image used in message
 	 */
-	public static void processRightParenthesis(CodeArea grammar,
-			int iRightParenthesis, boolean fCaretAfterParen, double pause, ResourceBundle resource,
-			Image image) {
+	public static void processRightItem(CodeArea grammar,
+			int iRightItem, boolean fCaretAfterItem, double pause, char leftItem,
+			char rightItem, ResourceBundle resource, Image image) {
 		grammarArea = grammar;
 		bundle = resource;
 		mainIcon = image;
 		grammarArea.setEditable(false);
-		int iLeftParenthesis = findMatchingLeftItemAndHighlightIt(iRightParenthesis, ')', '(');
-		if (iLeftParenthesis > -1) {
+		int iLeftItem = findMatchingLeftItemAndHighlightIt(iRightItem, leftItem, rightItem);
+		if (iLeftItem > -1) {
 			// sleep and then reset the caret
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(pause), event -> {
-				removeMatchingLeftItemHighlightAndRestoreCaret(iLeftParenthesis,
-						iRightParenthesis + (fCaretAfterParen ? 1 : 0));
+				removeMatchingLeftItemHighlightAndRestoreCaret(iLeftItem,
+						iRightItem + (fCaretAfterItem ? 1 : 0));
 				grammarArea.setEditable(true);
 				processAnyItemsKeyedDuringPause();
 			}));
@@ -125,31 +127,31 @@ public class GrammarUIService {
 	}
 
 	private static Object removeMatchingLeftItemHighlightAndRestoreCaret(
-			int iLeftParenthesis, int iRightParenthesis) {
+			int iLeftItem, int iRightItem) {
 		grammarArea.requestFollowCaret();
-		grammarArea.moveTo(iRightParenthesis);
+		grammarArea.moveTo(iRightItem);
 		return null;
 	}
 
 	// TODO: when we get rtf working, highlight some other way and we may not
 	// need to return an integer here...
 	// is public for unit testing
-	public static int findMatchingLeftItemAndHighlightIt(int iRightParenthesis, char rightItem, char leftItem) {
+	public static int findMatchingLeftItemAndHighlightIt(int iRightItem, char leftItem, char rightItem) {
 		String sDescription = grammarArea.getText();
 		int iMax = sDescription.length() - 1;
-		int iIndex = iRightParenthesis - 1;
+		int iIndex = iRightItem - 1;
 		if (iIndex > iMax) {
 			return -1;
 		}
-		int iCloseParen = 0;
+		int iClosingItem = 0;
 		while (iIndex >= 0) {
 			if (sDescription.charAt(iIndex) == rightItem) {
-				iCloseParen++;
+				iClosingItem++;
 			} else if (sDescription.charAt(iIndex) == leftItem) {
-				if (iCloseParen == 0) {
+				if (iClosingItem == 0) {
 					break;
 				} else {
-					iCloseParen--;
+					iClosingItem--;
 				}
 			}
 			iIndex--;
@@ -163,12 +165,33 @@ public class GrammarUIService {
 			if (bundle != null) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle(MainApp.kApplicationTitle);
-				alert.setHeaderText(bundle.getString("error.nomatchingopeningparenthesis"));
-				alert.setContentText(bundle.getString("error.missingopenparenthesis"));
-
+				String noMatching = "";
+				String missing = "";
+				switch (leftItem) {
+				case '{':
+					noMatching = bundle.getString("error.nomatchingopeningbrace");
+					missing = bundle.getString("error.missingopeningbrace");
+					break;
+				case '[':
+					noMatching = bundle.getString("error.nomatchingopeningbracket");
+					missing = bundle.getString("error.missingopeningbracket");
+					break;
+				case '(':
+					noMatching = bundle.getString("error.nomatchingopeningparenthesis");
+					missing = bundle.getString("error.missingopeningparenthesis");
+					break;
+				case '<':
+					noMatching = bundle.getString("error.nomatchingopeningwedge");
+					missing = bundle.getString("error.missingopeningwedge");
+					break;
+				default:
+					System.out.println("default:" + leftItem);
+					break;
+				}
+				alert.setHeaderText(noMatching);
+				alert.setContentText(missing);
 				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 				stage.getIcons().add(mainIcon);
-
 				alert.showAndWait();
 			}
 		}
@@ -178,30 +201,33 @@ public class GrammarUIService {
 	/**
 	 * @param grammar
 	 *            = tree description text area
+	 * @param fCaretAfterItem TODO
+	 * @param leftItem TODO
+	 * @param rightItem TODO
+	 * @param pause
+	 *            = number of milliseconds to sleep while showing matching item
 	 * @param fShowMsg
 	 *            = whether to show message about missing matching right
-	 *            parenthesis or not
-	 * @param pause
-	 *            = number of milliseconds to sleep while showing matching paren
+	 *            item or not
 	 * @param resource
 	 *            = resources used in message
 	 * @param image
 	 *            = image used in message
 	 */
-	public static void processLeftItem(CodeArea grammar, boolean fShowMsg,
-			double pause, ResourceBundle resource, Image image) {
+	public static void processLeftItem(CodeArea grammar, boolean fCaretAfterItem,
+			char leftItem, char rightItem, double pause, boolean fShowMsg, ResourceBundle resource, Image image) {
 		grammarArea = grammar;
 		bundle = resource;
 		mainIcon = image;
-		int iLeftParenthesis = grammarArea.getCaretPosition();
+		int iLeftItem = grammarArea.getCaretPosition();
 		grammarArea.setEditable(false);
-		int iRightParenthesis = findMatchingRightItemAndHighlightIt(iLeftParenthesis,
-				fShowMsg, '(', ')');
-		if (iRightParenthesis > -1) {
+		int iRightItem = findMatchingRightItemAndHighlightIt(iLeftItem + (fCaretAfterItem? 0 : 1),
+				fShowMsg, leftItem, rightItem);
+		if (iRightItem > -1) {
 			// sleep and then reset the caret
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(pause), event -> {
-				removeMatchingRightItemHighlightAndRestoreCaret(iLeftParenthesis,
-						iRightParenthesis);
+				removeMatchingRightItemHighlightAndRestoreCaret(iLeftItem,
+						iRightItem);
 				grammarArea.setEditable(true);
 				processAnyItemsKeyedDuringPause();
 			}));
@@ -212,9 +238,9 @@ public class GrammarUIService {
 	}
 
 	private static Object removeMatchingRightItemHighlightAndRestoreCaret(
-			int iLeftParenthesis, int iRightParenthesis) {
+			int iLeftItem, int iRightItem) {
 		grammarArea.requestFollowCaret();
-		grammarArea.moveTo(iLeftParenthesis);
+		grammarArea.moveTo(iLeftItem);
 		return null;
 	}
 
@@ -222,30 +248,30 @@ public class GrammarUIService {
 	// need to return an integer here...
 	// is public for unit testing
 	/**
-	 * @param iLeftParenthesis
-	 *            = position of left parenthesis to match
+	 * @param iLeftItem
+	 *            = position of left item to match
 	 * @param fShowMsg
 	 *            = whether to show message about missing matching right
-	 *            parenthesis
+	 *            item
 	 * @param leftItem TODO
 	 * @param rightItem TODO
 	 * @return
 	 */
-	public static int findMatchingRightItemAndHighlightIt(int iLeftParenthesis,
+	public static int findMatchingRightItemAndHighlightIt(int iLeftItem,
 			boolean fShowMsg, char leftItem, char rightItem) {
 		int iIndex;
 		String sDescription = grammarArea.getText();
 		int iEnd = sDescription.length();
-		int iOpenParen = 0;
-		iIndex = iLeftParenthesis;
+		int iOpeningItem = 0;
+		iIndex = iLeftItem;
 		while (iIndex < iEnd) {
 			if (sDescription.charAt(iIndex) == leftItem) {
-				iOpenParen++;
+				iOpeningItem++;
 			} else if (sDescription.charAt(iIndex) == rightItem) {
-				if (iOpenParen == 0) {
+				if (iOpeningItem == 0) {
 					break;
 				} else {
-					iOpenParen--;
+					iOpeningItem--;
 				}
 			}
 			iIndex++;
@@ -259,12 +285,33 @@ public class GrammarUIService {
 			if (fShowMsg && bundle != null) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle(MainApp.kApplicationTitle);
-				alert.setHeaderText(bundle.getString("error.nomatchingclosingparenthesis"));
-				alert.setContentText(bundle.getString("error.missingcloseparenthesis"));
-
+				String noMatching = "";
+				String missing = "";
+				switch (leftItem) {
+				case '{':
+					noMatching = bundle.getString("error.nomatchingclosingbrace");
+					missing = bundle.getString("error.missingclosingbrace");
+					break;
+				case '[':
+					noMatching = bundle.getString("error.nomatchingclosingbracket");
+					missing = bundle.getString("error.missingclosingbracket");
+					break;
+				case '(':
+					noMatching = bundle.getString("error.nomatchingclosingparenthesis");
+					missing = bundle.getString("error.missingclosingparenthesis");
+					break;
+				case '<':
+					noMatching = bundle.getString("error.nomatchingclosingwedge");
+					missing = bundle.getString("error.missingclosingwedge");
+					break;
+				default:
+					System.out.println("default:" + leftItem);
+					break;
+				}
+				alert.setHeaderText(noMatching);
+				alert.setContentText(missing);
 				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 				stage.getIcons().add(mainIcon);
-
 				alert.showAndWait();
 			}
 		}
