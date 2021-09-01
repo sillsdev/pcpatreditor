@@ -299,6 +299,7 @@ public class RootLayoutController implements Initializable {
 					}
 					break;
 				}
+				enableDisableRedoUndoButtons();
 			}
 		});
 
@@ -482,10 +483,6 @@ public class RootLayoutController implements Initializable {
 				default:
 					break;
 				}
-
-				// TODO: is this the best place for this?
-//				computeHighlighting();
-
 			}
 		});
 
@@ -500,11 +497,12 @@ public class RootLayoutController implements Initializable {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-//				computeHighlighting();
 				grammar.requestFocus();
 				grammar.moveTo(0);
 			}
 		});
+
+		enableDisableRedoUndoButtons();
 	}
 
 
@@ -874,7 +872,6 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	protected void handleCut() {
 		grammar.cut();
-//		computeHighlighting();
 	}
 
 	@FXML
@@ -882,20 +879,32 @@ public class RootLayoutController implements Initializable {
 		ClipboardUtilities.removeAnyFinalNullFromStringOnClipboard();
 		// now our possibly adjusted string is on the clipboard; do a paste
 		grammar.paste();
-//		computeHighlighting();
 		grammar.requestFocus();
 	}
 
 	@FXML
 	protected void handleUndo() {
 		grammar.undo();
-//		computeHighlighting();
+		enableDisableRedoUndoButtons();
 	}
 
 	@FXML
 	protected void handleRedo() {
 		grammar.redo();
-//		computeHighlighting();
+		enableDisableRedoUndoButtons();
+	}
+
+	private void enableDisableRedoUndoButtons() {
+		if (grammar.isRedoAvailable()) {
+			buttonToolbarEditRedo.setDisable(false);
+		} else {
+			buttonToolbarEditRedo.setDisable(true);
+		}
+		if (grammar.isUndoAvailable()) {
+			buttonToolbarEditUndo.setDisable(false);
+		} else {
+			buttonToolbarEditUndo.setDisable(true);
+		}
 	}
 
 	@FXML
@@ -943,71 +952,6 @@ public class RootLayoutController implements Initializable {
 				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		grammar.replaceText(mainApp.getContent());
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
-	}
-
-	// TODO: remove this
-	public void computeHighlighting() {
-		CharStream input = CharStreams.fromString(grammar.getText());
-		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		tokens.fill();
-
-		String syntagmeme = "-fx-font-family: Monospaced;\n-fx-fill: black;\n-fx-font-size:"
-				+ applicationPreferences.getGrammarFontSize() + "pt;";
-		String nonterminal = ""; //NonTerminalFontInfo.getInstance().getCss();
-		String gloss = ""; //GlossFontInfo.getInstance().getCss();
-		String empty = ""; //EmptyElementFontInfo.getInstance().getCss();
-		String lexical = ""; //LexFontInfo.getInstance().getCss();
-
-		String cssStyleClass = syntagmeme;
-		String textClassToUse = ""; //NonTerminalFontInfo.getInstance().getCss();
-		for (Token token : tokens.getTokens()) {
-			// We keep the following output for when we want to see the set of
-			// tokens and their types
-			 System.out.println("token='" + token.getText() + "'; type=" +
-			 token.getType());
-			switch (token.getType()) {
-			// TODO: if the description grammar changes, we may need to adjust
-			// the case values as they may change
-			case 1: // opening parenthesis
-				cssStyleClass = syntagmeme;
-				textClassToUse = nonterminal;
-				break;
-//			case 3: // Let
-//				cssStyleClass = "-fx-fill: red;";
-//				break;
-//			case 4: // be
-//				cssStyleClass = "-fx-fill: blue;";
-//				break;
-			case 5: // \L
-				cssStyleClass = syntagmeme;
-				textClassToUse = lexical;
-				break;
-			case 6: // \G
-				cssStyleClass = syntagmeme;
-				textClassToUse = gloss;
-				break;
-			case 7: // \E
-				cssStyleClass = syntagmeme;
-				textClassToUse = empty;
-				break;
-			case 12: // text
-			case 13: // text with spaces
-				cssStyleClass = textClassToUse;
-				break;
-			default:
-				cssStyleClass = syntagmeme;
-				break;
-			}
-			if (token.getType() != -1) { // -1 is EOF
-				int iStart = token.getStartIndex();
-				int iStop = token.getStopIndex() + 1;
-//				grammar.setStyle(iStart, iStop, cssStyleClass);
-				grammar.getStyleClass().add("t1");
-				grammar.getStyleClass().add("t3");
-				grammar.getStyleClass().add("t4");
-			}
-		}
 	}
 
 	/**
