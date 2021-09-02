@@ -38,6 +38,7 @@ Using:
 
 copyAction.png (was copy.png)
 deleteAction.png (was no.png)
+findReplaceAction.png (was magnifier.png)
 insertAction.png (was plus_green.png)
 pasteAction.png (was paste.png)
 PcPatrEditor256x256 (was controls.png)

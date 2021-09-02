@@ -19,4 +19,8 @@ public class Constants {
 	public static final String PCPATR_EDITOR_DATA_FILE_EXTENSIONS = "*."
 			+ PCPATR_EDITOR_DATA_FILE_EXTENSION;
 
+	// Unit Testing constants
+	public static final String UNIT_TEST_DATA_FILE_NAME = "test/org/sil/pcpatreditor/testdata/TestData.";
+	public static final String UNIT_TEST_DATA_FILE = "test/org/sil/pcpatreditor/testdata/LargeGrammar.grm";
+
 }

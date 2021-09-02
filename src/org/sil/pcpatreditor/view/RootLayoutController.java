@@ -6,12 +6,14 @@
 
 package org.sil.pcpatreditor.view;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +34,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.InlineCssTextArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -55,9 +56,12 @@ import javafx.concurrent.Worker.State;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ChoiceDialog;
@@ -67,7 +71,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -76,6 +82,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class RootLayoutController implements Initializable {
@@ -84,6 +91,8 @@ public class RootLayoutController implements Initializable {
 	ResourceBundle bundle;
 	private Locale currentLocale;
 	ApplicationPreferences applicationPreferences;
+	private String sAboutHeader;
+	private String sAboutContent;
 	private String sFileFilterDescription;
 	private String pcPatrEditorFilterDescription;
 	private List<KeyEvent> itemsKeyedDuringPause = new ArrayList<KeyEvent>();
@@ -121,6 +130,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private Button buttonToolbarEditPaste;
 	@FXML
+	private Button buttonToolbarEditFindReplace;
+	@FXML
 	private Button buttonToolbarEditUndo;
 	@FXML
 	private Button buttonToolbarEditRedo;
@@ -154,9 +165,19 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemEditPaste;
 	@FXML
+	private MenuItem menuItemEditFindReplace;
+	@FXML
+	private Menu menuSettings;
+	@FXML
 	private CheckMenuItem menuItemShowMatchingItemWithArrowKeys;
 	@FXML
 	private MenuItem menuItemShowMatchingItemDelay;
+	@FXML
+	private Menu menuHelp;
+	@FXML
+	private MenuItem menuItemUserDocumentation;
+	@FXML
+	private MenuItem menuItemAbout;
 
 	@FXML
 	private Tooltip tooltipToolbarFileOpen;
@@ -174,6 +195,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditUndo;
 	@FXML
 	private Tooltip tooltipToolbarEditRedo;
+	@FXML
+	private Tooltip tooltipToolbarEditFindReplace;
 	@FXML
 	private Tooltip tooltipToolbarShowMatchingItemWithArrowKeys;
 
@@ -590,6 +613,7 @@ public class RootLayoutController implements Initializable {
 		menuItemEditCut.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.cut"));
 		menuItemEditCopy.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.copy"));
 		menuItemEditPaste.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.paste"));
+		menuItemEditFindReplace.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.findreplace"));
 //		menuTree.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.tree"));
 //		menuItemDrawTree.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.drawtree"));
 //		menuFormat.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.format"));
@@ -684,6 +708,10 @@ public class RootLayoutController implements Initializable {
 				bundle.getString("tooltip.paste"), Constants.RESOURCE_SOURCE_LOCATION);
 		tooltipToolbarEditPaste.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.paste"));
+		tooltipToolbarEditFindReplace = ControllerUtilities.createToolbarButtonWithImage("findReplaceAction.png",
+				buttonToolbarEditFindReplace, tooltipToolbarEditFindReplace, bundle.getString("tooltip.findreplace"),
+				Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarEditFindReplace.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.findreplace"));
 		tooltipToolbarEditUndo = ControllerUtilities.createToolbarButtonWithImage(
 				"undoAction.png", buttonToolbarEditUndo, tooltipToolbarEditUndo,
 				bundle.getString("tooltip.undo"), Constants.RESOURCE_SOURCE_LOCATION);
@@ -864,6 +892,42 @@ public class RootLayoutController implements Initializable {
 	}
 
 	@FXML
+	private void handleAbout() {
+		sAboutHeader = RESOURCE_FACTORY.getStringBinding("about.header").get();
+		Object[] args = { Constants.VERSION_NUMBER };
+		MessageFormat msgFormatter = new MessageFormat("");
+		msgFormatter.setLocale(currentLocale);
+		msgFormatter.applyPattern(RESOURCE_FACTORY.getStringBinding("about.content").get());
+		sAboutContent = msgFormatter.format(args);
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(sAboutHeader);
+		alert.setHeaderText(null);
+		alert.setContentText(sAboutContent);
+		Image silLogo = ControllerUtilities.getIconImageFromURL(
+				"file:resources/images/SILLogo.png", Constants.RESOURCE_SOURCE_LOCATION);
+		alert.setGraphic(new ImageView(silLogo));
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(mainApp.getNewMainIconImage());
+		alert.showAndWait();
+	}
+
+	@FXML
+	private void handleUserDocumentation() {
+		showFileToUser("doc/UserDocumentation.pdf");
+	}
+
+	protected void showFileToUser(String sFileToShow) {
+		if (Desktop.isDesktopSupported()) {
+			try {
+				File myFile = new File(sFileToShow);
+				Desktop.getDesktop().open(myFile);
+			} catch (IOException ex) {
+				// no application registered for PDFs
+			}
+		}
+	}
+
+	@FXML
 	protected void handleCopy() {
 		grammar.copy();
 		grammar.requestFocus();
@@ -904,6 +968,40 @@ public class RootLayoutController implements Initializable {
 			buttonToolbarEditUndo.setDisable(false);
 		} else {
 			buttonToolbarEditUndo.setDisable(true);
+		}
+	}
+
+	@FXML
+	protected void handleFindReplace() {
+		System.out.println("find/replace");
+		try {
+			// Load the fxml file and create a new stage for the popup.
+			Stage dialogStage = new Stage();
+			String resource = "fxml/FindReplaceDialog.fxml";
+			String title = RESOURCE_FACTORY.getStringBinding("findreplace.title").get();
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(RootLayoutController.class.getResource(resource));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			BorderPane page = loader.load();
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(title);
+
+			FindReplaceDialogController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setData(grammar);
+			dialogStage.showAndWait();
+//			if (controller.isOkClicked()) {
+//				markAsDirty();
+//			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
