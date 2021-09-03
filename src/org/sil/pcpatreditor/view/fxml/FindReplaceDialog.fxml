@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Label?>
@@ -11,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.sil.pcpatreditor.view.FindReplaceDialogController">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.sil.pcpatreditor.view.FindReplaceDialogController">
    <center>
       <DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="409.0" prefWidth="381.0" BorderPane.alignment="CENTER">
           <content>
@@ -33,23 +32,6 @@
                		   </toggleGroup>
                	  </RadioButton>
 				  <RadioButton fx:id="rbSelection" layoutX="150.0" layoutY="164.0" mnemonicParsing="false" onAction="#handleSelection" text="%findreplace.radio.selection" toggleGroup="$tgScope" />
-                  <ButtonBar layoutX="167.0" layoutY="298.0" prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                      <Button mnemonicParsing="true" onAction="#handleFind" text="%findreplace.button.find" />
-                        <Button mnemonicParsing="true" onAction="#handleReplaceFind" text="%findreplace.button.replacefind" />
-                    </buttons>
-                  </ButtonBar>
-                  <ButtonBar layoutX="167.0" layoutY="333.0" prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                      <Button mnemonicParsing="true" onAction="#handleReplace" text="%findreplace.button.replace" />
-                        <Button mnemonicParsing="true" onAction="#handleReplaceAll" text="%findreplace.button.replaceall" />
-                    </buttons>
-                  </ButtonBar>
-                  <ButtonBar layoutX="167.0" layoutY="362.0" prefHeight="40.0" prefWidth="200.0">
-                    <buttons>
-                      <Button cancelButton="true" mnemonicParsing="true" text="%findreplace.button.close" />
-                    </buttons>
-                  </ButtonBar>
                   <Label layoutX="15.0" layoutY="107.0" text="%findreplace.label.direction" />
                   <Label layoutX="141.0" layoutY="107.0" text="%findreplace.label.scope" />
                   <Label layoutX="15.0" layoutY="207.0" text="%findreplace.label.options" />
@@ -58,6 +40,11 @@
                   <CheckBox fx:id="cbRegularExpression" layoutX="31.0" layoutY="281.0" mnemonicParsing="false" text="%findreplace.checkbox.regularexpression" />
                   <CheckBox fx:id="cbWrap" layoutX="151.0" layoutY="231.0" mnemonicParsing="false" text="%findreplace.checkbox.wrapsearch" />
                   <CheckBox fx:id="cbIncremental" layoutX="151.0" layoutY="257.0" mnemonicParsing="false" text="%findreplace.checkbox.incremental" />
+                  <Button fx:id="btnFind" layoutX="195.0" layoutY="313.0" mnemonicParsing="true" defaultButton="true" onAction="#handleFind" text="%findreplace.button.find" />
+                  <Button fx:id="btnReplaceFind" layoutX="273.0" layoutY="313.0" mnemonicParsing="true" onAction="#handleReplaceFind" text="%findreplace.button.replacefind" />
+                  <Button fx:id="btnReplace" layoutX="194.0" layoutY="344.0" mnemonicParsing="true" onAction="#handleReplace" text="%findreplace.button.replace" />
+                  <Button fx:id="btnReplaceAll" layoutX="273.0" layoutY="345.0" mnemonicParsing="true" onAction="#handleReplaceAll" text="%findreplace.button.replaceall" />
+                  <Button cancelButton="true" layoutX="273.0" layoutY="377.0" mnemonicParsing="true" onAction="#handleCancel" text="%findreplace.button.close" />
                </children>
             </AnchorPane>
           </content>

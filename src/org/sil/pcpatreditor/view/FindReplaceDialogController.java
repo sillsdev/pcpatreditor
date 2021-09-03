@@ -12,15 +12,20 @@ import java.util.function.UnaryOperator;
 
 import org.fxmisc.richtext.CodeArea;
 import org.sil.pcpatreditor.MainApp;
+import org.sil.pcpatreditor.service.FindReplaceOperator;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 /**
@@ -57,32 +62,59 @@ public class FindReplaceDialogController implements Initializable {
 	private CheckBox cbWholeWord;
 	@FXML
 	private CheckBox cbWrap;
+	@FXML
+	private Button btnFind;
+	@FXML
+	private Button btnReplace;
+	@FXML
+	private Button btnReplaceFind;
+	@FXML
+	private Button btnReplaceAll;
 
 	Stage dialogStage;
 	private boolean okClicked = false;
 	private MainApp mainApp;
-//	private LingTreeTree ltTree;
-	private UnaryOperator<TextFormatter.Change> filter;
-
+	private CodeArea grammar;
+	private FindReplaceOperator findReplaceOperator;
 	/**
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded.
 	 */
 	public void initialize(URL location, ResourceBundle resources) {
-		filter = new UnaryOperator<TextFormatter.Change>() {
+		cbIncremental.setDisable(true);
+		tfFind.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
-			public TextFormatter.Change apply(TextFormatter.Change change) {
-				String text = change.getText();
-				for (int i = 0; i < text.length(); i++) {
-					if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '.' && text.charAt(i) != '-')
-						return null;
-				}
-				return change;
+			public void handle(KeyEvent event) {
+				enableDisableActionButtons();
 			}
-		};
+		});
+		tfReplace.setOnKeyTyped(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				enableDisableActionButtons();
+			}
+		});
+		enableDisableActionButtons();
+	}
 
-		tfFind.setTextFormatter(new TextFormatter<String>(filter));
-		tfReplace.setTextFormatter(new TextFormatter<String>(filter));
+	private void enableDisableActionButtons() {
+		if (tfFind.getText().trim().length() > 0) {
+			btnFind.setDisable(false);
+			if (tfReplace.getText().trim().length() > 0) {
+				btnReplace.setDisable(false);
+				btnReplaceFind.setDisable(false);
+				btnReplaceAll.setDisable(false);
+			} else {
+				btnReplace.setDisable(true);
+				btnReplaceFind.setDisable(true);
+				btnReplaceAll.setDisable(true);
+			}
+		} else {
+			btnFind.setDisable(true);
+			btnReplace.setDisable(true);
+			btnReplaceFind.setDisable(true);
+			btnReplaceAll.setDisable(true);
+		}
 	}
 
 	/**
@@ -94,7 +126,8 @@ public class FindReplaceDialogController implements Initializable {
 		this.dialogStage = dialogStage;
 	}
 
-	public void setData(CodeArea ltTree) {
+	public void setData(CodeArea grammar) {
+		this.grammar = grammar;
 	}
 
 	/**
@@ -160,7 +193,16 @@ public class FindReplaceDialogController implements Initializable {
 
 	@FXML
 	public void handleFind() {
-		System.out.println("find");
+		findReplaceOperator = FindReplaceOperator.getInstance();
+		findReplaceOperator.initializeParameters(rbForward.isSelected(), rbAll.isSelected(), cbCase.isSelected(),
+				cbWholeWord.isSelected(), cbRegularExpression.isSelected(), cbWrap.isSelected(),
+				cbIncremental.isSelected());
+		findReplaceOperator.setContent(grammar.getText());
+		int index = findReplaceOperator.find(grammar.getCaretPosition(), tfFind.getText());
+		if (index > -1) {
+			grammar.displaceCaret(index);
+			grammar.selectRange(index, index + tfFind.getText().length());
+		}
 	}
 	
 	@FXML

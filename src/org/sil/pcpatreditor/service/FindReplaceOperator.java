@@ -7,8 +7,9 @@
 package org.sil.pcpatreditor.service;
 
 import java.util.Locale;
-
-import org.fxmisc.richtext.CodeArea;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Andy Black
@@ -205,26 +206,41 @@ public class FindReplaceOperator {
 		this.incrementalSearch = incrementalSearch;
 	}
 
-	public int find(String findMe) {
+	public int find(int startIndex, String findMe) {
+		if (startIndex < 0 || startIndex >= content.length()) {
+			return -1;
+		}
+		String source = getStringToSearch(startIndex);
 		int index = -1;
 		if (caseSensitive) {
-			index = getIndexOf(content, findMe);
+			index = getIndexOf(source, findMe);
 		} else {
 			if (locale == null) {
 				locale = new Locale("en");
 			}
-			index = getIndexOf(content.toLowerCase(locale), findMe.toLowerCase(locale));
+			index = getIndexOf(source.toLowerCase(locale), findMe.toLowerCase(locale));
 		}
 		if (index >= 0 && wholeWord) {
 			int begin = Math.max(index - 1, index);
-			int end = Math.min(index + findMe.length() + 1, content.length());
-			String portion = content.substring(begin, end);
+			int end = Math.min(index + findMe.length() + 1, source.length());
+			String portion = source.substring(begin, end);
 			if (!caseSensitive) {
 				portion = portion.toLowerCase(locale);
 				findMe = findMe.toLowerCase(locale);
 			}
 			if (!portion.matches(".*\\b" + findMe + "\\b.*")) {
 				index = -1;
+			}
+		}
+		if (index == -1 && wrapSearch) {
+			if (directionForward) {
+				index = find(0, findMe);
+			} else {
+				index = find(content.length() - 1, findMe);
+			}
+		} else {
+			if (index >= 0) {
+				index = adjustIndex(index, startIndex);
 			}
 		}
 		return index;
@@ -236,6 +252,71 @@ public class FindReplaceOperator {
 			index = source.indexOf(toFind);
 		} else {
 			index = source.lastIndexOf(toFind);
+		}
+		return index;
+	}
+
+	private int adjustIndex(int index, int startIndex) {
+		if (directionForward) {
+			index += startIndex;
+		}return index;
+	}
+	private String getStringToSearch(int startIndex) {
+		String search = content.substring(startIndex);
+		if (!directionForward && startIndex > 0) {
+			search = content.substring(0, startIndex);
+		}
+		return search;
+	}
+
+	public int findRegularExpression(int startIndex, String pattern) {
+		if (startIndex < 0 || startIndex >= content.length()) {
+			return -1;
+		}
+		if (pattern.length() == 0) {
+			return -1;
+		}
+		int index = -1;
+		Pattern rePattern;
+		if (caseSensitive) {
+			rePattern = Pattern.compile(pattern);
+		} else {
+			rePattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
+		}
+		Matcher matcher = rePattern.matcher(getStringToSearch(startIndex));
+		if (directionForward) {
+			index = regularExpressionSearchForward(startIndex, pattern, index, matcher);
+		} else {
+			index = regularExpressionSearchBackward(startIndex, pattern, index, matcher);
+		}
+		return index;
+	}
+
+	private int regularExpressionSearchForward(int startIndex, String pattern, int index, Matcher matcher) {
+		if (matcher.find()) {
+			index = matcher.start();
+			index = adjustIndex(index, startIndex);
+		} else {
+			if (wrapSearch) {
+				index = findRegularExpression(0, pattern);
+			}
+		}
+		return index;
+	}
+
+	private int regularExpressionSearchBackward(int startIndex, String pattern, int index, Matcher matcher) {
+		Stack<Integer> matches = new Stack<Integer>();
+		while (matcher.find()) {
+			int start = matcher.start();
+			index = adjustIndex(start, startIndex);
+			matches.push(index);
+		}
+		if (matches.size() > 0) {
+			index = matches.lastElement();
+		} else {
+			if (wrapSearch) {
+				index = findRegularExpression(0, pattern);
+			}
 		}
 		return index;
 	}

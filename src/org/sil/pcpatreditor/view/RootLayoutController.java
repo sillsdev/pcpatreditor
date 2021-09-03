@@ -973,7 +973,6 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	protected void handleFindReplace() {
-		System.out.println("find/replace");
 		try {
 			// Load the fxml file and create a new stage for the popup.
 			Stage dialogStage = new Stage();
@@ -996,7 +995,8 @@ public class RootLayoutController implements Initializable {
 			controller.setDialogStage(dialogStage);
 			controller.setMainApp(mainApp);
 			controller.setData(grammar);
-			dialogStage.showAndWait();
+			dialogStage.initModality(Modality.NONE);
+			dialogStage.show();
 //			if (controller.isOkClicked()) {
 //				markAsDirty();
 //			}
