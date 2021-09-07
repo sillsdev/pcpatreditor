@@ -248,8 +248,15 @@ public class FindReplaceDialogController implements Initializable {
 		findReplaceOperator.initializeParameters(rbForward.isSelected(), rbAll.isSelected(), cbCase.isSelected(),
 				cbWholeWord.isSelected(), cbRegularExpression.isSelected(), cbWrap.isSelected(),
 				cbIncremental.isSelected());
-		findReplaceOperator.setContent(grammar.getText());
-		int index = findReplaceOperator.find(grammar.getCaretPosition(), tfFind.getText());
+		int index = -1;
+		if (!rbAll.isSelected()) {
+			findReplaceOperator.setContent(grammar.getSelectedText());
+			index = findReplaceOperator.find(0, tfFind.getText());
+			index += grammar.getSelection().getStart();
+		} else {
+			findReplaceOperator.setContent(grammar.getText());
+			index = findReplaceOperator.find(grammar.getCaretPosition(), tfFind.getText());
+		}
 		if (index > -1) {
 			grammar.displaceCaret(index);
 			grammar.selectRange(index, index + tfFind.getText().length());
