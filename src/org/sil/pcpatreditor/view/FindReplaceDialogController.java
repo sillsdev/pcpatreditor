@@ -8,13 +8,11 @@ package org.sil.pcpatreditor.view;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.UnaryOperator;
 
 import org.fxmisc.richtext.CodeArea;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
 
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,9 +21,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -36,6 +34,8 @@ public class FindReplaceDialogController implements Initializable {
 
 	@FXML
 	private Label prompt;
+	@FXML
+	private Text reportResult;
 	@FXML
 	private TextField tfFind;
 	@FXML
@@ -74,6 +74,7 @@ public class FindReplaceDialogController implements Initializable {
 	Stage dialogStage;
 	private boolean okClicked = false;
 	private MainApp mainApp;
+	private ResourceBundle bundle;
 	private CodeArea grammar;
 	private FindReplaceOperator findReplaceOperator;
 	/**
@@ -82,6 +83,7 @@ public class FindReplaceDialogController implements Initializable {
 	 */
 	public void initialize(URL location, ResourceBundle resources) {
 		cbIncremental.setDisable(true);
+		reportResult.setVisible(false);
 		tfFind.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -95,6 +97,51 @@ public class FindReplaceDialogController implements Initializable {
 			}
 		});
 		enableDisableActionButtons();
+		cbCase.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.isAltDown() && ke.getText().equals("c")) {
+					cbCase.setSelected(cbCase.isSelected() ? false : true);
+					btnFind.requestFocus();
+				}
+			}
+		});
+		cbIncremental.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.isAltDown() && ke.getText().equals("i")) {
+					cbIncremental.setSelected(cbIncremental.isSelected() ? false : true);
+					btnFind.requestFocus();
+				}
+			}
+		});
+		cbRegularExpression.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.isAltDown() && ke.getText().equals("x")) {
+					cbRegularExpression.setSelected(cbRegularExpression.isSelected() ? false : true);
+					btnFind.requestFocus();
+				}
+			}
+		});
+		cbWholeWord.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.isAltDown() && ke.getText().equals("w")) {
+					cbWholeWord.setSelected(cbWholeWord.isSelected() ? false : true);
+					btnFind.requestFocus();
+				}
+			}
+		});
+		cbWrap.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.isAltDown() && ke.getText().equals("p")) {
+					cbWrap.setSelected(cbWrap.isSelected() ? false : true);
+					btnFind.requestFocus();
+				}
+			}
+		});
 	}
 
 	private void enableDisableActionButtons() {
@@ -173,22 +220,26 @@ public class FindReplaceDialogController implements Initializable {
 
 	@FXML
 	public void handleBackward() {
-		System.out.println("backward");
+		rbBackward.setSelected(true);
+		btnFind.requestFocus();
 	}
 	
 	@FXML
 	public void handleForward() {
-		System.out.println("forward");
+		rbForward.setSelected(true);
+		btnFind.requestFocus();
 	}
 	
 	@FXML
 	public void handleAll() {
-		System.out.println("all");
+		rbAll.setSelected(true);
+		btnFind.requestFocus();
 	}
 	
 	@FXML
 	public void handleSelection() {
-		System.out.println("selection");
+		rbSelection.setSelected(true);
+		btnFind.requestFocus();
 	}
 
 	@FXML
@@ -202,6 +253,10 @@ public class FindReplaceDialogController implements Initializable {
 		if (index > -1) {
 			grammar.displaceCaret(index);
 			grammar.selectRange(index, index + tfFind.getText().length());
+			reportResult.setVisible(false);
+		} else {
+			reportResult.setVisible(true);
+			reportResult.setText(bundle.getString("findreplace.report.notfound"));
 		}
 	}
 	
@@ -220,14 +275,9 @@ public class FindReplaceDialogController implements Initializable {
 		System.out.println("replacefind");
 	}
 	
-	@FXML
-	public void handleIncremental() {
-		System.out.println("incremental");
-	}
-	
-
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
+		bundle = mainApp.getBundle();
 	}
 
 	/**

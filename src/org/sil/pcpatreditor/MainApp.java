@@ -35,6 +35,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private Locale locale;
+	private ResourceBundle bundle;
 	public static String kApplicationTitle = "PcPatr Editor";
 	private RootLayoutController controller;
 	private ApplicationPreferences applicationPreferences;
@@ -74,6 +75,13 @@ public class MainApp extends Application  implements MainAppUtilities {
 	 */
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	/**
+	 * @return the bundle
+	 */
+	public ResourceBundle getBundle() {
+		return bundle;
 	}
 
 	@Override
@@ -130,7 +138,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 			// Load root layout from fxml file.
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("view/fxml/RootLayout.fxml"));
-			ResourceBundle bundle = ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, locale);
+			bundle = ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, locale);
 			loader.setResources(bundle);
 			rootLayout = (BorderPane) loader.load();
 			ControllerUtilities.adjustMenusIfNeeded(sOperatingSystem, rootLayout);

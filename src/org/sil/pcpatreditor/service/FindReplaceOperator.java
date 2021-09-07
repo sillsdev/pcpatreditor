@@ -210,8 +210,12 @@ public class FindReplaceOperator {
 		if (startIndex < 0 || startIndex >= content.length()) {
 			return -1;
 		}
-		String source = getStringToSearch(startIndex);
 		int index = -1;
+		if (wholeWord) {
+			index = findRegularExpression(startIndex, "\\b" + findMe + "\\b");
+			return index;
+		}
+		String source = getStringToSearch(startIndex);
 		if (caseSensitive) {
 			index = getIndexOf(source, findMe);
 		} else {
@@ -219,18 +223,6 @@ public class FindReplaceOperator {
 				locale = new Locale("en");
 			}
 			index = getIndexOf(source.toLowerCase(locale), findMe.toLowerCase(locale));
-		}
-		if (index >= 0 && wholeWord) {
-			int begin = Math.max(index - 1, index);
-			int end = Math.min(index + findMe.length() + 1, source.length());
-			String portion = source.substring(begin, end);
-			if (!caseSensitive) {
-				portion = portion.toLowerCase(locale);
-				findMe = findMe.toLowerCase(locale);
-			}
-			if (!portion.matches(".*\\b" + findMe + "\\b.*")) {
-				index = -1;
-			}
 		}
 		if (index == -1 && wrapSearch) {
 			if (directionForward) {
@@ -264,7 +256,7 @@ public class FindReplaceOperator {
 	private String getStringToSearch(int startIndex) {
 		String search = content.substring(startIndex);
 		if (!directionForward && startIndex > 0) {
-			search = content.substring(0, startIndex);
+			search = content.substring(0, startIndex - 1);
 		}
 		return search;
 	}

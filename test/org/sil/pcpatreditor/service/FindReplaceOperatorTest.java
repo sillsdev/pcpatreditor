@@ -87,6 +87,8 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(0, "abs");
 		assertEquals(-1, result);
+		result = findReplaceOperator.find(0, "rule");
+		assertEquals(70888, result);
 	}
 
 	@Test

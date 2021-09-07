@@ -9,6 +9,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Text?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.sil.pcpatreditor.view.FindReplaceDialogController">
    <center>
@@ -16,35 +17,36 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="409.0" prefWidth="381.0">
                <children>
-                  <Label layoutX="24.0" layoutY="32.0" text="%findreplace.label.find" />
-                  <Label layoutX="23.0" layoutY="61.0" text="%findreplace.label.replacewith" />
+                  <Label layoutX="24.0" layoutY="32.0" text="%findreplace.label.find" mnemonicParsing="true" />
+                  <Label layoutX="23.0" layoutY="61.0" text="%findreplace.label.replacewith" mnemonicParsing="true" />
                   <TextField fx:id="tfFind" layoutX="121.0" layoutY="28.0" prefHeight="25.0" prefWidth="226.0" />
                   <TextField fx:id="tfReplace" layoutX="121.0" layoutY="58.0" prefHeight="25.0" prefWidth="226.0" />
-  				  <RadioButton fx:id="rbForward" layoutX="29.0" layoutY="138.0" mnemonicParsing="false" onAction="#handleForward" selected="true" text="%findreplace.radio.forward">
+  				  <RadioButton fx:id="rbForward" layoutX="29.0" layoutY="138.0" mnemonicParsing="true" onAction="#handleForward" selected="true" text="%findreplace.radio.forward">
                		  <toggleGroup>
                   		 <ToggleGroup fx:id="tgDirection" />
                		   </toggleGroup>
                	  </RadioButton>
-				  <RadioButton fx:id="rbBackward" layoutX="29.0" layoutY="164.0" mnemonicParsing="false" onAction="#handleBackward" text="%findreplace.radio.backward" toggleGroup="$tgDirection" />
-  				  <RadioButton fx:id="rbAll" layoutX="150.0" layoutY="138.0" mnemonicParsing="false" onAction="#handleAll" selected="true" text="%findreplace.radio.all">
+				  <RadioButton fx:id="rbBackward" layoutX="29.0" layoutY="164.0" mnemonicParsing="true" onAction="#handleBackward" text="%findreplace.radio.backward" toggleGroup="$tgDirection" />
+  				  <RadioButton fx:id="rbAll" layoutX="150.0" layoutY="138.0" mnemonicParsing="true" onAction="#handleAll" selected="true" text="%findreplace.radio.all">
                		  <toggleGroup>
                   		 <ToggleGroup fx:id="tgScope" />
                		   </toggleGroup>
                	  </RadioButton>
-				  <RadioButton fx:id="rbSelection" layoutX="150.0" layoutY="164.0" mnemonicParsing="false" onAction="#handleSelection" text="%findreplace.radio.selection" toggleGroup="$tgScope" />
+				  <RadioButton fx:id="rbSelection" layoutX="150.0" layoutY="164.0" mnemonicParsing="true" onAction="#handleSelection" text="%findreplace.radio.selection" toggleGroup="$tgScope" />
                   <Label layoutX="15.0" layoutY="107.0" text="%findreplace.label.direction" />
                   <Label layoutX="141.0" layoutY="107.0" text="%findreplace.label.scope" />
                   <Label layoutX="15.0" layoutY="207.0" text="%findreplace.label.options" />
-                  <CheckBox fx:id="cbCase" layoutX="31.0" layoutY="231.0" mnemonicParsing="false" text="%findreplace.checkbox.casesensitive" />
-                  <CheckBox fx:id="cbWholeWord" layoutX="31.0" layoutY="257.0" mnemonicParsing="false" text="%findreplace.checkbox.wholeword" />
-                  <CheckBox fx:id="cbRegularExpression" layoutX="31.0" layoutY="281.0" mnemonicParsing="false" text="%findreplace.checkbox.regularexpression" />
-                  <CheckBox fx:id="cbWrap" layoutX="151.0" layoutY="231.0" mnemonicParsing="false" text="%findreplace.checkbox.wrapsearch" />
-                  <CheckBox fx:id="cbIncremental" layoutX="151.0" layoutY="257.0" mnemonicParsing="false" text="%findreplace.checkbox.incremental" />
-                  <Button fx:id="btnFind" layoutX="195.0" layoutY="313.0" mnemonicParsing="true" defaultButton="true" onAction="#handleFind" text="%findreplace.button.find" />
+                  <CheckBox fx:id="cbCase" layoutX="31.0" layoutY="231.0" mnemonicParsing="true" text="%findreplace.checkbox.casesensitive" />
+                  <CheckBox fx:id="cbWholeWord" layoutX="31.0" layoutY="257.0" mnemonicParsing="true" text="%findreplace.checkbox.wholeword" />
+                  <CheckBox fx:id="cbRegularExpression" layoutX="31.0" layoutY="281.0" mnemonicParsing="true" text="%findreplace.checkbox.regularexpression" />
+                  <CheckBox fx:id="cbWrap" layoutX="151.0" layoutY="231.0" mnemonicParsing="true" text="%findreplace.checkbox.wrapsearch" />
+                  <CheckBox fx:id="cbIncremental" layoutX="151.0" layoutY="257.0" mnemonicParsing="true" text="%findreplace.checkbox.incremental" />
+                  <Button fx:id="btnFind" defaultButton="true" layoutX="195.0" layoutY="313.0" mnemonicParsing="true" onAction="#handleFind" text="%findreplace.button.find" />
                   <Button fx:id="btnReplaceFind" layoutX="273.0" layoutY="313.0" mnemonicParsing="true" onAction="#handleReplaceFind" text="%findreplace.button.replacefind" />
                   <Button fx:id="btnReplace" layoutX="194.0" layoutY="344.0" mnemonicParsing="true" onAction="#handleReplace" text="%findreplace.button.replace" />
                   <Button fx:id="btnReplaceAll" layoutX="273.0" layoutY="345.0" mnemonicParsing="true" onAction="#handleReplaceAll" text="%findreplace.button.replaceall" />
                   <Button cancelButton="true" layoutX="273.0" layoutY="377.0" mnemonicParsing="true" onAction="#handleCancel" text="%findreplace.button.close" />
+                  <Text fx:id="reportResult" layoutX="17.0" layoutY="377.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                </children>
             </AnchorPane>
           </content>
