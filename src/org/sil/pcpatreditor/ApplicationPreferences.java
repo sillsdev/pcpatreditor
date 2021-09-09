@@ -22,6 +22,16 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	// Not trying to be anglo-centric, but we have to start with something...
 	static final String DEFAULT_LOCALE_LANGUAGE = "en";
 
+	public static final String FIND_REPLACE_LAST_FORWARD = "lastFindReplaceForward";
+	public static final String FIND_REPLACE_LAST_ALL = "lastFindReplaceAll";
+	public static final String FIND_REPLACE_LAST_CASE_SENSITIVE = "lastFindReplaceCaseSensitive";
+	public static final String FIND_REPLACE_LAST_WHOLE_WORD = "lastFindReplaceWholeWord";
+	public static final String FIND_REPLACE_LAST_REGULAR_EXPRESSION = "lastFindReplaceRegularExpression";
+	public static final String FIND_REPLACE_LAST_WRAP_SEARCH = "lastFindReplaceWrapSearch";
+	public static final String FIND_REPLACE_LAST_INCREMENTAL = "lastFindReplaceIncremental";
+	public static final String FIND_REPLACE_LAST_FIND = "lastFindReplaceFind";
+	public static final String FIND_REPLACE_LAST_REPLACE = "lastFindReplaceReplace";
+
 	// Window parameters to remember
 	static final String POSITION_X = "PositionX";
 	static final String POSITION_Y = "PositionY";
@@ -31,6 +41,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	// Window parameters for main window and various dialogs
 	public static final String LAST_WINDOW = "lastWindow";
 	public static final String LAST_SPLIT_PANE_POSITION = "lastSplitPanePosition";
+	public static final String LAST_FIND_REPLACE_DIALOG = "lastFindReplaceDialog";
 
 	Preferences prefs;
 
@@ -132,7 +143,15 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		setPreferencesKey(sWindow + MAXIMIZED, stage.isMaximized());
 	}
 
-	private void setPreferencesKey(String key, boolean value) {
+	public boolean getBooleanValue(String sKey, boolean defaultValue) {
+		return prefs.getBoolean(sKey, defaultValue);
+	}
+
+	public String getStringValue(String sKey, String defaultValue) {
+		return prefs.get(sKey, defaultValue);
+	}
+
+	public void setPreferencesKey(String key, boolean value) {
 		if (!StringUtilities.isNullOrEmpty(key)) {
 			if (key != null) {
 				prefs.putBoolean(key, value);
@@ -166,7 +185,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		}
 	}
 
-	private void setPreferencesKey(String key, String value) {
+	public void setPreferencesKey(String key, String value) {
 		if (!StringUtilities.isNullOrEmpty(key) && !StringUtilities.isNullOrEmpty(value)) {
 			prefs.put(key, value);
 

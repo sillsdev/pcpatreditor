@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.fxmisc.richtext.CodeArea;
+import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
@@ -29,6 +30,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * @author Andy Black
@@ -76,20 +78,19 @@ public class FindReplaceDialogController implements Initializable {
 	private Button btnReplaceAll;
 
 	Stage dialogStage;
-	private boolean okClicked = false;
-	private MainApp mainApp;
+	private ApplicationPreferences preferences;
 	private ResourceBundle bundle;
 	private CodeArea grammar;
 	private FindReplaceOperator findReplaceOperator;
 	private AudioClip beep;
-//	private AudioClip beep = new AudioClip("file:/Users/Andy%20Black/Documents/eclipse-workspace/org.sil.pcpatreditor/src/org/sil/pcpatreditor/resources/audio/bell-ring-01.mp3");
+	private boolean initializing = true;
+
 	/**
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded.
 	 */
 	public void initialize(URL location, ResourceBundle resources) {
 		beep = new AudioClip("file:" + Constants.RESOURCE_SOURCE_LOCATION + "resources/audio/bell-ring-01-short.mp3");
-//		cbIncremental.setDisable(true);
 		reportResult.setVisible(false);
 		tfFind.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
@@ -101,7 +102,7 @@ public class FindReplaceDialogController implements Initializable {
 					case ENTER:
 						int adjust = rbForward.isSelected() ? -1 : tfFind.getLength();
 						grammar.displaceCaret(Math.max(0, grammar.getCaretPosition() + adjust));
-						handleFind();
+						processInitializing();
 						break;
 					// ignore all of these
 					case ALT:
@@ -134,7 +135,7 @@ public class FindReplaceDialogController implements Initializable {
 					case UP:
 						break;
 					default:
-						handleFind();
+						processInitializing();
 						break;
 					}
 				}
@@ -268,6 +269,25 @@ public class FindReplaceDialogController implements Initializable {
 	 */
 	public void setDialogStage(Stage dialogStage) {
 		this.dialogStage = dialogStage;
+		dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent we) {
+				rememberPreferences();
+			}
+		});
+	}
+
+	private void rememberPreferences() {
+		preferences.setLastWindowParameters(ApplicationPreferences.LAST_FIND_REPLACE_DIALOG,
+				dialogStage);
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_FORWARD, rbForward.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_ALL, rbAll.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_CASE_SENSITIVE, cbCase.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_WHOLE_WORD, cbWholeWord.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_REGULAR_EXPRESSION, cbRegularExpression.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_WRAP_SEARCH, cbWrap.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_INCREMENTAL, cbIncremental.isSelected());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_FIND, tfFind.getText());
+		preferences.setPreferencesKey(ApplicationPreferences.FIND_REPLACE_LAST_REPLACE, tfReplace.getText());
 	}
 
 	public void setData(CodeArea grammar) {
@@ -275,43 +295,11 @@ public class FindReplaceDialogController implements Initializable {
 	}
 
 	/**
-	 * Returns true if the user clicked OK, false otherwise.
-	 * 
-	 * @return
-	 */
-	public boolean isOkClicked() {
-		return okClicked;
-	}
-
-	/**
-	 * Called when the user clicks OK.
-	 */
-	@FXML
-	private void handleOk() {
-//		if (initialXCoordinate.getText().length() > 0) {
-//			ltTree.setInitialXCoordinate(Double.valueOf(initialXCoordinate.getText()));
-//		}
-//		if (initialYCoordinate.getText().length() > 0) {
-//			ltTree.setInitialYCoordinate(Double.valueOf(initialYCoordinate.getText()));
-//		}
-//		if (horizontalGap.getText().length() > 0) {
-//			ltTree.setHorizontalGap(Double.valueOf(horizontalGap.getText()));
-//		}
-//		if (verticalGap.getText().length() > 0) {
-//			ltTree.setVerticalGap(Double.valueOf(verticalGap.getText()));
-//		}
-//		if (lexGlossGapAdjustment.getText().length() > 0) {
-//			ltTree.setLexGlossGapAdjustment(Double.valueOf(lexGlossGapAdjustment.getText()));
-//		}
-		okClicked = true;
-		dialogStage.close();
-	}
-
-	/**
 	 * Called when the user clicks cancel.
 	 */
 	@FXML
 	private void handleCancel() {
+		rememberPreferences();
 		dialogStage.close();
 	}
 
@@ -355,6 +343,7 @@ public class FindReplaceDialogController implements Initializable {
 			int caret = grammar.getCaretPosition();
 			if (cbIncremental.isSelected()) {
 				caret -= tfFind.getText().length()-1;
+				caret = Math.max(0, caret);
 			}
 			index = performFindOperation(caret, tfFind.getText());
 		}
@@ -399,17 +388,29 @@ public class FindReplaceDialogController implements Initializable {
 	}
 	
 	public void setMainApp(MainApp mainApp) {
-		this.mainApp = mainApp;
 		bundle = mainApp.getBundle();
+		preferences = mainApp.getApplicationPreferences();
+		dialogStage = preferences.getLastWindowParameters(
+				ApplicationPreferences.LAST_FIND_REPLACE_DIALOG, dialogStage, 450., 381.);
+		rbForward.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_FORWARD, true));
+		rbAll.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_ALL, true));
+		cbCase.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_CASE_SENSITIVE, false));
+		cbWholeWord.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_WHOLE_WORD, false));
+		cbRegularExpression.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_REGULAR_EXPRESSION, false));
+		cbWrap.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_WRAP_SEARCH, false));
+		cbIncremental.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_INCREMENTAL, false));
+		tfFind.setText(preferences.getStringValue(ApplicationPreferences.FIND_REPLACE_LAST_FIND, ""));
+		tfFind.selectAll();
+		tfReplace.setText(preferences.getStringValue(ApplicationPreferences.FIND_REPLACE_LAST_REPLACE, ""));
+		tfReplace.selectAll();
 	}
 
-	/**
-	 * Called when the user clicks help.
-	 */
-	@FXML
-	private void handleHelp() {
-		// TODO: write custom (English) documentation for this, showing examples
-		//mainApp.showNotImplementedYet();
+	private void processInitializing() {
+		if (initializing) {
+			initializing = false;
+		} else {
+			handleFind();
+		}
 	}
 
 }

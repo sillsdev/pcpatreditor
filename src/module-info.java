@@ -23,7 +23,7 @@ module org.sil.pcpatreditor {
 	requires antlr;
 	requires controlsfx;
 	requires transitive libjavadev;
-	requires richtextfx.fat;
+	requires transitive richtextfx.fat;
 	requires javafx.base;
 	requires javafx.media;
 }
