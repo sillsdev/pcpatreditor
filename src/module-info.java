@@ -25,4 +25,5 @@ module org.sil.pcpatreditor {
 	requires transitive libjavadev;
 	requires richtextfx.fat;
 	requires javafx.base;
+	requires javafx.media;
 }

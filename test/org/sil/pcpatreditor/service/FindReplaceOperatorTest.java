@@ -234,20 +234,26 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		result = findReplaceOperator.findRegularExpression(0, "head .+ject");
 		assertEquals(574, result);
+		assertEquals(625, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(575, "head .+ject");
 		assertEquals(663, result);
+		assertEquals(714, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "Head .+ject");
 		assertEquals(574, result);
-		result = findReplaceOperator.findRegularExpression(0, "[au]tive");
+		assertEquals(625, findReplaceOperator.getRegExEnd());
+	    result = findReplaceOperator.findRegularExpression(0, "[au]tive");
 		assertEquals(63, result);
+		assertEquals(68, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "[au]Tive");
 		assertEquals(63, result);
+		assertEquals(68, findReplaceOperator.getRegExEnd());
 		// check for wrapping
 		result = findReplaceOperator.findRegularExpression(412890, "[au]tive");
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.findRegularExpression(412890, "[au]tive");
 		assertEquals(63, result);
+		assertEquals(68, findReplaceOperator.getRegExEnd());
 		}
 
 	@Test
@@ -256,12 +262,15 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(0, "head .+ject");
 		assertEquals(574, result);
+		assertEquals(625, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(575, "head .+ject");
 		assertEquals(663, result);
+		assertEquals(714, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "Head .+ject");
 		assertEquals(-1, result);
 		result = findReplaceOperator.findRegularExpression(0, "[au]tive");
 		assertEquals(63, result);
+		assertEquals(68, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "[au]Tive");
 		assertEquals(-1, result);
 		}
@@ -272,18 +281,22 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(0, "head .+ject");
 		assertEquals(408887, result);
+		assertEquals(408898, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(408886, "head .+ject");
 		assertEquals(405039, result);
+		assertEquals(405050, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "Head .+ject");
 		assertEquals(408887, result);
+		assertEquals(408898, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "[au]tive");
 		assertEquals(412866, result);
+		assertEquals(412871, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "[au]Tive");
 		assertEquals(412866, result);
-		result = findReplaceOperator.findRegularExpression(0, "[au]Tive");
-		assertEquals(412866, result);
+		assertEquals(412871, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(0, "-abs");
 		assertEquals(1335, result);
+		assertEquals(1339, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(1336, "-abs");
 		assertEquals(-1, result);
 		result = findReplaceOperator.findRegularExpression(0, "\\+abs");
@@ -294,6 +307,7 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.findRegularExpression(16, "[au]tive");
 		assertEquals(412866, result);
+		assertEquals(412871, findReplaceOperator.getRegExEnd());
 		}
 
 	@Test

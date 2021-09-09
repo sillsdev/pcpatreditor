@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.fxmisc.richtext.CodeArea;
+import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
 
@@ -22,7 +23,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -77,17 +81,63 @@ public class FindReplaceDialogController implements Initializable {
 	private ResourceBundle bundle;
 	private CodeArea grammar;
 	private FindReplaceOperator findReplaceOperator;
+	private AudioClip beep;
+//	private AudioClip beep = new AudioClip("file:/Users/Andy%20Black/Documents/eclipse-workspace/org.sil.pcpatreditor/src/org/sil/pcpatreditor/resources/audio/bell-ring-01.mp3");
 	/**
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded.
 	 */
 	public void initialize(URL location, ResourceBundle resources) {
-		cbIncremental.setDisable(true);
+		beep = new AudioClip("file:" + Constants.RESOURCE_SOURCE_LOCATION + "resources/audio/bell-ring-01-short.mp3");
+//		cbIncremental.setDisable(true);
 		reportResult.setVisible(false);
-		tfFind.setOnKeyTyped(new EventHandler<KeyEvent>() {
+		tfFind.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
 				enableDisableActionButtons();
+				if (cbIncremental.isSelected() && tfFind.getText().length() > 0) {
+					KeyCode code = event.getCode();
+					switch (code) {
+					case ENTER:
+						int adjust = rbForward.isSelected() ? -1 : tfFind.getLength();
+						grammar.displaceCaret(Math.max(0, grammar.getCaretPosition() + adjust));
+						handleFind();
+						break;
+					// ignore all of these
+					case ALT:
+					case ALT_GRAPH:
+					case CAPS:
+					case CONTROL:
+					case DOWN:
+					case END:
+					case ESCAPE:
+					case F1:
+					case F2:
+					case F3:
+					case F4:
+					case F5:
+					case F6:
+					case F7:
+					case F8:
+					case F9:
+					case F10:
+					case F11:
+					case F12:
+					case HOME:
+					case INSERT:
+					case KP_DOWN:
+					case KP_UP:
+					case PAGE_DOWN:
+					case PAGE_UP:
+					case PRINTSCREEN:
+					case SHIFT:
+					case UP:
+						break;
+					default:
+						handleFind();
+						break;
+					}
+				}
 			}
 		});
 		tfReplace.setOnKeyTyped(new EventHandler<KeyEvent>() {
@@ -102,8 +152,14 @@ public class FindReplaceDialogController implements Initializable {
 			public void handle(KeyEvent ke) {
 				if (ke.isAltDown() && ke.getText().equals("c")) {
 					cbCase.setSelected(cbCase.isSelected() ? false : true);
-					btnFind.requestFocus();
+					resetFocusToFindTextField();
 				}
+			}
+		});
+		cbCase.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent me) {
+				resetFocusToFindTextField();
 			}
 		});
 		cbIncremental.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -111,7 +167,19 @@ public class FindReplaceDialogController implements Initializable {
 			public void handle(KeyEvent ke) {
 				if (ke.isAltDown() && ke.getText().equals("i")) {
 					cbIncremental.setSelected(cbIncremental.isSelected() ? false : true);
-					btnFind.requestFocus();
+					if (cbIncremental.isSelected()) {
+						cbRegularExpression.setSelected(false);
+					}
+					resetFocusToFindTextField();
+				}
+			}
+		});
+		cbIncremental.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent me) {
+				if (cbIncremental.isSelected()) {
+					cbRegularExpression.setSelected(false);
+					resetFocusToFindTextField();
 				}
 			}
 		});
@@ -120,7 +188,19 @@ public class FindReplaceDialogController implements Initializable {
 			public void handle(KeyEvent ke) {
 				if (ke.isAltDown() && ke.getText().equals("x")) {
 					cbRegularExpression.setSelected(cbRegularExpression.isSelected() ? false : true);
-					btnFind.requestFocus();
+					if (cbRegularExpression.isSelected()) {
+						cbIncremental.setSelected(false);
+					}
+					resetFocusToFindTextField();
+				}
+			}
+		});
+		cbRegularExpression.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent me) {
+				if (cbRegularExpression.isSelected()) {
+					cbIncremental.setSelected(false);
+					resetFocusToFindTextField();
 				}
 			}
 		});
@@ -129,8 +209,14 @@ public class FindReplaceDialogController implements Initializable {
 			public void handle(KeyEvent ke) {
 				if (ke.isAltDown() && ke.getText().equals("w")) {
 					cbWholeWord.setSelected(cbWholeWord.isSelected() ? false : true);
-					btnFind.requestFocus();
+					resetFocusToFindTextField();
 				}
+			}
+		});
+		cbWholeWord.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent me) {
+				resetFocusToFindTextField();
 			}
 		});
 		cbWrap.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -138,10 +224,21 @@ public class FindReplaceDialogController implements Initializable {
 			public void handle(KeyEvent ke) {
 				if (ke.isAltDown() && ke.getText().equals("p")) {
 					cbWrap.setSelected(cbWrap.isSelected() ? false : true);
-					btnFind.requestFocus();
+					resetFocusToFindTextField();
 				}
 			}
 		});
+		cbWrap.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent me) {
+				resetFocusToFindTextField();
+			}
+		});
+	}
+
+	private void resetFocusToFindTextField() {
+		tfFind.requestFocus();
+		tfFind.positionCaret(tfFind.getLength());
 	}
 
 	private void enableDisableActionButtons() {
@@ -221,25 +318,25 @@ public class FindReplaceDialogController implements Initializable {
 	@FXML
 	public void handleBackward() {
 		rbBackward.setSelected(true);
-		btnFind.requestFocus();
+		resetFocusToFindTextField();
 	}
 	
 	@FXML
 	public void handleForward() {
 		rbForward.setSelected(true);
-		btnFind.requestFocus();
+		resetFocusToFindTextField();
 	}
 	
 	@FXML
 	public void handleAll() {
 		rbAll.setSelected(true);
-		btnFind.requestFocus();
+		resetFocusToFindTextField();
 	}
 	
 	@FXML
 	public void handleSelection() {
 		rbSelection.setSelected(true);
-		btnFind.requestFocus();
+		resetFocusToFindTextField();
 	}
 
 	@FXML
@@ -251,20 +348,39 @@ public class FindReplaceDialogController implements Initializable {
 		int index = -1;
 		if (!rbAll.isSelected()) {
 			findReplaceOperator.setContent(grammar.getSelectedText());
-			index = findReplaceOperator.find(0, tfFind.getText());
+			index = performFindOperation(0, tfFind.getText());
 			index += grammar.getSelection().getStart();
 		} else {
 			findReplaceOperator.setContent(grammar.getText());
-			index = findReplaceOperator.find(grammar.getCaretPosition(), tfFind.getText());
+			int caret = grammar.getCaretPosition();
+			if (cbIncremental.isSelected()) {
+				caret -= tfFind.getText().length()-1;
+			}
+			index = performFindOperation(caret, tfFind.getText());
 		}
 		if (index > -1) {
 			grammar.displaceCaret(index);
-			grammar.selectRange(index, index + tfFind.getText().length());
+			int indexEnd = index + tfFind.getText().length();
+			if (cbRegularExpression.isSelected()) {
+				indexEnd = findReplaceOperator.getRegExEnd();
+			}
+			grammar.selectRange(index, indexEnd);
 			reportResult.setVisible(false);
 		} else {
 			reportResult.setVisible(true);
 			reportResult.setText(bundle.getString("findreplace.report.notfound"));
+			beep.play();
 		}
+	}
+
+	private int performFindOperation(int indexStart, String findMe) {
+		int index = -1;
+		if (cbRegularExpression.isSelected()) {
+			index = findReplaceOperator.findRegularExpression(indexStart, findMe);
+		} else {
+			index = findReplaceOperator.find(indexStart, findMe);
+		}
+		return index;
 	}
 	
 	@FXML

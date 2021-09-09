@@ -30,6 +30,7 @@ public class FindReplaceOperator {
 	private String find;
 	private String replace;
 	private Locale locale;
+	private int regExEnd = -1;
 	
 	/**
 	 * @return the instance
@@ -195,6 +196,13 @@ public class FindReplaceOperator {
 		this.locale = locale;
 	}
 
+	/**
+	 * @return the regExEnd
+	 */
+	public int getRegExEnd() {
+		return regExEnd;
+	}
+
 	public void initializeParameters(boolean directionForward, boolean scopeAll, boolean caseSensitive,
 			boolean wholeWord, boolean regularExpression, boolean wrapSearch, boolean incrementalSearch) {
 		this.directionForward = directionForward;
@@ -255,8 +263,8 @@ public class FindReplaceOperator {
 	}
 	private String getStringToSearch(int startIndex) {
 		String search = content.substring(startIndex);
-		if (!directionForward && startIndex > 0) {
-			search = content.substring(0, startIndex - 1);
+		if (!directionForward && startIndex >= 0) {
+			search = content.substring(0, Math.max(0, startIndex - 1));
 		}
 		return search;
 	}
@@ -288,6 +296,8 @@ public class FindReplaceOperator {
 		if (matcher.find()) {
 			index = matcher.start();
 			index = adjustIndex(index, startIndex);
+			regExEnd = matcher.end();
+			regExEnd = adjustIndex(regExEnd, startIndex);
 		} else {
 			if (wrapSearch) {
 				index = findRegularExpression(0, pattern);
@@ -297,14 +307,19 @@ public class FindReplaceOperator {
 	}
 
 	private int regularExpressionSearchBackward(int startIndex, String pattern, int index, Matcher matcher) {
-		Stack<Integer> matches = new Stack<Integer>();
+		Stack<Integer> matchesStart = new Stack<Integer>();
+		Stack<Integer> matchesEnd = new Stack<Integer>();
 		while (matcher.find()) {
 			int start = matcher.start();
 			index = adjustIndex(start, startIndex);
-			matches.push(index);
+			matchesStart.push(index);
+			regExEnd = matcher.end();
+			regExEnd = adjustIndex(regExEnd, startIndex);
+			matchesEnd.push(regExEnd);
 		}
-		if (matches.size() > 0) {
-			index = matches.lastElement();
+		if (matchesStart.size() > 0 && matchesEnd.size() > 0) {
+			index = matchesStart.lastElement();
+			regExEnd = matchesEnd.lastElement();
 		} else {
 			if (wrapSearch) {
 				index = findRegularExpression(0, pattern);
