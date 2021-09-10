@@ -337,7 +337,9 @@ public class FindReplaceDialogController implements Initializable {
 		if (!rbAll.isSelected()) {
 			findReplaceOperator.setContent(grammar.getSelectedText());
 			index = performFindOperation(0, tfFind.getText());
-			index += grammar.getSelection().getStart();
+			if (index > -1) {
+				index += grammar.getSelection().getStart();
+			}
 		} else {
 			findReplaceOperator.setContent(grammar.getText());
 			int caret = grammar.getCaretPosition();
@@ -393,7 +395,9 @@ public class FindReplaceDialogController implements Initializable {
 		dialogStage = preferences.getLastWindowParameters(
 				ApplicationPreferences.LAST_FIND_REPLACE_DIALOG, dialogStage, 450., 381.);
 		rbForward.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_FORWARD, true));
+		rbBackward.setSelected(!rbForward.isSelected());
 		rbAll.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_ALL, true));
+		rbSelection.setSelected(!rbAll.isSelected());
 		cbCase.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_CASE_SENSITIVE, false));
 		cbWholeWord.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_WHOLE_WORD, false));
 		cbRegularExpression.setSelected(preferences.getBooleanValue(ApplicationPreferences.FIND_REPLACE_LAST_REGULAR_EXPRESSION, false));
