@@ -19,6 +19,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	static final String SHOW_MATCHING_ITEM_DELAY = "showmatchingitemdelay";
 	static final String SHOW_MATCHING_ITEM_WITH_ARROW_KEYS = "showmatchingitemwitharrowkeys";
 	static final String GRAMMAR_FONT_SIZE = "grammarfontsize";
+	static final String LAST_CARET_POSITION = "lastCaretPosition";
 	// Not trying to be anglo-centric, but we have to start with something...
 	static final String DEFAULT_LOCALE_LANGUAGE = "en";
 
@@ -65,6 +66,14 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		setPreferencesKey(LAST_LOCALE_LANGUAGE, lastLocaleLanguage);
 	}
 
+	public int getLastCaretPosition() {
+		return prefs.getInt(LAST_CARET_POSITION, 0);
+	}
+
+	public void setLastCaretPosition(int lastCaretPosition) {
+		prefs.putInt(LAST_CARET_POSITION, lastCaretPosition);
+	}
+
 	public File getLastOpenedFile() {
 		String filePath = prefs.get(LAST_OPENED_FILE_PATH, null);
 		if (filePath != null) {
@@ -77,7 +86,6 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public void setLastOpenedFilePath(File file) {
 		if (file != null) {
 			setPreferencesKey(LAST_OPENED_FILE_PATH, file.getPath());
-
 		} else {
 			prefs.remove(LAST_OPENED_FILE_PATH);
 		}
@@ -155,7 +163,6 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		if (!StringUtilities.isNullOrEmpty(key)) {
 			if (key != null) {
 				prefs.putBoolean(key, value);
-
 			} else {
 				prefs.remove(key);
 			}
@@ -178,7 +185,6 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		if (!StringUtilities.isNullOrEmpty(key)) {
 			if (key != null && value != null) {
 				prefs.putDouble(key, value);
-
 			} else {
 				prefs.remove(key);
 			}
@@ -188,7 +194,6 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public void setPreferencesKey(String key, String value) {
 		if (!StringUtilities.isNullOrEmpty(key) && !StringUtilities.isNullOrEmpty(value)) {
 			prefs.put(key, value);
-
 		} else {
 			prefs.remove(key);
 		}

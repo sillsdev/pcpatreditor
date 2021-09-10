@@ -521,7 +521,6 @@ public class RootLayoutController implements Initializable {
 			@Override
 			public void run() {
 				grammar.requestFocus();
-				grammar.moveTo(0);
 			}
 		});
 
@@ -798,7 +797,8 @@ public class RootLayoutController implements Initializable {
 //			askAboutSaving();
 //		}
 		cleanupWhenDone.unsubscribe();
-        executor.shutdown();
+		executor.shutdown();
+		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
 		System.out.println("file exit");
 		System.exit(0);
 	}
@@ -821,6 +821,9 @@ public class RootLayoutController implements Initializable {
 //			askAboutSaving();
 //		}
 		doFileOpen(false);
+		grammar.requestFollowCaret();
+		grammar.moveTo(0);
+		grammar.requestFocus();
 //		setTree(mainApp.getTree());
 	}
 
@@ -1049,6 +1052,11 @@ public class RootLayoutController implements Initializable {
 		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
 				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		grammar.replaceText(mainApp.getContent());
+		grammar.requestFollowCaret();
+		int caret = applicationPreferences.getLastCaretPosition();
+		caret = (caret > grammar.getText().length()) ? 0 : caret;
+		grammar.moveTo(caret);
+//		grammar.selectRange(caret, caret);
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
 

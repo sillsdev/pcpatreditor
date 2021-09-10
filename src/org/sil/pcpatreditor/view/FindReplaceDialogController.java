@@ -108,12 +108,12 @@ public class FindReplaceDialogController implements Initializable {
 					switch (code) {
 					case ENTER:
 						int adjust = rbForward.isSelected() ? -1 : tfFind.getLength();
-						grammar.displaceCaret(Math.max(0, grammar.getCaretPosition() + adjust));
+						grammar.moveTo(Math.max(0, grammar.getCaretPosition() + adjust));
 						processInitializing();
 						break;
 					case BACK_SPACE:
 						adjust = rbForward.isSelected() ? -(tfFind.getLength() + 1) : tfFind.getLength();
-						grammar.displaceCaret(Math.max(0, grammar.getCaretPosition() + adjust));
+						grammar.moveTo(Math.max(0, grammar.getCaretPosition() + adjust));
 						processInitializing();
 						break;
 					// ignore all of these
@@ -362,7 +362,8 @@ public class FindReplaceDialogController implements Initializable {
 			index = performFindOperation(caret, tfFind.getText());
 		}
 		if (index > -1) {
-			grammar.displaceCaret(index);
+			grammar.requestFollowCaret();
+			grammar.moveTo(index);
 			int indexEnd = index + tfFind.getText().length();
 			if (cbRegularExpression.isSelected()) {
 				indexEnd = findReplaceOperator.getRegExEnd();
