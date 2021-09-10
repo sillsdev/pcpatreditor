@@ -92,6 +92,13 @@ public class FindReplaceDialogController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		beep = new AudioClip("file:" + Constants.RESOURCE_SOURCE_LOCATION + "resources/audio/bell-ring-01-short.mp3");
 		reportResult.setVisible(false);
+		tfFind.textProperty().addListener(
+				(observable, oldValue, newValue) -> {
+					if (grammar != null && tfFind.getText().length() == 0) {
+						int caret = Math.max(0,grammar.getCaretPosition()-1);
+						grammar.selectRange(caret, caret);
+					}
+				});
 		tfFind.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -101,6 +108,11 @@ public class FindReplaceDialogController implements Initializable {
 					switch (code) {
 					case ENTER:
 						int adjust = rbForward.isSelected() ? -1 : tfFind.getLength();
+						grammar.displaceCaret(Math.max(0, grammar.getCaretPosition() + adjust));
+						processInitializing();
+						break;
+					case BACK_SPACE:
+						adjust = rbForward.isSelected() ? -(tfFind.getLength() + 1) : tfFind.getLength();
 						grammar.displaceCaret(Math.max(0, grammar.getCaretPosition() + adjust));
 						processInitializing();
 						break;
