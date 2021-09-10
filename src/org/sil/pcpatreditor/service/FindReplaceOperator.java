@@ -224,20 +224,13 @@ public class FindReplaceOperator {
 			return index;
 		}
 		String source = getStringToSearch(startIndex);
-		if (caseSensitive) {
-			index = getIndexOf(source, findMe);
-		} else {
-			if (locale == null) {
-				locale = new Locale("en");
-			}
-			index = getIndexOf(source.toLowerCase(locale), findMe.toLowerCase(locale));
+		if (!caseSensitive) {
+			findMe = findMe.toLowerCase();
 		}
+		index = getIndexOf(source, findMe);
 		if (index == -1 && wrapSearch) {
-			if (directionForward) {
-				index = find(0, findMe);
-			} else {
-				index = find(content.length() - 1, findMe);
-			}
+			int newStart = directionForward ? 0 : Math.max(0, content.length() - 1);
+			index = getIndexOf(getStringToSearch(newStart), findMe);
 		} else {
 			if (index >= 0) {
 				index = adjustIndex(index, startIndex);
@@ -266,6 +259,12 @@ public class FindReplaceOperator {
 		if (!directionForward && startIndex >= 0) {
 			search = content.substring(0, Math.max(0, startIndex - 1));
 		}
+		if (!caseSensitive) {
+			if (locale == null) {
+				locale = new Locale("en");
+			}
+			search = search.toLowerCase(locale);
+		}
 		return search;
 	}
 
@@ -285,30 +284,54 @@ public class FindReplaceOperator {
 		}
 		Matcher matcher = rePattern.matcher(getStringToSearch(startIndex));
 		if (directionForward) {
-			index = regularExpressionSearchForward(startIndex, pattern, index, matcher);
+			index = regularExpressionSearchForward(startIndex, matcher, rePattern);
 		} else {
-			index = regularExpressionSearchBackward(startIndex, pattern, index, matcher);
+			index = regularExpressionSearchBackward(startIndex, matcher, rePattern);
 		}
 		return index;
 	}
 
-	private int regularExpressionSearchForward(int startIndex, String pattern, int index, Matcher matcher) {
+	private int regularExpressionSearchForward(int startIndex, Matcher matcher, Pattern rePattern) {
+		int index = -1;
 		if (matcher.find()) {
-			index = matcher.start();
-			index = adjustIndex(index, startIndex);
-			regExEnd = matcher.end();
-			regExEnd = adjustIndex(regExEnd, startIndex);
+			index = reMatchIndexes(startIndex, matcher);
 		} else {
 			if (wrapSearch) {
-				index = findRegularExpression(0, pattern);
+				int newStart = 0;
+				matcher = rePattern.matcher(getStringToSearch(newStart));
+				if (matcher.find()) {
+					index = reMatchIndexes(newStart, matcher);
+				}
 			}
 		}
 		return index;
 	}
 
-	private int regularExpressionSearchBackward(int startIndex, String pattern, int index, Matcher matcher) {
+	private int reMatchIndexes(int startIndex, Matcher matcher) {
+		int index;
+		index = matcher.start();
+		index = adjustIndex(index, startIndex);
+		regExEnd = matcher.end();
+		regExEnd = adjustIndex(regExEnd, startIndex);
+		return index;
+	}
+
+	private int regularExpressionSearchBackward(int startIndex, Matcher matcher, Pattern rePattern) {
+		int index = findLastMatch(startIndex, matcher);
+		if (index == -1) {
+			if (wrapSearch) {
+				int newStart = Math.max(0, content.length() - 1);
+				matcher = rePattern.matcher(getStringToSearch(newStart));
+				index = findLastMatch(startIndex, matcher);
+			}
+		}
+		return index;
+	}
+
+	private int findLastMatch(int startIndex, Matcher matcher) {
 		Stack<Integer> matchesStart = new Stack<Integer>();
 		Stack<Integer> matchesEnd = new Stack<Integer>();
+		int index = -1;
 		while (matcher.find()) {
 			int start = matcher.start();
 			index = adjustIndex(start, startIndex);
@@ -320,10 +343,6 @@ public class FindReplaceOperator {
 		if (matchesStart.size() > 0 && matchesEnd.size() > 0) {
 			index = matchesStart.lastElement();
 			regExEnd = matchesEnd.lastElement();
-		} else {
-			if (wrapSearch) {
-				index = findRegularExpression(0, pattern);
-			}
 		}
 		return index;
 	}
