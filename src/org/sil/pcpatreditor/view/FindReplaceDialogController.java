@@ -7,6 +7,8 @@
 package org.sil.pcpatreditor.view;
 
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.fxmisc.richtext.CodeArea;
@@ -14,10 +16,13 @@ import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
+import org.sil.utility.view.ObservableResourceFactory;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -84,6 +89,15 @@ public class FindReplaceDialogController implements Initializable {
 	private FindReplaceOperator findReplaceOperator;
 	private AudioClip beep;
 	private boolean initializing = true;
+
+	// following lines from
+	// https://stackoverflow.com/questions/32464974/javafx-change-application-language-on-the-run
+	private static final ObservableResourceFactory RESOURCE_FACTORY = ObservableResourceFactory
+			.getInstance();
+	static {
+		RESOURCE_FACTORY.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION,
+				new Locale("en")));
+	}
 
 	/**
 	 * Initializes the controller class. This method is automatically called
@@ -257,7 +271,7 @@ public class FindReplaceDialogController implements Initializable {
 	private void enableDisableActionButtons() {
 		if (tfFind.getText().trim().length() > 0) {
 			btnFind.setDisable(false);
-			if (tfReplace.getText().trim().length() > 0) {
+			if (tfReplace.getText().trim().length() > 0 && textSelected()) {
 				btnReplace.setDisable(false);
 				btnReplaceFind.setDisable(false);
 				btnReplaceAll.setDisable(false);
@@ -272,6 +286,10 @@ public class FindReplaceDialogController implements Initializable {
 			btnReplaceFind.setDisable(true);
 			btnReplaceAll.setDisable(true);
 		}
+	}
+
+	private boolean textSelected() {
+		return grammar.getSelectedText().length() > 0;
 	}
 
 	/**
@@ -341,12 +359,18 @@ public class FindReplaceDialogController implements Initializable {
 
 	@FXML
 	public void handleFind() {
+		findPerformed();
+		enableDisableActionButtons();
+	}
+
+	private boolean findPerformed() {
+		boolean findDone = false;
 		findReplaceOperator = FindReplaceOperator.getInstance();
 		findReplaceOperator.initializeParameters(rbForward.isSelected(), rbAll.isSelected(), cbCase.isSelected(),
 				cbWholeWord.isSelected(), cbRegularExpression.isSelected(), cbWrap.isSelected(),
 				cbIncremental.isSelected());
 		int index = -1;
-		if (!rbAll.isSelected()) {
+		if (rbSelection.isSelected()) {
 			findReplaceOperator.setContent(grammar.getSelectedText());
 			index = performFindOperation(0, tfFind.getText());
 			if (index > -1) {
@@ -370,11 +394,13 @@ public class FindReplaceDialogController implements Initializable {
 			}
 			grammar.selectRange(index, indexEnd);
 			reportResult.setVisible(false);
+			findDone = true;
 		} else {
 			reportResult.setVisible(true);
 			reportResult.setText(bundle.getString("findreplace.report.notfound"));
 			beep.play();
 		}
+		return findDone;
 	}
 
 	private int performFindOperation(int indexStart, String findMe) {
@@ -389,17 +415,52 @@ public class FindReplaceDialogController implements Initializable {
 	
 	@FXML
 	public void handleReplace() {
-		System.out.println("replace");
+		replacePerformed();
+	}
+
+	private boolean replacePerformed() {
+		boolean replaceDone = false;
+		if (textSelected()) {
+			grammar.replaceSelection(tfReplace.getText());
+			replaceDone = true;
+		}
+		return replaceDone;
 	}
 
 	@FXML
 	public void handleReplaceAll() {
-		System.out.println("replace all");
+		if (rbSelection.isSelected()) {
+			// won't work; tell user
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle(bundle.getString("findreplace.alert.sorry"));
+			alert.setHeaderText(null);
+			alert.setContentText(bundle.getString("findreplace.alert.replaceallnotworkwithselection"));
+			alert.initOwner(dialogStage);
+			alert.showAndWait();
+			return;
+		}
+		int count = 0;
+		while (replacePerformed()) {
+			count++;
+			if (!findPerformed()) {
+				reportResult.setVisible(true);
+				Object[] args = { count };
+				MessageFormat msgFormatter = new MessageFormat("");
+				msgFormatter.setLocale(bundle.getLocale());
+				msgFormatter
+						.applyPattern(RESOURCE_FACTORY.getStringBinding("findreplace.report.replacementsmade").get());
+				String sMessage = msgFormatter.format(args);
+				reportResult.setText(sMessage);
+				beep.play();
+				break;
+			}
+		}
 	}
 
 	@FXML
 	public void handleReplaceFind() {
-		System.out.println("replacefind");
+		handleReplace();
+		handleFind();
 	}
 	
 	public void setMainApp(MainApp mainApp) {
