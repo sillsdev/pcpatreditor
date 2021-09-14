@@ -18,13 +18,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventListener;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,17 +49,11 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.concurrent.Worker.State;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -68,7 +62,8 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
@@ -76,8 +71,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -166,6 +159,8 @@ public class RootLayoutController implements Initializable {
 	private MenuItem menuItemEditPaste;
 	@FXML
 	private MenuItem menuItemEditFindReplace;
+	@FXML
+	private MenuItem menuItemEditGoToLine;
 	@FXML
 	private Menu menuSettings;
 	@FXML
@@ -613,6 +608,7 @@ public class RootLayoutController implements Initializable {
 		menuItemEditCopy.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.copy"));
 		menuItemEditPaste.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.paste"));
 		menuItemEditFindReplace.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.findreplace"));
+		menuItemEditGoToLine.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.gotoline"));
 //		menuTree.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.tree"));
 //		menuItemDrawTree.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.drawtree"));
 //		menuFormat.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.format"));
@@ -1006,6 +1002,37 @@ public class RootLayoutController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@FXML
+	protected void handleGoToLine() {
+		TextInputDialog dialog = new TextInputDialog("");
+		dialog.setTitle(bundle.getString("label.gotoline"));
+		dialog.setHeaderText(null);
+		dialog.setContentText(bundle.getString("label.entergotoline"));
+		dialog.initOwner(mainApp.getPrimaryStage());
+		final UnaryOperator<TextFormatter.Change> filter;
+		filter = new UnaryOperator<TextFormatter.Change>() {
+			@Override
+			public TextFormatter.Change apply(TextFormatter.Change change) {
+				String text = change.getText();
+				for (int i = 0; i < text.length(); i++) {
+					if (!Character.isDigit(text.charAt(i)) && text.charAt(i) != '.' && text.charAt(i) != '-')
+						return null;
+				}
+				return change;
+			}
+		};
+		dialog.getEditor().setTextFormatter(new TextFormatter<String>(filter));
+
+		Optional<String> result = dialog.showAndWait();
+		result.ifPresent(lineNo -> {
+			int line = Integer.valueOf(lineNo) - 1;
+			line = Math.min(line, grammar.getParagraphs().size());
+			line = Math.max(line, 0);
+			grammar.moveTo(line, 0);
+			grammar.requestFollowCaret();
+		});
 	}
 
 	@FXML

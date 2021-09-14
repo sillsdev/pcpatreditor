@@ -48,6 +48,7 @@
 					<MenuItem fx:id="menuItemEditPaste" mnemonicParsing="true" onAction="#handlePaste" text="%menu.paste" accelerator="ctrl+v" />
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemEditFindReplace" mnemonicParsing="true" onAction="#handleFindReplace" text="%menu.findreplace" accelerator="ctrl+f" />
+					<MenuItem fx:id="menuItemEditGoToLine" mnemonicParsing="true" onAction="#handleGoToLine" text="%menu.gotoline" accelerator="ctrl+g" />
                   </items>
                 </Menu>
 <!--                 <Menu fx:id="menuTree" mnemonicParsing="true" text="%menu.tree"> -->
