@@ -241,8 +241,15 @@ public class MainApp extends Application  implements MainAppUtilities {
 	}
 	
 	@Override
-	public void updateStageTitle(File arg0) {
-		// TODO Auto-generated method stub
-		
+	public void updateStageTitle(File file) {
+		if (file != null) {
+			String sFileNameToUse = file.getName();
+			if (controller.isDirty()) {
+				sFileNameToUse += "*";
+			}
+			primaryStage.setTitle(kApplicationTitle + " - " + sFileNameToUse);
+		} else {
+			primaryStage.setTitle(kApplicationTitle);
+		}
 	}
 }
