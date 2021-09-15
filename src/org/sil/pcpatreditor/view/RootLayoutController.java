@@ -57,6 +57,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
@@ -67,6 +68,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -789,9 +791,9 @@ public class RootLayoutController implements Initializable {
 	 */
 	@FXML
 	public void handleExit() {
-//		if (fIsDirty) {
-//			askAboutSaving();
-//		}
+		if (fIsDirty) {
+			askAboutSaving();
+		}
 		cleanupWhenDone.unsubscribe();
 		executor.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
@@ -802,21 +804,76 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	public void handleNewDocument() {
-		System.out.println("file new");
-//		if (fIsDirty) {
-//			askAboutSaving();
-//		}
-//		initGrammar();
+		if (fIsDirty) {
+			askAboutSaving();
+		}
+		String sDirectoryPath = applicationPreferences.getLastOpenedDirectoryPath();
+		if (sDirectoryPath == "") {
+			// probably creating a new file the first time the program is run;
+			// set the directory to the closest we can to a reasonable default
+			sDirectoryPath = tryToGetDefaultDirectoryPath();
+		}
+		applicationPreferences.setLastOpenedDirectoryPath(sDirectoryPath);
+		File fileCreated = ControllerUtilities.doFileSaveAs(mainApp, currentLocale, false,
+				pcPatrEditorFilterDescription, RESOURCE_FACTORY.getStringBinding("file.new").get(),
+				Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS,
+				Constants.RESOURCE_LOCATION);
+		if (fileCreated != null) {
+			grammar.replaceText("");
+			grammar.moveTo(0);
+			grammar.requestFollowCaret();
+			mainApp.updateStageTitle(fileCreated);
+			try {
+				handleSaveDocument();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			grammar = null;
+		}
+		initGrammar();
 	}
+
+	protected String tryToGetDefaultDirectoryPath() {
+		String sDirectoryPath = System.getProperty("user.home") + File.separator;
+		File dir = new File(sDirectoryPath);
+		if (dir.exists()) {
+			// See if there is a "Documents" directory as Windows, Linux, and
+			// Mac OS X tend to have
+			String sDocumentsDirectoryPath = sDirectoryPath + "Documents" + File.separator;
+			dir = new File(sDocumentsDirectoryPath);
+			if (dir.exists()) {
+				// Try and find or make the "My LingTree" subdirectory of
+				// Documents
+				String sMyLingTreeDirectoryPath = sDocumentsDirectoryPath
+						+ Constants.DEFAULT_DIRECTORY_NAME + File.separator;
+				dir = new File(sMyLingTreeDirectoryPath);
+				if (dir.exists()) {
+					sDirectoryPath = sMyLingTreeDirectoryPath;
+				} else {
+					boolean success = (dir.mkdir());
+					if (success) {
+						sDirectoryPath = sMyLingTreeDirectoryPath;
+					} else {
+						sDirectoryPath = sDocumentsDirectoryPath;
+					}
+				}
+			}
+		} else { // give up; let user set it
+			sDirectoryPath = "";
+		}
+		return sDirectoryPath;
+	}
+
 	/**
 	 * Opens a FileChooser to let the user select a tree to load.
 	 */
 	@FXML
 	public void handleOpenDocument() {
-		System.out.println("file open");
-//		if (fIsDirty) {
-//			askAboutSaving();
-//		}
+		if (fIsDirty) {
+			askAboutSaving();
+		}
 		doFileOpen(false);
 		initGrammar();
 	}
@@ -833,8 +890,8 @@ public class RootLayoutController implements Initializable {
 		File file = ControllerUtilities.getFileToOpen(mainApp, pcPatrEditorFilterDescription,
 				Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS);
 		if (file != null) {
-			mainApp.loadDocument(file);
 			try {
+				mainApp.loadDocument(file);
 				String content = new String(Files.readAllBytes(file.toPath()),
 						StandardCharsets.UTF_8);
 		        grammar.replaceText(content);
@@ -854,6 +911,29 @@ public class RootLayoutController implements Initializable {
 		return file;
 	}
 
+	public void askAboutSaving() {
+		Alert alert = new Alert(AlertType.CONFIRMATION, "");
+		alert.setTitle(MainApp.kApplicationTitle);
+		alert.setHeaderText(RESOURCE_FACTORY.getStringBinding("file.asktosaveheader").get());
+		alert.setContentText(RESOURCE_FACTORY.getStringBinding("file.asktosavecontent").get());
+		ButtonType buttonYes = new ButtonType(bundle.getString("label.yes"), ButtonData.YES);
+		ButtonType buttonNo = new ButtonType(bundle.getString("label.no"), ButtonData.NO);
+		alert.getButtonTypes().setAll(buttonYes, buttonNo);
+
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(mainApp.getNewMainIconImage());
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.YES) {
+			try {
+				handleSaveDocument();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/**
 	 * Saves the file to the tree file that is currently open. If there is no
 	 * open file, the "save as" dialog is shown.
@@ -862,16 +942,12 @@ public class RootLayoutController implements Initializable {
 	 */
 	@FXML
 	public void handleSaveDocument() throws IOException {
-		System.out.println("file save");
-		System.out.print(grammar.getText());
-//		updateTreeDataToBackEndProvider();
 		File file = mainApp.getDocumentFile();
 		if (file != null) {
 			writeGrammarToFile(file);
 		} else {
 			handleSaveDocumentAs();
 		}
-
 		grammar.requestFocus();
 	}
 
@@ -881,7 +957,11 @@ public class RootLayoutController implements Initializable {
 	 * @throws IOException
 	 */
 	private void writeGrammarToFile(File file) throws IOException {
-		Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.WRITE);
+		if (Files.exists(file.toPath())) {
+			Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.WRITE);
+		} else {
+			Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.CREATE);
+		}
 		markAsClean();
 	}
 
@@ -1091,6 +1171,10 @@ public class RootLayoutController implements Initializable {
 		grammar.moveTo(caret);
 //		grammar.selectRange(caret, caret);
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
+	}
+
+	public void setGrammarContents(String contents) {
+		grammar.replaceText(contents);
 	}
 
 	/**

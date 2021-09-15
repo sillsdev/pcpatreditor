@@ -18,6 +18,7 @@ public class Constants {
 	public static final String PCPATR_EDITOR_DATA_FILE_EXTENSION = "grm";
 	public static final String PCPATR_EDITOR_DATA_FILE_EXTENSIONS = "*."
 			+ PCPATR_EDITOR_DATA_FILE_EXTENSION;
+	public static final String DEFAULT_DIRECTORY_NAME = "My PCPatrEditor";
 
 	// Unit Testing constants
 	public static final String UNIT_TEST_DATA_FILE_NAME = "test/org/sil/pcpatreditor/testdata/TestData.";

@@ -95,6 +95,8 @@ public class MainApp extends Application  implements MainAppUtilities {
 			if (file.exists() && !file.isDirectory()) {
 				content = new String(Files.readAllBytes(file.toPath()),
 						StandardCharsets.UTF_8);
+			} else {
+				content = "";
 			}
 //			doc = new Document();
 //			xmlBackEndProvider = new XMLBackEndProvider(doc, locale);
@@ -177,7 +179,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 			if (file != null && file.exists()) {
 				loadDocument(file);
 				controller.initGrammar();
-//				controller.setDocument(doc);
+				controller.setGrammarContents(content);
 			} else {
 //				boolean fSucceeded = askUserForNewOrToOpenExistingFile(bundle, controller);
 //				if (!fSucceeded) {
@@ -196,14 +198,16 @@ public class MainApp extends Application  implements MainAppUtilities {
 		}
 	}
 
-	public void loadDocument(File file) {
-//		xmlBackEndProvider.loadDocumentFromFile(file);
-//		doc = xmlBackEndProvider.getDocument();
+	public void loadDocument(File file) throws IOException {
 		documentFile = file;
-//		ltTree.setFontsAndColors();
 		applicationPreferences.setLastOpenedFilePath(file);
 		applicationPreferences.setLastOpenedDirectoryPath(file.getParent());
 		updateStageTitle(file);
+
+		String content = new String(Files.readAllBytes(file.toPath()),
+				StandardCharsets.UTF_8);
+        setContent(content);
+        controller.setGrammarContents(content);
 	}
 
 	private void restoreWindowSettings() {
