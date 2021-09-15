@@ -806,6 +806,7 @@ public class RootLayoutController implements Initializable {
 //		if (fIsDirty) {
 //			askAboutSaving();
 //		}
+//		initGrammar();
 	}
 	/**
 	 * Opens a FileChooser to let the user select a tree to load.
@@ -817,10 +818,15 @@ public class RootLayoutController implements Initializable {
 //			askAboutSaving();
 //		}
 		doFileOpen(false);
+		initGrammar();
+	}
+
+
+	public void initGrammar() {
+		grammar.getUndoManager().forgetHistory();
 		grammar.requestFollowCaret();
 		grammar.moveTo(0);
 		grammar.requestFocus();
-//		setTree(mainApp.getTree());
 	}
 
 	public File doFileOpen(Boolean fCloseIfCanceled) {

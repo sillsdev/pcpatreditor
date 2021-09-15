@@ -176,6 +176,7 @@ public class MainApp extends Application  implements MainAppUtilities {
 			}
 			if (file != null && file.exists()) {
 				loadDocument(file);
+				controller.initGrammar();
 //				controller.setDocument(doc);
 			} else {
 //				boolean fSucceeded = askUserForNewOrToOpenExistingFile(bundle, controller);
