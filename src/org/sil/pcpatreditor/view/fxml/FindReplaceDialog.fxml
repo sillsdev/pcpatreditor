@@ -46,7 +46,7 @@
                   <Button fx:id="btnReplace" layoutX="194.0" layoutY="344.0" mnemonicParsing="true" onAction="#handleReplace" text="%findreplace.button.replace" />
                   <Button fx:id="btnReplaceAll" layoutX="273.0" layoutY="345.0" mnemonicParsing="true" onAction="#handleReplaceAll" text="%findreplace.button.replaceall" />
                   <Button cancelButton="true" layoutX="273.0" layoutY="377.0" mnemonicParsing="true" onAction="#handleCancel" text="%findreplace.button.close" />
-                  <Text fx:id="reportResult" layoutX="17.0" layoutY="377.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                  <Text fx:id="reportResult" layoutX="17.0" layoutY="383.0" strokeType="OUTSIDE" strokeWidth="0.0" />
                </children>
             </AnchorPane>
           </content>

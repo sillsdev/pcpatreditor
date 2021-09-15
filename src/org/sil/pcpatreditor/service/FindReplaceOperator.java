@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @author Andy Black
@@ -21,16 +22,18 @@ public class FindReplaceOperator {
 	private static FindReplaceOperator instance;
 	private String content;
 	private boolean directionForward = true;
-	private boolean scopeAll = true;
 	private boolean caseSensitive = false;
 	private boolean wholeWord = false;
 	private boolean regularExpression = false;
 	private boolean wrapSearch = true;
-	private boolean incrementalSearch = false;
 	private String find;
 	private String replace;
 	private Locale locale;
 	private int regExEnd = -1;
+	private Pattern rePattern;
+	private Matcher matcher;
+	private String rePatternErrorMessage = "";
+	private boolean rePatternParsed = true;
 	
 	/**
 	 * @return the instance
@@ -68,20 +71,6 @@ public class FindReplaceOperator {
 	 */
 	public void setDirectionForward(boolean directionForward) {
 		this.directionForward = directionForward;
-	}
-
-	/**
-	 * @return the scopeAll
-	 */
-	public boolean isScopeAll() {
-		return scopeAll;
-	}
-
-	/**
-	 * @param scopeAll the scopeAll to set
-	 */
-	public void setScopeAll(boolean scopeAll) {
-		this.scopeAll = scopeAll;
 	}
 
 	/**
@@ -141,20 +130,6 @@ public class FindReplaceOperator {
 	}
 
 	/**
-	 * @return the incrementalSearch
-	 */
-	public boolean isIncrementalSearch() {
-		return incrementalSearch;
-	}
-
-	/**
-	 * @param incrementalSearch the incrementalSearch to set
-	 */
-	public void setIncrementalSearch(boolean incrementalSearch) {
-		this.incrementalSearch = incrementalSearch;
-	}
-
-	/**
 	 * @return the find
 	 */
 	public String getFind() {
@@ -197,21 +172,61 @@ public class FindReplaceOperator {
 	}
 
 	/**
+	 * @return the rePattern
+	 */
+	public Pattern getRePattern() {
+		return rePattern;
+	}
+
+	/**
+	 * @param rePattern the rePattern to set
+	 */
+	public void setRePattern(Pattern rePattern) {
+		this.rePattern = rePattern;
+	}
+
+	/**
+	 * @return the rePatternParsed
+	 */
+	public boolean isRePatternParsed() {
+		return rePatternParsed;
+	}
+
+	/**
+	 * @return the rePatternErrorMessage
+	 */
+	public String getRePatternErrorMessage() {
+		return rePatternErrorMessage;
+	}
+
+	/**
+	 * @return the matcher
+	 */
+	public Matcher getMatcher() {
+		return matcher;
+	}
+
+	/**
+	 * @param matcher the matcher to set
+	 */
+	public void setMatcher(Matcher matcher) {
+		this.matcher = matcher;
+	}
+
+	/**
 	 * @return the regExEnd
 	 */
 	public int getRegExEnd() {
 		return regExEnd;
 	}
 
-	public void initializeParameters(boolean directionForward, boolean scopeAll, boolean caseSensitive,
-			boolean wholeWord, boolean regularExpression, boolean wrapSearch, boolean incrementalSearch) {
+	public void initializeParameters(boolean directionForward, boolean caseSensitive, boolean wholeWord,
+			boolean regularExpression, boolean wrapSearch) {
 		this.directionForward = directionForward;
-		this.scopeAll = scopeAll;
 		this.caseSensitive = caseSensitive;
 		this.wholeWord = wholeWord;
 		this.regularExpression = regularExpression;
 		this.wrapSearch = wrapSearch;
-		this.incrementalSearch = incrementalSearch;
 	}
 
 	public int find(int startIndex, String findMe) {
@@ -276,13 +291,20 @@ public class FindReplaceOperator {
 			return -1;
 		}
 		int index = -1;
-		Pattern rePattern;
-		if (caseSensitive) {
-			rePattern = Pattern.compile(pattern);
-		} else {
-			rePattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
+		try {
+			rePatternErrorMessage = "";
+			rePatternParsed = true;
+			if (caseSensitive) {
+				rePattern = Pattern.compile(pattern);
+			} else {
+				rePattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
+			}
+		} catch (PatternSyntaxException rePatternException) {
+			rePatternParsed = false;
+			rePatternErrorMessage = rePatternException.getMessage();
+			return startIndex;
 		}
-		Matcher matcher = rePattern.matcher(getStringToSearch(startIndex));
+		matcher = rePattern.matcher(getStringToSearch(startIndex));
 		if (directionForward) {
 			index = regularExpressionSearchForward(startIndex, matcher, rePattern);
 		} else {

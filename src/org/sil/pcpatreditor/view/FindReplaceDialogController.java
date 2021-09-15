@@ -10,6 +10,8 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.fxmisc.richtext.CodeArea;
 import org.sil.pcpatreditor.ApplicationPreferences;
@@ -33,6 +35,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -366,9 +369,8 @@ public class FindReplaceDialogController implements Initializable {
 	private boolean findPerformed() {
 		boolean findDone = false;
 		findReplaceOperator = FindReplaceOperator.getInstance();
-		findReplaceOperator.initializeParameters(rbForward.isSelected(), rbAll.isSelected(), cbCase.isSelected(),
-				cbWholeWord.isSelected(), cbRegularExpression.isSelected(), cbWrap.isSelected(),
-				cbIncremental.isSelected());
+		findReplaceOperator.initializeParameters(rbForward.isSelected(), cbCase.isSelected(), cbWholeWord.isSelected(),
+				cbRegularExpression.isSelected(), cbWrap.isSelected());
 		int index = -1;
 		if (rbSelection.isSelected()) {
 			findReplaceOperator.setContent(grammar.getSelectedText());
@@ -389,14 +391,19 @@ public class FindReplaceDialogController implements Initializable {
 			grammar.requestFollowCaret();
 			grammar.moveTo(index);
 			int indexEnd = index + tfFind.getText().length();
+			boolean resultVisible = false;
 			if (cbRegularExpression.isSelected()) {
-				indexEnd = findReplaceOperator.getRegExEnd();
+				indexEnd = Math.max(index, findReplaceOperator.getRegExEnd());
+				if (!findReplaceOperator.isRePatternParsed()) {
+					resultVisible = true;
+				}
 			}
 			grammar.selectRange(index, indexEnd);
-			reportResult.setVisible(false);
+			reportResult.setVisible(resultVisible);
 			findDone = true;
 		} else {
 			reportResult.setVisible(true);
+			reportResult.setFill(Color.BLACK);
 			reportResult.setText(bundle.getString("findreplace.report.notfound"));
 			beep.play();
 		}
@@ -407,6 +414,14 @@ public class FindReplaceDialogController implements Initializable {
 		int index = -1;
 		if (cbRegularExpression.isSelected()) {
 			index = findReplaceOperator.findRegularExpression(indexStart, findMe);
+			if (!findReplaceOperator.isRePatternParsed()) {
+				reportResult.setVisible(true);
+				reportResult.setFill(Color.RED);
+				String patternError = findReplaceOperator.getRePatternErrorMessage();
+				reportResult.setText(patternError);
+				beep.play();
+				index = indexStart;
+			}
 		} else {
 			index = findReplaceOperator.find(indexStart, findMe);
 		}
@@ -416,12 +431,24 @@ public class FindReplaceDialogController implements Initializable {
 	@FXML
 	public void handleReplace() {
 		replacePerformed();
+		enableDisableActionButtons();
 	}
 
 	private boolean replacePerformed() {
 		boolean replaceDone = false;
 		if (textSelected()) {
-			grammar.replaceSelection(tfReplace.getText());
+			String replacement = "";
+			if (!cbRegularExpression.isSelected()) {
+				replacement = tfReplace.getText();
+			} else {
+				Matcher matcher = findReplaceOperator.getMatcher();
+				Pattern rePattern = findReplaceOperator.getRePattern();
+				int reEnd = findReplaceOperator.getRegExEnd();
+				matcher = rePattern.matcher(grammar.getSelectedText());
+				matcher.find();
+				replacement = matcher.replaceFirst(tfReplace.getText());
+			}
+			grammar.replaceSelection(replacement);
 			replaceDone = true;
 		}
 		return replaceDone;
@@ -440,21 +467,50 @@ public class FindReplaceDialogController implements Initializable {
 			return;
 		}
 		int count = 0;
+		int caretOriginal = grammar.getCaretPosition();
+		int caretNow = caretOriginal;
+		int caretFinal = -1;
 		while (replacePerformed()) {
 			count++;
+			if (cbWrap.isSelected()) {
+				// avoid infinite loop
+				caretNow = grammar.getCaretPosition();
+				if (rbForward.isSelected()) {
+					if (caretNow <= caretOriginal && count > 1) {
+						grammar.moveTo(caretFinal);
+						reportCountOfReplacments(--count);
+						break;
+					}
+				} else {
+					if (caretNow >= caretOriginal && count > 1) {
+						grammar.moveTo(caretFinal);
+						reportCountOfReplacments(--count);
+						break;
+					}
+				}
+				caretFinal = caretNow;
+			}
 			if (!findPerformed()) {
-				reportResult.setVisible(true);
-				Object[] args = { count };
-				MessageFormat msgFormatter = new MessageFormat("");
-				msgFormatter.setLocale(bundle.getLocale());
-				msgFormatter
-						.applyPattern(RESOURCE_FACTORY.getStringBinding("findreplace.report.replacementsmade").get());
-				String sMessage = msgFormatter.format(args);
-				reportResult.setText(sMessage);
-				beep.play();
+				reportCountOfReplacments(count);
 				break;
 			}
 		}
+	}
+
+	/**
+	 * @param count
+	 */
+	private void reportCountOfReplacments(int count) {
+		reportResult.setVisible(true);
+		reportResult.setFill(Color.BLACK);
+		Object[] args = { count };
+		MessageFormat msgFormatter = new MessageFormat("");
+		msgFormatter.setLocale(bundle.getLocale());
+		msgFormatter
+				.applyPattern(RESOURCE_FACTORY.getStringBinding("findreplace.report.replacementsmade").get());
+		String sMessage = msgFormatter.format(args);
+		reportResult.setText(sMessage);
+		beep.play();
 	}
 
 	@FXML

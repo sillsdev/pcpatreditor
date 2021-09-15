@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +44,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findForwardNotCaseNotWholeWordTest() {
-		findReplaceOperator.initializeParameters(true, true, false, false, false, false, false);
+		findReplaceOperator.initializeParameters(true, false, false, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(-1, "");
 		assertEquals(-1, result);
@@ -78,7 +80,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findForwardNotCaseWholeWordTest() {
-		findReplaceOperator.initializeParameters(true, true, false, true, false, false, false);
+		findReplaceOperator.initializeParameters(true, false, true, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(0, "head");
 		assertEquals(396, result);
@@ -106,7 +108,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findForwardCaseNotWholeWordTest() {
-		findReplaceOperator.initializeParameters(true, true, true, false, false, false, false);
+		findReplaceOperator.initializeParameters(true, true, false, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(0, "head");
 		assertEquals(396, result);
@@ -134,7 +136,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findForwardCaseWholeWordTest() {
-		findReplaceOperator.initializeParameters(true, true, true, true, false, false, false);
+		findReplaceOperator.initializeParameters(true, true, true, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(0, "head");
 		assertEquals(396, result);
@@ -161,7 +163,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findBackwardNotCaseNotWholeWordTest() {
-		findReplaceOperator.initializeParameters(false, true, false, false, false, false, false);
+		findReplaceOperator.initializeParameters(false, false, false, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(-1, "");
 		assertEquals(-1, result);
@@ -195,7 +197,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findBackwardNotCaseWholeWordTest() {
-		findReplaceOperator.initializeParameters(false, true, false, true, false, false, false);
+		findReplaceOperator.initializeParameters(false, false, true, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(sourceSize, "head");
 		assertEquals(412837, result);
@@ -219,7 +221,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findBackwardCaseNotWholeWordTest() {
-		findReplaceOperator.initializeParameters(false, true, true, false, false, false, false);
+		findReplaceOperator.initializeParameters(false, true, false, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(sourceSize, "head");
 		assertEquals(412837, result);
@@ -246,7 +248,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findBackwardCaseWholeWordTest() {
-		findReplaceOperator.initializeParameters(false, true, true, true, false, false, false);
+		findReplaceOperator.initializeParameters(false, true, true, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(sourceSize, "head");
 		assertEquals(412837, result);
@@ -270,7 +272,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findRegularExpressionForwardNotCaseTest() {
-		findReplaceOperator.initializeParameters(true, true, false, false, true, false, false);
+		findReplaceOperator.initializeParameters(true, false, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(-1, "");
 		assertEquals(-1, result);
@@ -300,11 +302,18 @@ public class FindReplaceOperatorTest {
 		result = findReplaceOperator.findRegularExpression(412890, "[au]tive");
 		assertEquals(63, result);
 		assertEquals(68, findReplaceOperator.getRegExEnd());
+		// check for regular expression pattern error
+		result = findReplaceOperator.findRegularExpression(0, "head [a+ject");
+		assertEquals(0, result);
+		assertFalse(findReplaceOperator.isRePatternParsed());
+		assertEquals("Unclosed character class near index 11\r\n"
+				+ "head [a+ject\r\n"
+				+ "           ^", findReplaceOperator.getRePatternErrorMessage());
 		}
 
 	@Test
 	public void findRegularExpressionForwardCaseTest() {
-		findReplaceOperator.initializeParameters(true, true, true, false, true, false, false);
+		findReplaceOperator.initializeParameters(true, true, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(0, "head .+ject");
 		assertEquals(574, result);
@@ -323,7 +332,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findRegularExpressionBackwardNotCaseTest() {
-		findReplaceOperator.initializeParameters(false, true, false, false, true, false, false);
+		findReplaceOperator.initializeParameters(false, false, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(sourceSize, "head .+ject");
 		assertEquals(408887, result);
@@ -358,7 +367,7 @@ public class FindReplaceOperatorTest {
 
 	@Test
 	public void findRegularExpressionBackwardCaseTest() {
-		findReplaceOperator.initializeParameters(false, true, true, false, true, false, false);
+		findReplaceOperator.initializeParameters(false, true, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(sourceSize, "head .+ject");
 		assertEquals(408887, result);
@@ -379,4 +388,37 @@ public class FindReplaceOperatorTest {
 		assertEquals(412871, findReplaceOperator.getRegExEnd());
 		}
 
+	@Test
+	public void replaceRegularExpressionTest() {
+		findReplaceOperator.initializeParameters(false, true, false, true, false);
+		findReplaceOperator.setContent(content);
+		int result = findReplaceOperator.findRegularExpression(sourceSize, "head .+ject");
+		assertEquals(408887, result);
+		Matcher matcher = findReplaceOperator.getMatcher();
+		Pattern rePattern = findReplaceOperator.getRePattern();
+		assertNotNull(rePattern);
+		int reEnd = findReplaceOperator.getRegExEnd();
+		assertEquals(408898, reEnd);
+		String newContent = content.subSequence(result, reEnd).toString();
+		assertEquals("head object", newContent);
+		matcher = rePattern.matcher(newContent);
+		assertNotNull(matcher);
+		assertTrue(matcher.find());
+		String replacement = matcher.replaceFirst("head .+oink");
+		assertEquals("head .+oink", replacement);
+		result = findReplaceOperator.findRegularExpression(sourceSize, "head (.+)ject");
+		assertEquals(408887, result);
+		matcher = findReplaceOperator.getMatcher();
+		rePattern = findReplaceOperator.getRePattern();
+		assertNotNull(rePattern);
+		reEnd = findReplaceOperator.getRegExEnd();
+		assertEquals(408898, reEnd);
+		newContent = content.subSequence(result, reEnd).toString();
+		assertEquals("head object", newContent);
+		matcher = rePattern.matcher(newContent);
+		assertNotNull(matcher);
+		assertTrue(matcher.find());
+		replacement = matcher.replaceFirst("head $1oink");
+		assertEquals("head oboink", replacement);
+	}
 }
