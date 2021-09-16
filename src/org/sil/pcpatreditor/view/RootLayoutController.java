@@ -111,8 +111,6 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	CodeArea grammar;
 	@FXML
-	Pane messageArea;
-	@FXML
 	private Button buttonToolbarFileOpen;
 	@FXML
 	private Button buttonToolbarFileNew;
