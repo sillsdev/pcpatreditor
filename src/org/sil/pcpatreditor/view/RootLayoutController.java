@@ -74,7 +74,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -167,6 +166,8 @@ public class RootLayoutController implements Initializable {
 	private CheckMenuItem menuItemShowMatchingItemWithArrowKeys;
 	@FXML
 	private MenuItem menuItemShowMatchingItemDelay;
+	@FXML
+	private MenuItem menuItemFontSize;
 	@FXML
 	private Menu menuHelp;
 	@FXML
@@ -522,6 +523,10 @@ public class RootLayoutController implements Initializable {
 		enableDisableRedoUndoButtons();
 	}
 
+	private void initializeGrammarFontSize() {
+		double size = applicationPreferences.getGrammarFontSize();
+		grammar.setStyle("-fx-font-size: " + Double.toString(size) + "pt;");
+	}
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = grammar.getText();
@@ -638,6 +643,8 @@ public class RootLayoutController implements Initializable {
 				RESOURCE_FACTORY.getStringBinding("menu.showmatchingitemwitharrowkeys"));
 		menuItemShowMatchingItemDelay.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("menu.showmatchingitemdelay"));
+		menuItemFontSize.textProperty().bind(
+				RESOURCE_FACTORY.getStringBinding("menu.fontsize"));
 //		menuItemChangeInterfaceLanguage.textProperty().bind(
 //				RESOURCE_FACTORY.getStringBinding("menu.changeinterfacelanguage"));
 //		menuHelp.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.help"));
@@ -1131,10 +1138,10 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	private void handleMenuShowMatchingParenDelay() {
-		final Double[] fontSizes = new Double[] { 125d, 250d, 375d, 500d, 625d, 750d, 875d, 1000d,
+		final Double[] delayValues = new Double[] { 125d, 250d, 375d, 500d, 625d, 750d, 875d, 1000d,
 				1125d, 1250d, 1375d, 1500d, 1625d, 1750d, 1875d, 2000d, 2125d, 2250d, 2375d, 2500d,
 				2625d, 2750d, 2875d, 3000d, 3125d, 3250d, 3375d, 3500d, 3625d, 3750d, 3875d, 4000d };
-		ChoiceDialog<Double> dialog = new ChoiceDialog<>(750d, fontSizes);
+		ChoiceDialog<Double> dialog = new ChoiceDialog<>(750d, delayValues);
 		dialog.setTitle(RESOURCE_FACTORY.getStringBinding("showmatchingparendelay.header").get());
 		dialog.setHeaderText(RESOURCE_FACTORY.getStringBinding("showmatchingparendelay.content")
 				.get());
@@ -1149,6 +1156,26 @@ public class RootLayoutController implements Initializable {
 		}
 	}
 
+	@FXML
+	private void handleFontSize() {
+		final Double[] fontSizes = new Double[] { 3d, 4d, 5d, 6d, 7d, 8d, 9d, 10d, 11d, 12d, 13d,
+				14d, 15d, 16d, 17d, 18d, 19d, 20d, 21d, 22d, 23d, 24d, 25d, 26d, 27d, 28d, 29d,
+				30d, 31d, 32d, 33d, 34d, 35d, 36d, 37d, 38d, 39d, 40d, 41d, 42d, 43d, 44d, 45d,
+				46d, 47d, 48d, 49d, 50d, 51d, 52d, 53d, 54d, 55d, 56d, 57d, 58d, 59d, 60d, 61d,
+				62d, 63d, 64d, 65d, 66d, 67d, 68d, 69d, 70d, 71d, 72d };
+		ChoiceDialog<Double> dialog = new ChoiceDialog<>(12d, fontSizes);
+		dialog.setTitle(RESOURCE_FACTORY.getStringBinding("grammarfontsize.header").get());
+		dialog.setHeaderText(RESOURCE_FACTORY.getStringBinding("grammarfontsize.content").get());
+		dialog.setContentText(RESOURCE_FACTORY.getStringBinding("grammarfontsize.choose").get());
+		dialog.setSelectedItem(applicationPreferences.getGrammarFontSize());
+		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(mainApp.getNewMainIconImage());
+		Optional<Double> result = dialog.showAndWait();
+		if (result.isPresent()) {
+			applicationPreferences.setGrammarFontSize(result.get());
+		}
+		initializeGrammarFontSize();
+	}
 
 	public MenuBar getMenuBar() {
 		return menuBar;
@@ -1172,6 +1199,7 @@ public class RootLayoutController implements Initializable {
 				.getShowMatchingItemWithArrowKeys());
 		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
 				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
+		initializeGrammarFontSize();
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
 //		grammar.requestFollowCaret();

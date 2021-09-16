@@ -80,6 +80,8 @@
 					<MenuItem fx:id="menuItemShowMatchingItemDelay" mnemonicParsing="true" onAction="#handleMenuShowMatchingItemDelay" text="%menu.showmatchingitemdelay" />
 <!-- 					<SeparatorMenuItem /> -->
 <!-- 					<MenuItem fx:id="menuItemChangeInterfaceLanguage" mnemonicParsing="true" onAction="#handleChangeInterfaceLanguage" text="%menu.changeinterfacelanguage" /> -->
+					<SeparatorMenuItem />
+					<MenuItem fx:id="menuItemFontSize" mnemonicParsing="false" onAction="#handleFontSize" text="%menu.fontsize" />
 				  </items>
 				</Menu>
                 <Menu fx:id="menuHelp" mnemonicParsing="true" text="%menu.help">
