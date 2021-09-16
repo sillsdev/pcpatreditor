@@ -241,10 +241,14 @@ public class RootLayoutController implements Initializable {
                 })
                 .subscribe(this::applyHighlighting);
 
+		grammar.multiPlainChanges().subscribe(event -> {
+			// is invoked by find/replace changes, too
+			markAsDirty();
+		});
+
 		grammar.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-//				fContentJustChangedSoDrawTree = true;
 				String sCharacter = event.getCharacter();
 				if (!grammar.isEditable()) {
 					itemsKeyedDuringPause.add(event);
@@ -310,7 +314,6 @@ public class RootLayoutController implements Initializable {
 							break;
 						default:
 							// do not mark as dirty for other control codes
-//							fContentJustChangedSoDrawTree = false;
 							break;
 						}
 					} else {
@@ -398,11 +401,9 @@ public class RootLayoutController implements Initializable {
 				case PRINTSCREEN:
 				case SHIFT:
 				case UP:
-//					fContentJustChangedSoDrawTree = false;
 					break;
 				case LEFT:
 				case KP_LEFT:
-//					fContentJustChangedSoDrawTree = false;
 					if (menuItemShowMatchingItemWithArrowKeys.isSelected()) {
 						index = grammar.getCaretPosition();
 						String item = grammar.getText(index, index + 1);
@@ -452,7 +453,6 @@ public class RootLayoutController implements Initializable {
 					break;
 				case KP_RIGHT:
 				case RIGHT:
-//					fContentJustChangedSoDrawTree = false;
 					if (menuItemShowMatchingItemWithArrowKeys.isSelected()) {
 						index = grammar.getCaretPosition();
 						String item = grammar.getText(Math.max(0, index - 1), index);
@@ -797,7 +797,6 @@ public class RootLayoutController implements Initializable {
 		cleanupWhenDone.unsubscribe();
 		executor.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
-		System.out.println("file exit");
 		System.exit(0);
 	}
 
@@ -876,14 +875,20 @@ public class RootLayoutController implements Initializable {
 		}
 		doFileOpen(false);
 		initGrammar();
+		grammar.moveTo(0);
+		grammar.requestFocus();
 	}
 
 
 	public void initGrammar() {
 		grammar.getUndoManager().forgetHistory();
 		grammar.requestFollowCaret();
-		grammar.moveTo(0);
+
+		int caret = applicationPreferences.getLastCaretPosition();
+		caret = (caret > grammar.getText().length()) ? 0 : caret;
+		grammar.moveTo(caret);
 		grammar.requestFocus();
+		markAsClean();
 	}
 
 	public File doFileOpen(Boolean fCloseIfCanceled) {
@@ -1053,6 +1058,9 @@ public class RootLayoutController implements Initializable {
 			buttonToolbarEditUndo.setDisable(false);
 		} else {
 			buttonToolbarEditUndo.setDisable(true);
+			if (mainApp != null) {
+				markAsClean();
+			}
 		}
 	}
 
@@ -1165,11 +1173,11 @@ public class RootLayoutController implements Initializable {
 		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
 				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		grammar.replaceText(mainApp.getContent());
-		grammar.requestFollowCaret();
-		int caret = applicationPreferences.getLastCaretPosition();
-		caret = (caret > grammar.getText().length()) ? 0 : caret;
-		grammar.moveTo(caret);
-//		grammar.selectRange(caret, caret);
+		initGrammar();
+//		grammar.requestFollowCaret();
+//		int caret = applicationPreferences.getLastCaretPosition();
+//		caret = (caret > grammar.getText().length()) ? 0 : caret;
+//		grammar.moveTo(caret);
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
 

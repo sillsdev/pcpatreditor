@@ -120,7 +120,6 @@ public class MainApp extends Application  implements MainAppUtilities {
 	
 	@Override
 	public void stop() throws IOException {
-		System.out.println("stop in MainApp");
 		applicationPreferences.setLastWindowParameters(ApplicationPreferences.LAST_WINDOW,
 				primaryStage);
 		applicationPreferences.setLastLocaleLanguage(locale.getLanguage());
@@ -178,8 +177,8 @@ public class MainApp extends Application  implements MainAppUtilities {
 			}
 			if (file != null && file.exists()) {
 				loadDocument(file);
-				controller.initGrammar();
 				controller.setGrammarContents(content);
+				controller.initGrammar();
 			} else {
 //				boolean fSucceeded = askUserForNewOrToOpenExistingFile(bundle, controller);
 //				if (!fSucceeded) {
