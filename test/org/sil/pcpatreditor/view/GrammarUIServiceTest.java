@@ -19,10 +19,14 @@ public class GrammarUIServiceTest {
 	public JavaFXThreadingRule javafxRule = new JavaFXThreadingRule();
 
 	CodeArea grammar;
+	char leftItem = '(';
+	char rightItem = ')';
 	
 	@Before
 	public void setUp() throws Exception {
 		grammar = new CodeArea("()");
+		leftItem = '(';
+		rightItem = ')';
 	}
 
 	@After
@@ -48,8 +52,8 @@ public class GrammarUIServiceTest {
 
 	private void checkMatchingLeft(int iRightPos, int iLeftExpected) {
 		grammar.moveTo(iRightPos);
-		GrammarUIService.processRightItem(grammar, iRightPos, true, 750.0, '(', ')', null, null);
-		int iLeftPos = GrammarUIService.findMatchingLeftItemAndHighlightIt(iRightPos, '(', ')');
+		GrammarUIService.processRightItem(grammar, iRightPos, true, 750.0, leftItem, rightItem, null, null);
+		int iLeftPos = GrammarUIService.findMatchingLeftItemAndHighlightIt(iRightPos, leftItem, rightItem);
 		assertEquals(iLeftExpected, iLeftPos);
 	}
 
@@ -70,8 +74,83 @@ public class GrammarUIServiceTest {
 
 	private void checkMatchingRight(int iLeftPos, int iRightExpected) {
 		grammar.moveTo(iLeftPos);
-		GrammarUIService.processLeftItem(grammar, false, '(', ')', 125.0, false, null, null);
-		int iRightPos = GrammarUIService.findMatchingRightItemAndHighlightIt(iLeftPos, false, '(', ')');
+		GrammarUIService.processLeftItem(grammar, false, leftItem, rightItem, 125.0, false, null, null);
+		int iRightPos = GrammarUIService.findMatchingRightItemAndHighlightIt(iLeftPos, false, leftItem, rightItem);
 		assertEquals(iRightExpected, iRightPos);
+	}
+
+	@Test
+	public void processWedgesWhenPriorityUnionTest() {
+		leftItem = '<';
+		rightItem = '>';
+
+		grammar.replaceText("<InitP head type comma> <= <Conj_2 head type comma>");
+		checkMatchingLeft(0, -1);
+		checkMatchingLeft(22, 0);
+		checkMatchingLeft(50, 27);
+
+		checkMatchingRight(0,-1);
+		checkMatchingRight(1,22);
+		checkMatchingRight(28,50);
+		checkMatchingRight(25,25);
+
+		grammar.replaceText("<<InitP head type comma> <= <Conj_2 head type comma>>");
+		checkMatchingLeft(0, -1);
+		checkMatchingLeft(23, 1);
+		checkMatchingLeft(51, 28);
+		checkMatchingLeft(52, 0);
+
+		checkMatchingRight(0,-1);
+		checkMatchingRight(2,23);
+		checkMatchingRight(29,51);
+		checkMatchingRight(26,26);
+	}
+
+	@Test
+	public void processWedgesWhenConditionalLogicalConstraintTest() {
+		leftItem = '<';
+		rightItem = '>';
+
+		grammar.replaceText("<DP head type> == [relative:+] -> [relcl:+]");
+		checkMatchingLeft(0, -1);
+		checkMatchingLeft(13, 0);
+		checkMatchingLeft(32, 32);
+
+		checkMatchingRight(0,-1);
+		checkMatchingRight(1,13);
+		checkMatchingRight(32,-1);
+
+		grammar.replaceText("<<DP head type> == [relative:+] -> [relcl:+]>");
+		checkMatchingLeft(0, -1);
+		checkMatchingLeft(14, 1);
+		checkMatchingLeft(43, 0);
+		checkMatchingLeft(33, 33);
+
+		checkMatchingRight(1,44);
+		checkMatchingRight(2,14);
+	}
+
+	@Test
+	public void processWedgesWhenBiconditionalLogicalConstraintTest() {
+		leftItem = '<';
+		rightItem = '>';
+
+		grammar.replaceText("<DP head type> == [relative:+] <-> [relcl:+]");
+		checkMatchingLeft(0, -1);
+		checkMatchingLeft(13, 0);
+		checkMatchingLeft(32, 31);
+
+		checkMatchingRight(0,-1);
+		checkMatchingRight(1,13);
+		checkMatchingRight(32,33);
+
+		grammar.replaceText("<<DP head type> == [relative:+] <-> [relcl:+]>");
+		checkMatchingLeft(0, -1);
+		checkMatchingLeft(14, 1);
+		checkMatchingLeft(43, 0);
+		checkMatchingLeft(33, 32);
+
+		checkMatchingRight(1,45);
+		checkMatchingRight(2,14);
 	}
 }

@@ -143,11 +143,29 @@ public class GrammarUIService {
 		if (iIndex > iMax) {
 			return -1;
 		}
+		if (rightItem == '>' && iIndex > 0 && sDescription.charAt(iIndex) == '-') {
+			if (iIndex > 1 && sDescription.charAt(iIndex-1) != '<') {
+				// have conditional logical constraint (->) symbol; ignore it
+				return iRightItem;
+			}
+		}
 		int iClosingItem = 0;
 		while (iIndex >= 0) {
 			if (sDescription.charAt(iIndex) == rightItem) {
+				if (iIndex > 0 && sDescription.charAt(iIndex-1) == '-') {
+					if (iIndex > 1 && sDescription.charAt(iIndex-2) != '<') {
+						// have conditional logical constraint (->) symbol; ignore it
+						iIndex--;
+						continue;
+					}
+				}
 				iClosingItem++;
 			} else if (sDescription.charAt(iIndex) == leftItem) {
+				if (leftItem == '<' && iIndex < iMax && sDescription.charAt(iIndex+1) == '=') {
+					// have priority union (<=) symbol; ignore it
+					iIndex--;
+					continue;
+				}
 				if (iClosingItem == 0) {
 					break;
 				} else {
@@ -262,12 +280,23 @@ public class GrammarUIService {
 		int iIndex;
 		String sDescription = grammarArea.getText();
 		int iEnd = sDescription.length();
+		if (leftItem == '<' && iLeftItem < (iEnd-1) && sDescription.charAt(iLeftItem) == '=') {
+			// have priority union (<=) symbol; ignore it
+			return iLeftItem;
+		}
 		int iOpeningItem = 0;
 		iIndex = iLeftItem;
 		while (iIndex < iEnd) {
 			if (sDescription.charAt(iIndex) == leftItem) {
 				iOpeningItem++;
 			} else if (sDescription.charAt(iIndex) == rightItem) {
+				if (rightItem == '>' && iIndex > 0 && sDescription.charAt(iIndex-1) == '-') {
+					if (iIndex > 1 && sDescription.charAt(iIndex-2) != '<') {
+						// have conditional logical constraint (->) symbol; ignore it
+						iIndex++;
+						continue;
+					}
+				}
 				if (iOpeningItem == 0) {
 					break;
 				} else {
