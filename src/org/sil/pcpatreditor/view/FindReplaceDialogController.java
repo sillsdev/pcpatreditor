@@ -446,7 +446,20 @@ public class FindReplaceDialogController implements Initializable {
 				int reEnd = findReplaceOperator.getRegExEnd();
 				matcher = rePattern.matcher(grammar.getSelectedText());
 				matcher.find();
-				replacement = matcher.replaceFirst(tfReplace.getText());
+				try {
+					replacement = matcher.replaceFirst(tfReplace.getText());
+				} catch (IndexOutOfBoundsException e) {
+					reportResult.setVisible(true);
+					reportResult.setFill(Color.RED);
+					String patternError = e.getMessage();
+					reportResult.setText(patternError);
+					beep.play();
+					return false;
+				} catch (Exception e) {
+					e.printStackTrace();
+					MainApp.reportException(e, null);
+					return false;
+				}
 			}
 			grammar.replaceSelection(replacement);
 			replaceDone = true;

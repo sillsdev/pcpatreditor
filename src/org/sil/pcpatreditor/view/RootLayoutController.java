@@ -823,8 +823,8 @@ public class RootLayoutController implements Initializable {
 			try {
 				handleSaveDocument();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MainApp.reportException(e, null);
 			}
 		} else {
 			grammar = null;
@@ -900,8 +900,8 @@ public class RootLayoutController implements Initializable {
 		        grammar.replaceText(content);
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MainApp.reportException(e, null);
 			}
 
 			String sDirectoryPath = file.getParent();
@@ -931,8 +931,8 @@ public class RootLayoutController implements Initializable {
 			try {
 				handleSaveDocument();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MainApp.reportException(e, null);
 			}
 		}
 	}
@@ -1011,6 +1011,7 @@ public class RootLayoutController implements Initializable {
 				Desktop.getDesktop().open(myFile);
 			} catch (IOException ex) {
 				// no application registered for PDFs
+				MainApp.reportException(ex, null);
 			}
 		}
 	}
@@ -1093,6 +1094,7 @@ public class RootLayoutController implements Initializable {
 //			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			MainApp.reportException(e, null);
 		}
 	}
 

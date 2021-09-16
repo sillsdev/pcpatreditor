@@ -31,7 +31,6 @@ public class FindReplaceOperatorTest {
 					StandardCharsets.UTF_8);
 			sourceSize = content.length() - 1;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		findReplaceOperator = FindReplaceOperator.getInstance();
