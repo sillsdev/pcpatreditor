@@ -78,6 +78,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class RootLayoutController implements Initializable {
 	
@@ -104,6 +105,7 @@ public class RootLayoutController implements Initializable {
     private Subscription cleanupWhenDone;
 	private final String kPressedStyle = "buttonpressed";
 	private final String kUnPressedStyle = "buttonunpressed";
+	private final String kFindReplaceDialog = "Find/Replace Dialog";
 
 	@FXML
 	BorderPane mainPane;
@@ -1084,6 +1086,13 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	protected void handleFindReplace() {
+		for (Window win : Window.getWindows()) {
+			if (win.getUserData() != null && win.getUserData().equals(kFindReplaceDialog)) {
+				// dialog is already there; give it focus
+				win.requestFocus();
+				return;
+			}
+		}
 		try {
 			// Load the fxml file and create a new stage for the popup.
 			Stage dialogStage = new Stage();
@@ -1107,10 +1116,8 @@ public class RootLayoutController implements Initializable {
 			controller.setMainApp(mainApp);
 			controller.setData(grammar);
 			dialogStage.initModality(Modality.NONE);
+			dialogStage.setUserData(kFindReplaceDialog);
 			dialogStage.show();
-//			if (controller.isOkClicked()) {
-//				markAsDirty();
-//			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, null);
