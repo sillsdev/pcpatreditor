@@ -549,10 +549,14 @@ public class RootLayoutController implements Initializable {
     private static final String BRACE_PATTERN = "\\{|\\}";
     private static final String BRACKET_PATTERN = "\\[|\\]";
     private static final String SLASH_PATTERN = "/";
+    private static final String BANG_PATTERN = "!";
+    private static final String TILDE_PATTERN = "~";
+    private static final String AMPERSAND_PATTERN = "&";
+    private static final String PRIORITY_UNION_PATTERN = "\\<=";
     private static final String EQUALS_PATTERN = "=";
+    private static final String BICONDITIONAL_PATTERN = "\\<-\\>";
+    private static final String CONDITIONAL_PATTERN = "-\\>";
     private static final String WEDGE_PATTERN = "\\<|\\>";
-//    private static final String SEMICOLON_PATTERN = "\\;";
-//    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
     private static final String COMMENT_PATTERN = "\\|[^\n]*";// + "|" + "/\\*(.|\\R)*?\\*/";
 
     private static final Pattern PATTERN = Pattern.compile(
@@ -560,11 +564,15 @@ public class RootLayoutController implements Initializable {
             + "|(?<PAREN>" + PAREN_PATTERN + ")"
             + "|(?<BRACE>" + BRACE_PATTERN + ")"
             + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
+            + "|(?<PRIORITYUNION>" + PRIORITY_UNION_PATTERN + ")"
+            + "|(?<BICONDITIONAL>" + BICONDITIONAL_PATTERN + ")"
+            + "|(?<CONDITIONAL>" + CONDITIONAL_PATTERN + ")"
             + "|(?<WEDGE>" + WEDGE_PATTERN + ")"
             + "|(?<SLASH>" + SLASH_PATTERN + ")"
+            + "|(?<BANG>" + BANG_PATTERN + ")"
+            + "|(?<TILDE>" + TILDE_PATTERN + ")"
+            + "|(?<AMPERSAND>" + AMPERSAND_PATTERN + ")"
             + "|(?<EQUALS>" + EQUALS_PATTERN + ")"
-//            + "|(?<SEMICOLON>" + SEMICOLON_PATTERN + ")"
-//            + "|(?<STRING>" + STRING_PATTERN + ")"
             + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
@@ -579,11 +587,15 @@ public class RootLayoutController implements Initializable {
                     matcher.group("PAREN") != null ? "paren" :
                     matcher.group("BRACE") != null ? "brace" :
                     matcher.group("BRACKET") != null ? "bracket" :
+                    matcher.group("BICONDITIONAL") != null ? "biconditional" :
+                    matcher.group("CONDITIONAL") != null ? "conditional" :
+                    matcher.group("PRIORITYUNION") != null ? "priorityunion" :
+                    matcher.group("AMPERSAND") != null ? "ampersand" :
                     matcher.group("EQUALS") != null ? "equals" :
                     matcher.group("SLASH") != null ? "slash" :
+                    matcher.group("BANG") != null ? "bang" :
+                    matcher.group("TILDE") != null ? "tilde" :
                     matcher.group("WEDGE") != null ? "wedge" :
-//                    matcher.group("SEMICOLON") != null ? "semicolon" :
-//                    matcher.group("STRING") != null ? "string" :
                     matcher.group("COMMENT") != null ? "comment" :
                     null; /* never happens */ assert styleClass != null;
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);

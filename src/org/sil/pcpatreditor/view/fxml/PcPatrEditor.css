@@ -25,48 +25,64 @@
 
 
 /* from richtextfx */
-.code-area {
-	-fx-font-size: 14pt;
-}
-.keyword {
-    -fx-fill: purple;
+.ampersand {
+    -fx-fill: blueviolet;
     -fx-font-weight: bold;
 }
-/*.semicolon {
-    -fx-font-weight: bold;
-} */
-.paren {
-    -fx-fill: firebrick;
+.bang {
+    -fx-fill: darkolivegreen;
     -fx-font-weight: bold;
 }
-.bracket {
-    -fx-fill: darkgreen;
+.biconditional {
+    -fx-fill: blueviolet;
     -fx-font-weight: bold;
 }
 .brace {
     -fx-fill: teal;
     -fx-font-weight: bold;
 }
-/*.string {
-    -fx-fill: blue;
-}*/
-.slash {
-    -fx-fill: firebrick;
+.bracket {
+    -fx-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+.code-area {
+	-fx-font-size: 14pt;
+}
+.comment {
+	-fx-fill: green; /*cadetblue;*/
+}
+.conditional {
+    -fx-fill: blueviolet;
     -fx-font-weight: bold;
 }
 .equals {
     -fx-fill: brown;
     -fx-font-weight: bold;
 }
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.priorityunion {
+    -fx-fill: cadetblue;
+    -fx-font-weight: bold;
+}
+.slash {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.tilde {
+    -fx-fill: blueviolet;
+    -fx-font-weight: bold;
+}
 .wedge {
     -fx-fill: brown;
     -fx-font-weight: bold;
-}
-
-.comment {
-	-fx-fill: green; /*cadetblue;*/
-}
-
-.paragraph-box:has-caret {
-    -fx-background-color: #f2f9fc;
 }
