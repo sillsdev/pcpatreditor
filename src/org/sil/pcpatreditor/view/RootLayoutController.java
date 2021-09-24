@@ -694,7 +694,6 @@ public class RootLayoutController implements Initializable {
 		}
 	}
 
-
 	protected void createToolbarButtons(ResourceBundle bundle) {
 		tooltipToolbarFileNew = ControllerUtilities.createToolbarButtonWithImage("newAction.png",
 				buttonToolbarFileNew, tooltipToolbarFileNew, bundle.getString("tooltip.new"),
@@ -793,6 +792,13 @@ public class RootLayoutController implements Initializable {
 				currentLocale));
 	}
 
+	/**
+	 * @return the grammar
+	 */
+	public CodeArea getGrammar() {
+		return grammar;
+	}
+
 	@FXML
 	private void handleShowMatchingItemWithArrowKeys() {
 		menuItemShowMatchingItemWithArrowKeys.setSelected(!menuItemShowMatchingItemWithArrowKeys
@@ -843,6 +849,7 @@ public class RootLayoutController implements Initializable {
 			mainApp.updateStageTitle(fileCreated);
 			try {
 				handleSaveDocument();
+				initGrammar();
 			} catch (IOException e) {
 				e.printStackTrace();
 				MainApp.reportException(e, null);
@@ -850,7 +857,6 @@ public class RootLayoutController implements Initializable {
 		} else {
 			grammar = null;
 		}
-		initGrammar();
 	}
 
 	protected String tryToGetDefaultDirectoryPath() {

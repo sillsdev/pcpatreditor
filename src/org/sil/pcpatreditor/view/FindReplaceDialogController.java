@@ -6,6 +6,7 @@
  */
 package org.sil.pcpatreditor.view;
 
+import java.awt.Toolkit;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -34,7 +35,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -90,7 +90,6 @@ public class FindReplaceDialogController implements Initializable {
 	private ResourceBundle bundle;
 	private CodeArea grammar;
 	private FindReplaceOperator findReplaceOperator;
-	private AudioClip beep;
 	private boolean initializing = true;
 
 	// following lines from
@@ -107,7 +106,6 @@ public class FindReplaceDialogController implements Initializable {
 	 * after the fxml file has been loaded.
 	 */
 	public void initialize(URL location, ResourceBundle resources) {
-		beep = new AudioClip("file:" + Constants.RESOURCE_SOURCE_LOCATION + "resources/audio/bell-ring-01-short.mp3");
 		reportResult.setVisible(false);
 		tfFind.textProperty().addListener(
 				(observable, oldValue, newValue) -> {
@@ -266,6 +264,10 @@ public class FindReplaceDialogController implements Initializable {
 		});
 	}
 
+	private void playBeep() {
+		Toolkit.getDefaultToolkit().beep();
+	}
+
 	private void resetFocusToFindTextField() {
 		tfFind.requestFocus();
 		tfFind.positionCaret(tfFind.getLength());
@@ -405,7 +407,7 @@ public class FindReplaceDialogController implements Initializable {
 			reportResult.setVisible(true);
 			reportResult.setFill(Color.BLACK);
 			reportResult.setText(bundle.getString("findreplace.report.notfound"));
-			beep.play();
+			playBeep();
 		}
 		return findDone;
 	}
@@ -419,7 +421,7 @@ public class FindReplaceDialogController implements Initializable {
 				reportResult.setFill(Color.RED);
 				String patternError = findReplaceOperator.getRePatternErrorMessage();
 				reportResult.setText(patternError);
-				beep.play();
+				playBeep();
 				index = indexStart;
 			}
 		} else {
@@ -453,7 +455,7 @@ public class FindReplaceDialogController implements Initializable {
 					reportResult.setFill(Color.RED);
 					String patternError = e.getMessage();
 					reportResult.setText(patternError);
-					beep.play();
+					playBeep();
 					return false;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -523,7 +525,7 @@ public class FindReplaceDialogController implements Initializable {
 				.applyPattern(RESOURCE_FACTORY.getStringBinding("findreplace.report.replacementsmade").get());
 		String sMessage = msgFormatter.format(args);
 		reportResult.setText(sMessage);
-		beep.play();
+		playBeep();
 	}
 
 	@FXML
@@ -550,6 +552,7 @@ public class FindReplaceDialogController implements Initializable {
 		tfFind.selectAll();
 		tfReplace.setText(preferences.getStringValue(ApplicationPreferences.FIND_REPLACE_LAST_REPLACE, ""));
 		tfReplace.selectAll();
+		enableDisableActionButtons();
 	}
 
 	private void processInitializing() {

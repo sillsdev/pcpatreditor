@@ -9,12 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
-import org.sil.utility.ApplicationPreferencesUtilities;
 import org.sil.utility.MainAppUtilities;
 import org.sil.utility.view.ControllerUtilities;
 import org.sil.pcpatreditor.view.RootLayoutController;
@@ -23,10 +21,17 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.fxml.FXMLLoader;
 
 public class MainApp extends Application  implements MainAppUtilities {
@@ -181,10 +186,10 @@ public class MainApp extends Application  implements MainAppUtilities {
 				controller.setGrammarContents(content);
 				controller.initGrammar();
 			} else {
-//				boolean fSucceeded = askUserForNewOrToOpenExistingFile(bundle, controller);
-//				if (!fSucceeded) {
-//					System.exit(0);
-//				}
+				boolean fSucceeded = askUserForNewOrToOpenExistingFile(bundle, controller);
+				if (!fSucceeded) {
+					System.exit(0);
+				}
 			}
 
 			// updateStatusBarNumberOfItems("");
@@ -197,6 +202,58 @@ public class MainApp extends Application  implements MainAppUtilities {
 			e.printStackTrace();
 			MainApp.reportException(e, null);
 		}
+	}
+
+	protected boolean askUserForNewOrToOpenExistingFile(ResourceBundle bundle,
+			RootLayoutController controller) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(bundle.getString("program.name"));
+		alert.setHeaderText(bundle.getString("file.initiallynotfound"));
+		alert.setContentText(bundle.getString("file.chooseanoption"));
+		alert.setResizable(true);
+		// Following comes from
+		// https://stackoverflow.com/questions/28937392/javafx-alerts-and-their-size
+		// It's an attempt to get the buttons' text to show completely
+		alert.getDialogPane().getChildren().stream().filter(node -> node instanceof Label)
+				.forEach(node -> ((Label) node).setMinHeight(Region.USE_PREF_SIZE));
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(getNewMainIconImage());
+
+		ButtonType buttonCreateNewDoc = new ButtonType(bundle.getString("label.createnewdocument"),
+				ButtonData.OK_DONE);
+		ButtonType buttonOpenExistingDoc = new ButtonType(
+				bundle.getString("label.openexistingdocument"));
+		ButtonType buttonCancel = new ButtonType(bundle.getString("label.cancel"),
+				ButtonData.CANCEL_CLOSE);
+
+		alert.getButtonTypes().setAll(buttonCreateNewDoc, buttonOpenExistingDoc, buttonCancel);
+		((Button) alert.getDialogPane().lookupButton(buttonCreateNewDoc)).setPrefWidth(250);
+		((Button) alert.getDialogPane().lookupButton(buttonOpenExistingDoc)).setPrefWidth(250);
+		((Button) alert.getDialogPane().lookupButton(buttonCancel))
+				.setPrefWidth(Region.USE_PREF_SIZE);
+
+		boolean fSucceeded = true;
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.isPresent() && result.get() == buttonCreateNewDoc) {
+			controller.handleNewDocument();
+			if (controller.getGrammar() == null) {
+				// The user canceled creating a new project
+				fSucceeded = false;
+			}
+		} else if (result.get() == buttonOpenExistingDoc) {
+			File file = controller.doFileOpen(true);
+			try {
+				loadDocument(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+				reportException(e, null);
+			}
+
+		} else {
+			// ... user chose CANCEL or closed the dialog
+			System.exit(0);
+		}
+		return fSucceeded;
 	}
 
 	public void loadDocument(File file) throws IOException {
