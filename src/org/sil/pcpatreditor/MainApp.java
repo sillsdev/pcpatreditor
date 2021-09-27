@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.sil.utility.MainAppUtilities;
+import org.sil.utility.StringUtilities;
 import org.sil.utility.view.ControllerUtilities;
 import org.sil.pcpatreditor.view.RootLayoutController;
 
@@ -96,15 +97,17 @@ public class MainApp extends Application  implements MainAppUtilities {
 			locale = new Locale(applicationPreferences.getLastLocaleLanguage());
 			
 			String docPath = applicationPreferences.getLastOpenedFilePath();
-			File file = new File(docPath);
-			if (file.exists() && !file.isDirectory()) {
-				content = new String(Files.readAllBytes(file.toPath()),
-						StandardCharsets.UTF_8);
+			if (!StringUtilities.isNullOrEmpty(docPath)) {
+				File file = new File(docPath);
+				if (file.exists() && !file.isDirectory()) {
+					content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+				} else {
+					content = "";
+				}
+
 			} else {
 				content = "";
 			}
-//			doc = new Document();
-//			xmlBackEndProvider = new XMLBackEndProvider(doc, locale);
 			
 			this.primaryStage = primaryStage;
 			this.primaryStage.setTitle(kApplicationTitle);
@@ -113,11 +116,6 @@ public class MainApp extends Application  implements MainAppUtilities {
 
 			initRootLayout();
 
-//			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("view/fxml/RootLayout.fxml"));
-//			Scene scene = new Scene(root,400,400);
-//			scene.getStylesheets().add(getClass().getResource("view/fxml/PcPatrEditor.css").toExternalForm());
-//			primaryStage.setScene(scene);
-//			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 			MainApp.reportException(e, null);
@@ -129,9 +127,6 @@ public class MainApp extends Application  implements MainAppUtilities {
 		applicationPreferences.setLastWindowParameters(ApplicationPreferences.LAST_WINDOW,
 				primaryStage);
 		applicationPreferences.setLastLocaleLanguage(locale.getLanguage());
-//		if (controller.isDirty()) {
-//			controller.askAboutSaving();
-//		}
 		controller.handleExit();
 	}
 
