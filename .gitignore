@@ -1,7 +1,7 @@
 /mods/
-/installer/input/
-/installer/output/
-/installer/installtemp/
+/installer/windows/input/
+/installer/windows/output/
+/installer/windows/installtemp/
 XLingPaperPDFTemp/
 *.*~
 .settings
