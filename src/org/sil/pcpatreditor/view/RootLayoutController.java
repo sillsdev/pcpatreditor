@@ -7,8 +7,12 @@
 package org.sil.pcpatreditor.view;
 
 import java.awt.Desktop;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -49,11 +53,14 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -63,6 +70,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
@@ -100,6 +108,7 @@ public class RootLayoutController implements Initializable {
 	boolean fCloseParenJustTyped = false;
 	boolean fOpenWedgeJustTyped = false;
 	boolean fCloseWedgeJustTyped = false;
+	boolean fOKToMoveViaVerticalScrollBar = true;
 	protected Clipboard systemClipboard = Clipboard.getSystemClipboard();
     private ExecutorService executor;
     private Subscription cleanupWhenDone;
@@ -111,6 +120,10 @@ public class RootLayoutController implements Initializable {
 	BorderPane mainPane;
 	@FXML
 	CodeArea grammar;
+	@FXML
+	ScrollBar horizontalBar;
+	@FXML
+	ScrollBar verticalBar;
 	@FXML
 	private Button buttonToolbarFileOpen;
 	@FXML
@@ -228,6 +241,37 @@ public class RootLayoutController implements Initializable {
         centerVBox.getChildren().add(0, vsPane);
         grammar.setParagraphGraphicFactory(LineNumberFactory.get(grammar));
 		grammar.setWrapText(false);
+		horizontalBar = (ScrollBar) vsPane.lookup(".scroll-bar");
+		System.out.println("horizontalBar=" + horizontalBar);
+		horizontalBar.valueProperty().addListener((obs, oldValue, newValue) -> {
+			System.out.println("horizontal bar value=" + newValue);
+		});
+		ObservableList<Node> sbs = horizontalBar.getParent().getChildrenUnmodifiable();
+		sbs.filtered(n -> n instanceof ScrollBar);
+		FilteredList<Node> scrollBars = sbs.filtered(n -> n instanceof ScrollBar);
+		verticalBar = (ScrollBar) scrollBars.get(1);
+		System.out.println("vb=" + verticalBar);
+		verticalBar.valueProperty().addListener((obs, oldValue, newValue) -> {
+			double diff = newValue.doubleValue() - oldValue.doubleValue();
+			System.out.println("vb: old=" + oldValue + "; new=" + newValue + "; diff=" + diff);
+			int lines = grammar.getParagraphs().size();
+			double max = verticalBar.getMax();
+			double min = verticalBar.getMin();
+			double percentage = newValue.doubleValue() / max;
+			if (Math.abs(diff) > 100.0 && percentage > 0.0) {
+				int line = (int)(percentage * lines);
+				System.out.println("flag=" + fOKToMoveViaVerticalScrollBar + "; vb=" + newValue + "; max=" + max + "; %=" + percentage + "; line=" + line);
+//				if (fOKToMoveViaVerticalScrollBar) {
+					System.out.println("would move to line " + line);
+					grammar.moveTo(line, 0);
+					grammar.requestFollowCaret();
+//				} else {
+//					fOKToMoveViaVerticalScrollBar = true;
+//				}
+			} else {
+				fOKToMoveViaVerticalScrollBar = false;
+			}
+		});
         cleanupWhenDone = grammar.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
@@ -987,11 +1031,18 @@ public class RootLayoutController implements Initializable {
 	 * @throws IOException
 	 */
 	private void writeGrammarToFile(File file) throws IOException {
-		if (Files.exists(file.toPath())) {
-			Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.WRITE);
-		} else {
-			Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.CREATE);
-		}
+		Writer out = new BufferedWriter(new OutputStreamWriter(
+			    new FileOutputStream(file.getPath()), "UTF-8"));
+			try {
+			    out.write(grammar.getText());
+			} finally {
+			    out.close();
+			}
+//		if (Files.exists(file.toPath())) {
+//			Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.WRITE);
+//		} else {
+//			Files.write(file.toPath(), grammar.getText().getBytes(), StandardOpenOption.CREATE);
+//		}
 		markAsClean();
 	}
 
