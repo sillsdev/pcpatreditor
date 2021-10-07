@@ -68,12 +68,12 @@ public class FindReplaceOperatorTest {
 		result = findReplaceOperator.find(0, "-abSOLutive");
 		assertEquals(1335, result);
 		// check for wrapping
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(1245, result);
-		result = findReplaceOperator.find(6662, "absolutiveXYZ");
+		result = findReplaceOperator.find(6669, "absolutiveXYZ");
 		assertEquals(-1, result);
 		}
 
@@ -94,14 +94,14 @@ public class FindReplaceOperatorTest {
 		result = findReplaceOperator.find(0, "abs");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(0, "rule");
-		assertEquals(70888, result);
+		assertEquals(70896, result);
 		// check for wrapping
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(1245, result);
-		result = findReplaceOperator.find(6662, "absolutiveXYZ");
+		result = findReplaceOperator.find(6669, "absolutiveXYZ");
 		assertEquals(-1, result);
 	}
 
@@ -124,12 +124,12 @@ public class FindReplaceOperatorTest {
 		result = findReplaceOperator.find(0, "-abSOLutive");
 		assertEquals(-1, result);
 		// check for wrapping
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(1245, result);
-		result = findReplaceOperator.find(6662, "absolutiveXYZ");
+		result = findReplaceOperator.find(6669, "absolutiveXYZ");
 		assertEquals(-1, result);
 	}
 
@@ -150,12 +150,12 @@ public class FindReplaceOperatorTest {
 		result = findReplaceOperator.find(0, "abs");
 		assertEquals(-1, result);
 		// check for wrapping
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
-		result = findReplaceOperator.find(6662, "absolutive");
+		result = findReplaceOperator.find(6669, "absolutive");
 		assertEquals(1245, result);
-		result = findReplaceOperator.find(6662, "absolutiveXYZ");
+		result = findReplaceOperator.find(6669, "absolutiveXYZ");
 		assertEquals(-1, result);
 	}
 
@@ -171,17 +171,17 @@ public class FindReplaceOperatorTest {
 		result = findReplaceOperator.find(content.length(), "head");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(sourceSize, "head");
-		assertEquals(412837, result);
+		assertEquals(412845, result);
 		result = findReplaceOperator.find(412836, "head");
-		assertEquals(412794, result);
+		assertEquals(412802, result);
 		result = findReplaceOperator.find(sourceSize, "Head");
-		assertEquals(412837, result);
+		assertEquals(412845, result);
 		result = findReplaceOperator.find(sourceSize, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "absoluTive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "abs");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "-absolutive");
 		assertEquals(1335, result);
 		result = findReplaceOperator.find(sourceSize, "-abSOLutive");
@@ -191,7 +191,7 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.find(1244, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 	}
 
 	@Test
@@ -199,13 +199,13 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.initializeParameters(false, false, true, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(sourceSize, "head");
-		assertEquals(412837, result);
+		assertEquals(412845, result);
 		result = findReplaceOperator.find(sourceSize, "Head");
-		assertEquals(412837, result);
+		assertEquals(412845, result);
 		result = findReplaceOperator.find(sourceSize, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "absoluTive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "-absolutive");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(sourceSize, "abs");
@@ -215,7 +215,7 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.find(1244, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 	}
 
 	@Test
@@ -223,15 +223,15 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.initializeParameters(false, true, false, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(sourceSize, "head");
-		assertEquals(412837, result);
+		assertEquals(412845, result);
 		result = findReplaceOperator.find(sourceSize, "Head");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(sourceSize, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "absoluTive");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(sourceSize, "abs");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "-absolutive");
 		assertEquals(1335, result);
 		result = findReplaceOperator.find(sourceSize, "-abSOLutive");
@@ -241,7 +241,7 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.find(1244, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 	}
 
 
@@ -250,11 +250,11 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.initializeParameters(false, true, true, false, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.find(sourceSize, "head");
-		assertEquals(412837, result);
+		assertEquals(412845, result);
 		result = findReplaceOperator.find(sourceSize, "Head");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(sourceSize, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 		result = findReplaceOperator.find(sourceSize, "absoluTive");
 		assertEquals(-1, result);
 		result = findReplaceOperator.find(sourceSize, "-absolutive");
@@ -266,7 +266,7 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.find(1244, "absolutive");
-		assertEquals(6661, result);
+		assertEquals(6668, result);
 	}
 
 	@Test
@@ -334,20 +334,20 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.initializeParameters(false, false, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(sourceSize, "head .+ject");
-		assertEquals(408887, result);
-		assertEquals(408898, findReplaceOperator.getRegExEnd());
+		assertEquals(408895, result);
+		assertEquals(408906, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(408886, "head .+ject");
-		assertEquals(405039, result);
-		assertEquals(405050, findReplaceOperator.getRegExEnd());
+		assertEquals(405047, result);
+		assertEquals(405058, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(sourceSize, "Head .+ject");
-		assertEquals(408887, result);
-		assertEquals(408898, findReplaceOperator.getRegExEnd());
+		assertEquals(408895, result);
+		assertEquals(408906, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(sourceSize, "[au]tive");
-		assertEquals(412866, result);
-		assertEquals(412871, findReplaceOperator.getRegExEnd());
+		assertEquals(412874, result);
+		assertEquals(412879, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(sourceSize, "[au]Tive");
-		assertEquals(412866, result);
-		assertEquals(412871, findReplaceOperator.getRegExEnd());
+		assertEquals(412874, result);
+		assertEquals(412879, findReplaceOperator.getRegExEnd());
 		result = findReplaceOperator.findRegularExpression(sourceSize, "-abs");
 		assertEquals(1335, result);
 		assertEquals(1339, findReplaceOperator.getRegExEnd());
@@ -360,8 +360,8 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.findRegularExpression(16, "[au]tive");
-		assertEquals(412866, result);
-		assertEquals(412871, findReplaceOperator.getRegExEnd());
+		assertEquals(412874, result);
+		assertEquals(412879, findReplaceOperator.getRegExEnd());
 		}
 
 	@Test
@@ -369,13 +369,13 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.initializeParameters(false, true, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(sourceSize, "head .+ject");
-		assertEquals(408887, result);
+		assertEquals(408895, result);
 		result = findReplaceOperator.findRegularExpression(408886, "head .+ject");
-		assertEquals(405039, result);
+		assertEquals(405047, result);
 		result = findReplaceOperator.findRegularExpression(sourceSize, "Head .+ject");
 		assertEquals(-1, result);
 		result = findReplaceOperator.findRegularExpression(sourceSize, "[au]tive");
-		assertEquals(412866, result);
+		assertEquals(412874, result);
 		result = findReplaceOperator.findRegularExpression(sourceSize, "[au]Tive");
 		assertEquals(-1, result);
 		// check for wrapping
@@ -383,8 +383,8 @@ public class FindReplaceOperatorTest {
 		assertEquals(-1, result);
 		findReplaceOperator.setWrapSearch(true);
 		result = findReplaceOperator.findRegularExpression(16, "[au]tive");
-		assertEquals(412866, result);
-		assertEquals(412871, findReplaceOperator.getRegExEnd());
+		assertEquals(412874, result);
+		assertEquals(412879, findReplaceOperator.getRegExEnd());
 		}
 
 	@Test
@@ -392,12 +392,12 @@ public class FindReplaceOperatorTest {
 		findReplaceOperator.initializeParameters(false, true, false, true, false);
 		findReplaceOperator.setContent(content);
 		int result = findReplaceOperator.findRegularExpression(sourceSize, "head .+ject");
-		assertEquals(408887, result);
+		assertEquals(408895, result);
 		Matcher matcher = findReplaceOperator.getMatcher();
 		Pattern rePattern = findReplaceOperator.getRePattern();
 		assertNotNull(rePattern);
 		int reEnd = findReplaceOperator.getRegExEnd();
-		assertEquals(408898, reEnd);
+		assertEquals(408906, reEnd);
 		String newContent = content.subSequence(result, reEnd).toString();
 		assertEquals("head object", newContent);
 		matcher = rePattern.matcher(newContent);
@@ -406,12 +406,12 @@ public class FindReplaceOperatorTest {
 		String replacement = matcher.replaceFirst("head .+oink");
 		assertEquals("head .+oink", replacement);
 		result = findReplaceOperator.findRegularExpression(sourceSize, "head (.+)ject");
-		assertEquals(408887, result);
+		assertEquals(408895, result);
 		matcher = findReplaceOperator.getMatcher();
 		rePattern = findReplaceOperator.getRePattern();
 		assertNotNull(rePattern);
 		reEnd = findReplaceOperator.getRegExEnd();
-		assertEquals(408898, reEnd);
+		assertEquals(408906, reEnd);
 		newContent = content.subSequence(result, reEnd).toString();
 		assertEquals("head object", newContent);
 		matcher = rePattern.matcher(newContent);

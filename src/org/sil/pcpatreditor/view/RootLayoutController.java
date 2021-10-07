@@ -108,7 +108,6 @@ public class RootLayoutController implements Initializable {
 	boolean fCloseParenJustTyped = false;
 	boolean fOpenWedgeJustTyped = false;
 	boolean fCloseWedgeJustTyped = false;
-	boolean fOKToMoveViaVerticalScrollBar = true;
 	protected Clipboard systemClipboard = Clipboard.getSystemClipboard();
     private ExecutorService executor;
     private Subscription cleanupWhenDone;
@@ -120,10 +119,6 @@ public class RootLayoutController implements Initializable {
 	BorderPane mainPane;
 	@FXML
 	CodeArea grammar;
-	@FXML
-	ScrollBar horizontalBar;
-	@FXML
-	ScrollBar verticalBar;
 	@FXML
 	private Button buttonToolbarFileOpen;
 	@FXML
@@ -241,37 +236,6 @@ public class RootLayoutController implements Initializable {
         centerVBox.getChildren().add(0, vsPane);
         grammar.setParagraphGraphicFactory(LineNumberFactory.get(grammar));
 		grammar.setWrapText(false);
-		horizontalBar = (ScrollBar) vsPane.lookup(".scroll-bar");
-		System.out.println("horizontalBar=" + horizontalBar);
-		horizontalBar.valueProperty().addListener((obs, oldValue, newValue) -> {
-			System.out.println("horizontal bar value=" + newValue);
-		});
-		ObservableList<Node> sbs = horizontalBar.getParent().getChildrenUnmodifiable();
-		sbs.filtered(n -> n instanceof ScrollBar);
-		FilteredList<Node> scrollBars = sbs.filtered(n -> n instanceof ScrollBar);
-		verticalBar = (ScrollBar) scrollBars.get(1);
-		System.out.println("vb=" + verticalBar);
-		verticalBar.valueProperty().addListener((obs, oldValue, newValue) -> {
-			double diff = newValue.doubleValue() - oldValue.doubleValue();
-			System.out.println("vb: old=" + oldValue + "; new=" + newValue + "; diff=" + diff);
-			int lines = grammar.getParagraphs().size();
-			double max = verticalBar.getMax();
-			double min = verticalBar.getMin();
-			double percentage = newValue.doubleValue() / max;
-			if (Math.abs(diff) > 100.0 && percentage > 0.0) {
-				int line = (int)(percentage * lines);
-				System.out.println("flag=" + fOKToMoveViaVerticalScrollBar + "; vb=" + newValue + "; max=" + max + "; %=" + percentage + "; line=" + line);
-//				if (fOKToMoveViaVerticalScrollBar) {
-					System.out.println("would move to line " + line);
-					grammar.moveTo(line, 0);
-					grammar.requestFollowCaret();
-//				} else {
-//					fOKToMoveViaVerticalScrollBar = true;
-//				}
-			} else {
-				fOKToMoveViaVerticalScrollBar = false;
-			}
-		});
         cleanupWhenDone = grammar.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
@@ -652,10 +616,9 @@ public class RootLayoutController implements Initializable {
         return spansBuilder.create();
     }
 
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        grammar.setStyleSpans(0, highlighting);
-    }
-
+	private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+		grammar.setStyleSpans(0, highlighting);
+	}
 
 	private void initMenuItemsForLocalization() {
 		menuFile.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.file"));
