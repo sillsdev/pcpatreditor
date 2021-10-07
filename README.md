@@ -1,7 +1,7 @@
 # pcpatreditor
 Editor for smart handling of PC-PATR grammar files
 
-Uses Java 17 (including JavaFX) via Azul Zulu (cf., https://www.azul.com/downloads/?package=jdk&show-old-builds=true, the "Download Azul Zulu Builds of OpenJDK" section)
+Uses Java 14 (including JavaFX) via Azul Zulu (cf., https://www.azul.com/downloads/?package=jdk&show-old-builds=true, the "Download Azul Zulu Builds of OpenJDK" section)
 
 Currently under development.  The roadmap is as follows:
 
