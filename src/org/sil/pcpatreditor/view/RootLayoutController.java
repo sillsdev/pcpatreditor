@@ -49,6 +49,7 @@ import org.sil.utility.view.FilteringEventDispatcher;
 import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
+import org.sil.pcpatreditor.model.PcPatrGrammar;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.reactfx.Subscription;
 
@@ -118,7 +119,7 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	BorderPane mainPane;
 	@FXML
-	CodeArea grammar;
+	PcPatrGrammar grammar;
 	@FXML
 	private Button buttonToolbarFileOpen;
 	@FXML
@@ -170,6 +171,14 @@ public class RootLayoutController implements Initializable {
 	private MenuItem menuItemEditFindReplace;
 	@FXML
 	private MenuItem menuItemEditGoToLine;
+	@FXML
+	private Menu menuBookmarks;
+	@FXML
+	private MenuItem menuItemBookmarkToggle;
+	@FXML
+	private MenuItem menuItemBookmarkNext;
+	@FXML
+	private MenuItem menuItemBookmarkPrevious;
 	@FXML
 	private Menu menuSettings;
 	@FXML
@@ -229,7 +238,7 @@ public class RootLayoutController implements Initializable {
 		statusBar.textProperty().bind(RESOURCE_FACTORY.getStringBinding("label.key"));
 
         executor = Executors.newSingleThreadExecutor();
-        grammar = new CodeArea();
+        grammar = new PcPatrGrammar();
         grammar.setPrefHeight(1200.0);
         grammar.setPrefWidth(1000.0);
         VirtualizedScrollPane<CodeArea> vsPane = new VirtualizedScrollPane<CodeArea>(grammar);
@@ -1278,6 +1287,32 @@ public class RootLayoutController implements Initializable {
 			toggleButton.getStyleClass().add(kUnPressedStyle);
 		}
 		return toggleButton;
+	}
+
+	@FXML
+	public void handleBookmarkNext() {
+		int caret = grammar.nextBookmark();
+		System.out.println("bookmark next=" + caret);
+		if (caret != -1) {
+			grammar.moveTo(caret);
+			grammar.requestFollowCaret();
+		}
+	}
+
+	@FXML
+	public void handleBookmarkPrevious() {
+		int caret = grammar.previoustBookmark();
+		System.out.println("bookmark previous" + caret);
+		if (caret != -1) {
+			grammar.moveTo(caret);
+			grammar.requestFollowCaret();
+		}
+	}
+
+	@FXML
+	public void handleBookmarkToggle() {
+		System.out.println("bookmark toggle");
+		grammar.toggleBookmark();
 	}
 
 	@FXML

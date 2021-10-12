@@ -51,27 +51,14 @@
 					<MenuItem fx:id="menuItemEditGoToLine" mnemonicParsing="true" onAction="#handleGoToLine" text="%menu.gotoline" accelerator="ctrl+g" />
                   </items>
                 </Menu>
-<!--                 <Menu fx:id="menuTree" mnemonicParsing="true" text="%menu.tree"> -->
-<!--                   <items> -->
-<!--                     <MenuItem fx:id="menuItemDrawTree" accelerator="ctrl+d" mnemonicParsing="true" onAction="#handleDrawTree" text="%menu.drawtree" /> -->
-<!--                   </items> -->
-<!--                 </Menu> -->
-<!--                 <Menu fx:id="menuFormat" mnemonicParsing="true" text="%menu.format"> -->
-<!--                   <items> -->
-<!--                     <CheckMenuItem fx:id="menuItemUseFlatTree" mnemonicParsing="true" onAction="#handleMenuUseFlatTree" text="%menu.useflattree" /> -->
-<!--                     <CheckMenuItem fx:id="menuItemUseRightToLeftOrientation" mnemonicParsing="true" onAction="#handleMenuUseRightToLeftOrientation" text="%menu.userighttoleftorientation" /> -->
-<!-- 					<SeparatorMenuItem /> -->
-<!-- 					<MenuItem fx:id="menuItemNonTerminalFont" mnemonicParsing="true" onAction="#handleNonTerminalFontInfo" text="%menu.nonterminalfont" /> -->
-<!-- 					<MenuItem fx:id="menuItemLexicalFont" mnemonicParsing="true" onAction="#handleLexicalFontInfo" text="%menu.lexicalfont" /> -->
-<!-- 					<MenuItem fx:id="menuItemGlossFont" mnemonicParsing="true" onAction="#handleGlossFontInfo" text="%menu.glossfont" /> -->
-<!-- 					<MenuItem fx:id="menuItemEmptyElementFont" mnemonicParsing="true" onAction="#handleEmptyElementFontInfo" text="%menu.emptyelementfont" /> -->
-<!-- 					<SeparatorMenuItem /> -->
-<!-- 					<MenuItem fx:id="menuItemTreeSpacingParameter" mnemonicParsing="true" onAction="#handleTreeSpacingParameters" text="%menu.treespacingparameters" /> -->
-<!-- 					<MenuItem fx:id="menuItemBackgroundAndLineParameters" mnemonicParsing="true" onAction="#handleBackgroundAndLineParameters" text="%menu.backgroundandlineparameters" /> -->
-<!-- 					<SeparatorMenuItem /> -->
-<!-- 					<MenuItem fx:id="menuItemSaveTreeParameters" mnemonicParsing="true" onAction="#handleSaveTreeParameters" text="%menu.savetreeparameters" /> -->
-<!--                   </items> -->
-<!--                 </Menu> -->
+                <Menu fx:id="menuBookmarks" mnemonicParsing="true" text="%menu.bookmarks">
+                  <items>
+					<MenuItem fx:id="menuItemBookmarkToggle" mnemonicParsing="true" onAction="#handleBookmarkToggle" text="%menu.bookmarktoggle" accelerator="Ctrl+F2" />
+					<SeparatorMenuItem />
+					<MenuItem fx:id="menuItemBookmarkNext" mnemonicParsing="true" onAction="#handleBookmarkNext" text="%menu.bookmarknext" accelerator="F2" />
+					<MenuItem fx:id="menuItemBookmarkPrevious" mnemonicParsing="true" onAction="#handleBookmarkPrevious" text="%menu.bookmarkprevious" accelerator="Alt+F2" />
+                  </items>
+                </Menu>
 				<Menu fx:id="menuSettings" mnemonicParsing="true" text="%menu.settings">
 				  <items>
 <!-- 					<MenuItem fx:id="menuItemDescriptionFontSize" mnemonicParsing="true" onAction="#handleMenuDescriptionFontSize" text="%menu.descriptionfontsize" /> -->
