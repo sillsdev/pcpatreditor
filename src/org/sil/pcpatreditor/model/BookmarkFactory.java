@@ -61,11 +61,11 @@ public class BookmarkFactory implements IntFunction<Node> {
 		triangle.visibleProperty().bind(Val.flatMap(triangle.sceneProperty(), scene -> {
 			if (scene != null) {
 				if (bookmarks.contains(lineNumber)) {
-					System.out.println("line " + lineNumber + " returns true");
+//					System.out.println("line " + lineNumber + " returns true");
 					return Val.constant(true);
 				}
 			}
-			System.out.println("line " + lineNumber + " returns false");
+//			System.out.println("line " + lineNumber + " returns false");
 			return Val.constant(false);
 		}));
 
