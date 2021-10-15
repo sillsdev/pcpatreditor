@@ -6,7 +6,6 @@
  */
 package org.sil.pcpatreditor.view;
 
-import java.awt.Toolkit;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -264,10 +263,6 @@ public class FindReplaceDialogController implements Initializable {
 		});
 	}
 
-	private void playBeep() {
-		Toolkit.getDefaultToolkit().beep();
-	}
-
 	private void resetFocusToFindTextField() {
 		tfFind.requestFocus();
 		tfFind.positionCaret(tfFind.getLength());
@@ -407,7 +402,7 @@ public class FindReplaceDialogController implements Initializable {
 			reportResult.setVisible(true);
 			reportResult.setFill(Color.BLACK);
 			reportResult.setText(bundle.getString("findreplace.report.notfound"));
-			playBeep();
+			MainApp.playBeep();
 		}
 		return findDone;
 	}
@@ -421,7 +416,7 @@ public class FindReplaceDialogController implements Initializable {
 				reportResult.setFill(Color.RED);
 				String patternError = findReplaceOperator.getRePatternErrorMessage();
 				reportResult.setText(patternError);
-				playBeep();
+				MainApp.playBeep();
 				index = indexStart;
 			}
 		} else {
@@ -455,7 +450,7 @@ public class FindReplaceDialogController implements Initializable {
 					reportResult.setFill(Color.RED);
 					String patternError = e.getMessage();
 					reportResult.setText(patternError);
-					playBeep();
+					MainApp.playBeep();
 					return false;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -525,7 +520,7 @@ public class FindReplaceDialogController implements Initializable {
 				.applyPattern(RESOURCE_FACTORY.getStringBinding("findreplace.report.replacementsmade").get());
 		String sMessage = msgFormatter.format(args);
 		reportResult.setText(sMessage);
-		playBeep();
+		MainApp.playBeep();
 	}
 
 	@FXML

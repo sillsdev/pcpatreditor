@@ -50,8 +50,8 @@ import org.sil.utility.view.FilteringEventDispatcher;
 import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
-import org.sil.pcpatreditor.model.PcPatrGrammar;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
+import org.sil.pcpatreditor.service.BookmarkManager;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
@@ -117,11 +117,12 @@ public class RootLayoutController implements Initializable {
 	private final String kPressedStyle = "buttonpressed";
 	private final String kUnPressedStyle = "buttonunpressed";
 	private final String kFindReplaceDialog = "Find/Replace Dialog";
+	private BookmarkManager bookmarkManager = BookmarkManager.getInstance();
 
 	@FXML
 	BorderPane mainPane;
 	@FXML
-	PcPatrGrammar grammar;
+	CodeArea grammar;
 	@FXML
 	private Button buttonToolbarFileOpen;
 	@FXML
@@ -240,7 +241,7 @@ public class RootLayoutController implements Initializable {
 		statusBar.textProperty().bind(RESOURCE_FACTORY.getStringBinding("label.key"));
 
         executor = Executors.newSingleThreadExecutor();
-        grammar = new PcPatrGrammar();
+        grammar = new CodeArea();
         grammar.setPrefHeight(1200.0);
         grammar.setPrefWidth(1000.0);
         VirtualizedScrollPane<CodeArea> vsPane = new VirtualizedScrollPane<CodeArea>(grammar);
@@ -272,11 +273,15 @@ public class RootLayoutController implements Initializable {
 				while (c.next()) {
 					if (!c.wasReplaced()) {
 						if (c.wasAdded()) {
-							// check for any needed changes to bookmark lines
-							grammar.adjustBookmarkLineNumbers(c.getFrom(), -1);
+							System.out.println("added: from =" + c.getFrom() + "; to=" + c.getTo());
+							for (int i = c.getFrom(); i < c.getTo(); i++) {
+								bookmarkManager.adjustBookmarkLineNumbers(i, -1);
+							}
 						} else if (c.wasRemoved()) {
-							// check for any needed changes to bookmark lines
-							grammar.adjustBookmarkLineNumbers(-1, c.getFrom());
+							System.out.println("removed: from =" + c.getFrom() + "; to=" + c.getTo());
+							for (int i = c.getFrom(); i <= c.getTo(); i++) {
+								bookmarkManager.adjustBookmarkLineNumbers(-1, i);
+							}
 						}
 					}
 		         }
@@ -941,6 +946,7 @@ public class RootLayoutController implements Initializable {
 
 
 	public void initGrammar() {
+		bookmarkManager.setGrammar(grammar);
 		grammar.getUndoManager().forgetHistory();
 		grammar.requestFollowCaret();
 
@@ -1310,28 +1316,32 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	public void handleBookmarkNext() {
-		int caret = grammar.nextBookmark();
+		int caret = bookmarkManager.nextBookmark();
 		System.out.println("bookmark next=" + caret);
 		if (caret != -1) {
-			grammar.moveTo(caret);
+			grammar.moveTo(caret, 0);
 			grammar.requestFollowCaret();
+		} else {
+			MainApp.playBeep();
 		}
 	}
 
 	@FXML
 	public void handleBookmarkPrevious() {
-		int caret = grammar.previoustBookmark();
+		int caret = bookmarkManager.previoustBookmark();
 		System.out.println("bookmark previous" + caret);
 		if (caret != -1) {
-			grammar.moveTo(caret);
+			grammar.moveTo(caret,0);
 			grammar.requestFollowCaret();
+		} else {
+			MainApp.playBeep();
 		}
 	}
 
 	@FXML
 	public void handleBookmarkToggle() {
 		System.out.println("bookmark toggle");
-		grammar.toggleBookmark();
+		bookmarkManager.toggleBookmark();
 	}
 
 	@FXML

@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,12 +18,10 @@ public class FindReplaceOperatorTest {
 
 	String content;
 	FindReplaceOperator findReplaceOperator;
-	Locale locale;
 	int sourceSize;
 	
 	@Before
 	public void setUp() throws Exception {
-		locale = new Locale("en");
 		File file = new File(Constants.UNIT_TEST_DATA_FILE);
 		try {
 			content = new String(Files.readAllBytes(file.toPath()),

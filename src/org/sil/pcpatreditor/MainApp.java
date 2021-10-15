@@ -5,6 +5,7 @@
  */
 package org.sil.pcpatreditor;
 	
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -323,5 +324,9 @@ public class MainApp extends Application  implements MainAppUtilities {
 		}
 		ControllerUtilities.showExceptionInErrorDialog(ex, sTitle, sHeader, sContent, sLabel);
 		System.exit(1);
+	}
+
+	public static void playBeep() {
+		Toolkit.getDefaultToolkit().beep();
 	}
 }

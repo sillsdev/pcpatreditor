@@ -4,15 +4,18 @@
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
 
-package org.sil.pcpatreditor.model;
+package org.sil.pcpatreditor.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.IntFunction;
 
 import org.fxmisc.richtext.CodeArea;
 import org.sil.pcpatreditor.Constants;
+import org.sil.pcpatreditor.model.BookmarkFactory;
 import org.sil.utility.view.ControllerUtilities;
 
 import javafx.geometry.Pos;
@@ -23,9 +26,12 @@ import javafx.scene.layout.HBox;
 /**
  * @author Andy Black
  *
+ *         Singleton pattern for managing bookmarks
  */
-public class PcPatrGrammar extends CodeArea {
+public class BookmarkManager {
 
+	private static BookmarkManager instance;
+	CodeArea grammar;
 	Image bookmarkImage;
 	IntFunction<? extends Node> numberFactory;
 	BookmarkFactory bookmarkFactory = null;
@@ -34,37 +40,70 @@ public class PcPatrGrammar extends CodeArea {
 	List<Integer> toRemove = new ArrayList<Integer>();
 	List<Integer> toAdd = new ArrayList<Integer>();
 
-    /**
-	 * @param imagePath
-	 */
-	public PcPatrGrammar() {
+	public static BookmarkManager getInstance() {
+		if (instance == null) {
+			instance = new BookmarkManager();
+		}
+		return instance;
+	}
+
+	public BookmarkManager() {
 		super();
 		bookmarkImage = ControllerUtilities.getIconImageFromURL(
 				"file:resources/images/bookmark.png", Constants.RESOURCE_SOURCE_LOCATION);
-//		alert.setGraphic(new ImageView(silLogo));
         numberFactory = null;
 	}
 
+	/**
+	 * @return the grammar
+	 */
+	public CodeArea getGrammar() {
+		return grammar;
+	}
+
+	/**
+	 * @param grammar the grammar to set
+	 */
+	public void setGrammar(CodeArea grammar) {
+		this.grammar = grammar;
+	}
+
+	/**
+	 * @return the bookmarks
+	 */
+	public HashSet<Integer> getBookmarks() {
+		return bookmarks;
+	}
+
 	public void toggleBookmark() {
-        int p = getCurrentParagraph();
-        if (numberFactory == null) {
-            numberFactory = this.getParagraphGraphicFactory();
+		if (numberFactory == null) {
+            numberFactory = grammar.getParagraphGraphicFactory();
         }
+        int line = grammar.getCurrentParagraph();
+        toggleLine(line);
+		updateBookmarkIcons();
+	}
+
+	public void toggleLine(int line) {
 		if (bookmarkFactory == null) {
 			bookmarkFactory = new BookmarkFactory();
 		}
 		bookmarkFactory.setBookmarks(bookmarks);
-		if (bookmarks.contains(p)) {
-			bookmarks.remove(p);
-			updateBookmarkIcons();
+		if (bookmarks.contains(line)) {
+			bookmarks.remove(line);
 		} else {
-			bookmarks.add(p);
-			updateBookmarkIcons();
+			bookmarks.add(line);
 		}
 	}
 
 
 	public void adjustBookmarkLineNumbers(int lineAdded, int lineRemoved) {
+		System.out.println("\tadjust added =" + lineAdded + "; removed =" + lineRemoved);
+		adjustBookmarkLines(lineAdded, lineRemoved);
+		updateBookmarkIcons();
+	}
+
+	public void adjustBookmarkLines(int lineAdded, int lineRemoved) {
 		toRemove.clear();
 		toAdd.clear();
 		if (lineAdded > -1) {
@@ -79,11 +118,10 @@ public class PcPatrGrammar extends CodeArea {
 		for (Integer i : toAdd) {
 			bookmarks.add(i);
 		}
-		updateBookmarkIcons();
-
 	}
 
 	public void createChangesLists(int lineChanged, List<Integer> toRemove, List<Integer> toAdd, int offset) {
+		System.out.println("\t\tchange lists: lineChanged =" + lineChanged + "; offset=" + offset);
 		bookmarks.stream().filter(l -> l >= lineChanged).forEach(l -> {
 			toRemove.add(l);
 			toAdd.add((l+offset));
@@ -94,7 +132,7 @@ public class PcPatrGrammar extends CodeArea {
 		if (bookmarkFactory != null) {
 			bookmarkFactory.setBookmarks(bookmarks);
 			if (bookmarks.size() == 0) {
-				setParagraphGraphicFactory(numberFactory);
+				grammar.setParagraphGraphicFactory(numberFactory);
 			} else {
 				graphicFactory = line -> {
 					HBox hbox = new HBox(bookmarkFactory.apply(line), numberFactory.apply(line));
@@ -102,16 +140,35 @@ public class PcPatrGrammar extends CodeArea {
 					hbox.setStyle("-fx-background-color:#dcdcdc");
 					return hbox;
 				};
-				setParagraphGraphicFactory(graphicFactory);
+				grammar.setParagraphGraphicFactory(graphicFactory);
 			}
 		}
 	}
 
 	public int nextBookmark() {
+		int line = grammar.getCurrentParagraph();
+		return nextBookmarkFromLine(line);
+	}
+
+	public int nextBookmarkFromLine(int line) {
+		Optional<Integer> next = bookmarks.stream().sorted().filter(l -> l > line).findFirst();
+		if (next.isPresent()) {
+			return next.get();
+		}
 		return -1;
 	}
 
 	public int previoustBookmark() {
+		int line = grammar.getCurrentParagraph();
+		return previousBookmarkFromLine(line);
+	}
+
+	public int previousBookmarkFromLine(int line) {
+		Optional<Integer> next = bookmarks.stream().sorted(Comparator.reverseOrder()).filter(l -> l < line).findFirst();
+		if (next.isPresent()) {
+			return next.get();
+		}
 		return -1;
 	}
+
 }

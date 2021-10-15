@@ -30,7 +30,7 @@ public class BookmarkFactory implements IntFunction<Node> {
 	Image bookmarkImage;
 	private HashSet<Integer> bookmarks = new HashSet<Integer>();
 
-	BookmarkFactory() {
+	public BookmarkFactory() {
 		bookmarkImage = ControllerUtilities.getIconImageFromURL("file:resources/images/bookmark.png",
 				Constants.RESOURCE_SOURCE_LOCATION);
 	}
