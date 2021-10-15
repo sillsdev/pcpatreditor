@@ -39,6 +39,7 @@ import org.antlr.v4.runtime.Token;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.Paragraph;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.sil.utility.view.ObservableResourceFactory;
@@ -54,6 +55,7 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
@@ -262,6 +264,23 @@ public class RootLayoutController implements Initializable {
 		grammar.multiPlainChanges().subscribe(event -> {
 			// is invoked by find/replace changes, too
 			markAsDirty();
+		});
+		grammar.getParagraphs().addListener(new ListChangeListener<Paragraph<Collection<String>,String,Collection<String>>>() {
+
+			@Override
+			public void onChanged(Change<? extends Paragraph<Collection<String>, String, Collection<String>>> c) {
+				while (c.next()) {
+					if (!c.wasReplaced()) {
+						if (c.wasAdded()) {
+							// check for any needed changes to bookmark lines
+							grammar.adjustBookmarkLineNumbers(c.getFrom(), -1);
+						} else if (c.wasRemoved()) {
+							// check for any needed changes to bookmark lines
+							grammar.adjustBookmarkLineNumbers(-1, c.getFrom());
+						}
+					}
+		         }
+			}
 		});
 
 		grammar.setOnKeyTyped(new EventHandler<KeyEvent>() {

@@ -10,11 +10,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+
 import org.reactfx.value.Val;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.function.IntFunction;
 
 /**
@@ -26,11 +25,9 @@ import java.util.function.IntFunction;
  */
 
 public class BookmarkFactory implements IntFunction<Node> {
-    private final ObservableValue<Integer> shownLine;
     private HashSet<Integer> bookmarks = new HashSet<Integer>();
 
-    BookmarkFactory(ObservableValue<Integer> shownLine) {
-        this.shownLine = shownLine;
+    BookmarkFactory() {
     }
 
     /**
@@ -52,23 +49,14 @@ public class BookmarkFactory implements IntFunction<Node> {
 		Polygon triangle = new Polygon(0.0, 0.0, 10.0, 5.0, 0.0, 10.0);
 		triangle.setFill(Color.GREEN);
 
-//        ObservableValue<Boolean> visible = Val.map(shownLine, sl -> sl == lineNumber);
-//        triangle.visibleProperty().bind(
-//                Val.flatMap(triangle.sceneProperty(), scene -> {
-//                    return scene != null ? visible : Val.constant(false);
-//            }));
-
 		triangle.visibleProperty().bind(Val.flatMap(triangle.sceneProperty(), scene -> {
 			if (scene != null) {
 				if (bookmarks.contains(lineNumber)) {
-//					System.out.println("line " + lineNumber + " returns true");
 					return Val.constant(true);
 				}
 			}
-//			System.out.println("line " + lineNumber + " returns false");
 			return Val.constant(false);
 		}));
-
 		return triangle;
 	}
 }
