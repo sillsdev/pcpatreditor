@@ -6,12 +6,13 @@
 
 package org.sil.pcpatreditor.model;
 
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import org.reactfx.value.Val;
+import org.sil.pcpatreditor.Constants;
+import org.sil.utility.view.ControllerUtilities;
 
 import java.util.HashSet;
 import java.util.function.IntFunction;
@@ -19,18 +20,22 @@ import java.util.function.IntFunction;
 /**
  * @author Andy Black
  *
- * Given the line number, return a node (graphic) to display to the left of a line.
- * (Taken from ArrowFactory.java in the org.fxmisc.richtext.demo.lineindicator package.)
+ *         Given the line number, return a node (graphic) to display to the left
+ *         of a line. (Taken from ArrowFactory.java in the
+ *         org.fxmisc.richtext.demo.lineindicator package.)
  * 
  */
 
 public class BookmarkFactory implements IntFunction<Node> {
-    private HashSet<Integer> bookmarks = new HashSet<Integer>();
+	Image bookmarkImage;
+	private HashSet<Integer> bookmarks = new HashSet<Integer>();
 
-    BookmarkFactory() {
-    }
+	BookmarkFactory() {
+		bookmarkImage = ControllerUtilities.getIconImageFromURL("file:resources/images/bookmark.png",
+				Constants.RESOURCE_SOURCE_LOCATION);
+	}
 
-    /**
+	/**
 	 * @return the bookmarks
 	 */
 	public HashSet<Integer> getBookmarks() {
@@ -46,10 +51,12 @@ public class BookmarkFactory implements IntFunction<Node> {
 
 	@Override
 	public Node apply(int lineNumber) {
-		Polygon triangle = new Polygon(0.0, 0.0, 10.0, 5.0, 0.0, 10.0);
-		triangle.setFill(Color.GREEN);
-
-		triangle.visibleProperty().bind(Val.flatMap(triangle.sceneProperty(), scene -> {
+		ImageView imageView = new ImageView(bookmarkImage);
+		imageView.setFitWidth(10);
+		imageView.setPreserveRatio(true);
+		imageView.setSmooth(true);
+		imageView.setCache(true);
+		imageView.visibleProperty().bind(Val.flatMap(imageView.sceneProperty(), scene -> {
 			if (scene != null) {
 				if (bookmarks.contains(lineNumber)) {
 					return Val.constant(true);
@@ -57,6 +64,6 @@ public class BookmarkFactory implements IntFunction<Node> {
 			}
 			return Val.constant(false);
 		}));
-		return triangle;
+		return imageView;
 	}
 }

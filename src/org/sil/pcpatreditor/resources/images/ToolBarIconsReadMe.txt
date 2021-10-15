@@ -36,6 +36,7 @@ THE SOFTWARE.
 
 Using:
 
+bookmark.png (was tag_blue.png)
 copyAction.png (was copy.png)
 deleteAction.png (was no.png)
 findReplaceAction.png (was magnifier.png)
