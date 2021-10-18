@@ -16,7 +16,6 @@ import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -56,14 +55,11 @@ import org.reactfx.Subscription;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -73,7 +69,6 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
@@ -273,15 +268,11 @@ public class RootLayoutController implements Initializable {
 				while (c.next()) {
 					if (!c.wasReplaced()) {
 						if (c.wasAdded()) {
-							System.out.println("added: from =" + c.getFrom() + "; to=" + c.getTo());
-							for (int i = c.getFrom(); i < c.getTo(); i++) {
-								bookmarkManager.adjustBookmarkLineNumbers(i, -1);
-							}
+							bookmarkManager.adjustBookmarkLinesAfterAddition(c.getFrom(), c.getAddedSize());
+							bookmarkManager.updateBookmarkIcons();
 						} else if (c.wasRemoved()) {
-							System.out.println("removed: from =" + c.getFrom() + "; to=" + c.getTo());
-							for (int i = c.getFrom(); i <= c.getTo(); i++) {
-								bookmarkManager.adjustBookmarkLineNumbers(-1, i);
-							}
+							bookmarkManager.adjustBookmarkLinesAfterRemoval(c.getFrom(), c.getRemovedSize());
+							bookmarkManager.updateBookmarkIcons();
 						}
 					}
 		         }
@@ -1317,7 +1308,6 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	public void handleBookmarkNext() {
 		int caret = bookmarkManager.nextBookmark();
-		System.out.println("bookmark next=" + caret);
 		if (caret != -1) {
 			grammar.moveTo(caret, 0);
 			grammar.requestFollowCaret();
@@ -1329,7 +1319,6 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	public void handleBookmarkPrevious() {
 		int caret = bookmarkManager.previoustBookmark();
-		System.out.println("bookmark previous" + caret);
 		if (caret != -1) {
 			grammar.moveTo(caret,0);
 			grammar.requestFollowCaret();
@@ -1340,7 +1329,6 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	public void handleBookmarkToggle() {
-		System.out.println("bookmark toggle");
 		bookmarkManager.toggleBookmark();
 	}
 

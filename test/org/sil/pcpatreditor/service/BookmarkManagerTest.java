@@ -62,56 +62,6 @@ public class BookmarkManagerTest {
 
 		addBookmarks();
 
-		// insert a line at various locations
-		manager.adjustBookmarkLines(200, -1);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(100));
-		assertTrue(bookmarks.contains(150));
-		assertTrue(bookmarks.contains(15));
-
-		manager.adjustBookmarkLines(20, -1);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(101));
-		assertTrue(bookmarks.contains(151));
-		assertTrue(bookmarks.contains(15));
-
-		manager.adjustBookmarkLines(2, -1);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(102));
-		assertTrue(bookmarks.contains(152));
-		assertTrue(bookmarks.contains(16));
-
-		manager.adjustBookmarkLines(124, -1);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(102));
-		assertTrue(bookmarks.contains(153));
-		assertTrue(bookmarks.contains(16));
-
-		// delete a line at various locations
-		manager.adjustBookmarkLines(-1, 177);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(102));
-		assertTrue(bookmarks.contains(153));
-		assertTrue(bookmarks.contains(16));
-
-		manager.adjustBookmarkLines(-1, 3);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(101));
-		assertTrue(bookmarks.contains(152));
-		assertTrue(bookmarks.contains(15));
-
-		manager.adjustBookmarkLines(-1, 73);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(100));
-		assertTrue(bookmarks.contains(151));
-		assertTrue(bookmarks.contains(15));
-
-		manager.adjustBookmarkLines(-1, 136);
-		assertEquals(3, bookmarks.size());
-		assertTrue(bookmarks.contains(100));
-		assertTrue(bookmarks.contains(150));
-		assertTrue(bookmarks.contains(15));
-
 		// toggle a line previously toggled
 		manager.toggleLine(15);
 		assertEquals(2, bookmarks.size());
@@ -123,6 +73,92 @@ public class BookmarkManagerTest {
 		assertTrue(bookmarks.contains(100));
 
 		manager.toggleLine(100);
+		assertEquals(0, bookmarks.size());
+	}
+
+	@Test
+	public void addRemoveTest() {
+		bookmarks = manager.getBookmarks();
+		assertEquals(0, bookmarks.size());
+
+		addBookmarks();
+
+		// insert a line at various locations
+		manager.adjustBookmarkLinesAfterAddition(200, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(100));
+		assertTrue(bookmarks.contains(150));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterAddition(20, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(101));
+		assertTrue(bookmarks.contains(151));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterAddition(2, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(102));
+		assertTrue(bookmarks.contains(152));
+		assertTrue(bookmarks.contains(16));
+
+		manager.adjustBookmarkLinesAfterAddition(124, 5);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(102));
+		assertTrue(bookmarks.contains(157));
+		assertTrue(bookmarks.contains(16));
+
+		// delete a line at various locations
+		manager.adjustBookmarkLinesAfterRemoval(177, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(102));
+		assertTrue(bookmarks.contains(157));
+		assertTrue(bookmarks.contains(16));
+
+		manager.adjustBookmarkLinesAfterRemoval(3, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(101));
+		assertTrue(bookmarks.contains(156));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterRemoval(73, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(100));
+		assertTrue(bookmarks.contains(155));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterRemoval(136, 1);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(100));
+		assertTrue(bookmarks.contains(154));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterRemoval(95, 4);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(96));
+		assertTrue(bookmarks.contains(150));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterAddition(95, 4);
+		assertEquals(3, bookmarks.size());
+		assertTrue(bookmarks.contains(100));
+		assertTrue(bookmarks.contains(154));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterRemoval(99, 4);
+		assertEquals(2, bookmarks.size());
+		assertTrue(bookmarks.contains(150));
+		assertTrue(bookmarks.contains(15));
+
+		manager.adjustBookmarkLinesAfterRemoval(15, 4);
+		assertEquals(1, bookmarks.size());
+		assertTrue(bookmarks.contains(146));
+
+		manager.adjustBookmarkLinesAfterRemoval(141, 4);
+		assertEquals(1, bookmarks.size());
+		assertTrue(bookmarks.contains(142));
+
+		manager.adjustBookmarkLinesAfterRemoval(139, 4);
 		assertEquals(0, bookmarks.size());
 	}
 

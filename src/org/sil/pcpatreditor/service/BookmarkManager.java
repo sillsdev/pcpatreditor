@@ -97,20 +97,25 @@ public class BookmarkManager {
 	}
 
 
-	public void adjustBookmarkLineNumbers(int lineAdded, int lineRemoved) {
-		System.out.println("\tadjust added =" + lineAdded + "; removed =" + lineRemoved);
-		adjustBookmarkLines(lineAdded, lineRemoved);
-		updateBookmarkIcons();
-	}
-
-	public void adjustBookmarkLines(int lineAdded, int lineRemoved) {
+	public void adjustBookmarkLinesAfterAddition(int lineAdded, int numberAdded) {
 		toRemove.clear();
 		toAdd.clear();
 		if (lineAdded > -1) {
-			createChangesLists(lineAdded, toRemove, toAdd, 1);
+			createChangesLists(lineAdded, toRemove, toAdd, numberAdded);
 		}
+		for (Integer i : toRemove) {
+			bookmarks.remove(i);
+		}
+		for (Integer i : toAdd) {
+			bookmarks.add(i);
+		}
+	}
+
+	public void adjustBookmarkLinesAfterRemoval(int lineRemoved, int numberRemoved) {
+		toRemove.clear();
+		toAdd.clear();
 		if (lineRemoved > -1) {
-			createChangesLists(lineRemoved, toRemove, toAdd, -1);
+			createChangesLists(lineRemoved, toRemove, toAdd, -numberRemoved);
 		}
 		for (Integer i : toRemove) {
 			bookmarks.remove(i);
@@ -121,11 +126,17 @@ public class BookmarkManager {
 	}
 
 	public void createChangesLists(int lineChanged, List<Integer> toRemove, List<Integer> toAdd, int offset) {
-		System.out.println("\t\tchange lists: lineChanged =" + lineChanged + "; offset=" + offset);
 		bookmarks.stream().filter(l -> l >= lineChanged).forEach(l -> {
 			toRemove.add(l);
-			toAdd.add((l+offset));
-			});
+			if (offset < 0) {
+				// only add it back if it was not removed
+				if (offset < 0 && l >= (lineChanged - offset)) {
+					toAdd.add(l + offset);
+				}
+			} else {
+				toAdd.add(l + offset);
+			}
+		});
 	}
 
 	public void updateBookmarkIcons() {
