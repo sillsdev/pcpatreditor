@@ -16,6 +16,11 @@ module org.sil.pcpatreditor {
 	requires javafx.swing;
 	requires javafx.web;
 
+	// JAXB
+	requires jakarta.xml.bind;
+	requires jakarta.activation;
+	opens org.sil.pcpatreditor.model;
+
 	// JUnit
 	requires junit;
 

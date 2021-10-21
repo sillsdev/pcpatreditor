@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bookmarks>
+    <documents>
+        <document>
+            <lines>
+                <line>100</line>
+                <line>200</line>
+            </lines>
+            <path>/user/document/myGrammar.grm</path>
+        </document>
+        <document>
+            <lines>
+                <line>1020</line>
+                <line>4150</line>
+                <line>6799</line>
+            </lines>
+            <path>/user/document/KimsGrammar.grm</path>
+        </document>
+    </documents>
+</bookmarks>
