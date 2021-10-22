@@ -20,18 +20,18 @@ import javafx.collections.ObservableList;
  *
  */
 @XmlRootElement(name = "bookmarks")
-public class Bookmarks {
+public class BookmarksInDocuments {
 
 	private List<BookmarkDocument> documents = new ArrayList<BookmarkDocument>();
 
-	public Bookmarks() {
+	public BookmarksInDocuments() {
 
 	}
 
 	/**
 	 * @param documents
 	 */
-	public Bookmarks(List<BookmarkDocument> documents) {
+	public BookmarksInDocuments(List<BookmarkDocument> documents) {
 		super();
 		this.documents = documents;
 	}
@@ -56,7 +56,7 @@ public class Bookmarks {
 		documents.clear();
 	}
 
-	public void load(Bookmarks bookmarks) {
+	public void load(BookmarksInDocuments bookmarks) {
 		this.documents = bookmarks.getDocuments();
 	}
 

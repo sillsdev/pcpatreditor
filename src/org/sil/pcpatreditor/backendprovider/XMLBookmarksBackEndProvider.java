@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.sil.pcpatreditor.Constants;
-import org.sil.pcpatreditor.model.Bookmarks;
+import org.sil.pcpatreditor.model.BookmarksInDocuments;
 import org.sil.utility.HandleExceptionMessage;
 
 import jakarta.xml.bind.JAXBContext;
@@ -23,7 +23,7 @@ import jakarta.xml.bind.Unmarshaller;
  *
  */
 public class XMLBookmarksBackEndProvider extends BookmarksBackEndProvider {
-	Bookmarks bookmarks;
+	BookmarksInDocuments bookmarks;
 	String sFileError;
 	String sFileErrorLoadHeader;
 	String sFileErrorLoadContent;
@@ -33,7 +33,7 @@ public class XMLBookmarksBackEndProvider extends BookmarksBackEndProvider {
 	/**
 	 * @param bookmarks
 	 */
-	public XMLBookmarksBackEndProvider(Bookmarks bookmarks, Locale locale) {
+	public XMLBookmarksBackEndProvider(BookmarksInDocuments bookmarks, Locale locale) {
 		this.bookmarks = bookmarks;
 		setResourceStrings(locale);
 	}
@@ -47,11 +47,11 @@ public class XMLBookmarksBackEndProvider extends BookmarksBackEndProvider {
 		sFileErrorSaveContent = bundle.getString("file.error.save.content");
 	}
 
-	public Bookmarks getBookmarks() {
+	public BookmarksInDocuments getBookmarks() {
 		return bookmarks;
 	}
 
-	public void setBookmarks(Bookmarks bookmarks) {
+	public void setBookmarks(BookmarksInDocuments bookmarks) {
 		this.bookmarks = bookmarks;
 	}
 
@@ -66,10 +66,10 @@ public class XMLBookmarksBackEndProvider extends BookmarksBackEndProvider {
 	@Override
 	public void loadBookmarkDataFromFile(File file) {
 		try {
-			JAXBContext context = JAXBContext.newInstance(Bookmarks.class);
+			JAXBContext context = JAXBContext.newInstance(BookmarksInDocuments.class);
 			Unmarshaller um = context.createUnmarshaller();
 			// Reading XML from the file and unmarshalling.
-			bookmarks = (Bookmarks) um.unmarshal(file);
+			bookmarks = (BookmarksInDocuments) um.unmarshal(file);
 //			bookmarks.clear();
 			bookmarks.load(bookmarks);
 		} catch (Exception e) { // catches ANY exception
@@ -87,7 +87,7 @@ public class XMLBookmarksBackEndProvider extends BookmarksBackEndProvider {
 	@Override
 	public void saveBookmarkDataToFile(File file) {
 		try {
-			JAXBContext context = JAXBContext.newInstance(Bookmarks.class);
+			JAXBContext context = JAXBContext.newInstance(BookmarksInDocuments.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			// Marshalling and saving XML to the file.

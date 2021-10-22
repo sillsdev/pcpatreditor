@@ -20,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.model.BookmarkDocument;
-import org.sil.pcpatreditor.model.Bookmarks;
+import org.sil.pcpatreditor.model.BookmarksInDocuments;
 import org.sil.utility.view.JavaFXThreadingRule;
 
 /**
@@ -30,7 +30,7 @@ import org.sil.utility.view.JavaFXThreadingRule;
 public class XMLBookmarksBackEndProviderTest {
 
 	XMLBookmarksBackEndProvider xmlBookmarksBackEndProvider;
-	Bookmarks bookmarks;
+	BookmarksInDocuments bookmarks;
 
 	@Rule
 	public JavaFXThreadingRule javafxRule = new JavaFXThreadingRule();
@@ -40,7 +40,7 @@ public class XMLBookmarksBackEndProviderTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		bookmarks = new Bookmarks();
+		bookmarks = new BookmarksInDocuments();
 		Locale locale = new Locale("en");
 		xmlBookmarksBackEndProvider = new XMLBookmarksBackEndProvider(bookmarks, locale);
 		File file = new File(Constants.UNIT_TEST_BOOKMARKS_DATA_FILE);

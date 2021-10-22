@@ -31,4 +31,5 @@ module org.sil.pcpatreditor {
 	requires transitive richtextfx.fat;
 	requires javafx.base;
 	requires javafx.media;
+	requires java.base;
 }

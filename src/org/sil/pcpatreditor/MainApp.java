@@ -52,6 +52,13 @@ public class MainApp extends Application  implements MainAppUtilities {
 	String content;
 	
 	/**
+	 * @return the sOperatingSystem
+	 */
+	public String getOperatingSystem() {
+		return sOperatingSystem;
+	}
+
+	/**
 	 * @return the documentFile
 	 */
 	public File getDocumentFile() {

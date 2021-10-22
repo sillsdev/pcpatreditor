@@ -66,6 +66,7 @@ public class BookmarkManager {
 	 */
 	public void setGrammar(CodeArea grammar) {
 		this.grammar = grammar;
+//		numberFactory = this.grammar.getParagraphGraphicFactory();
 	}
 
 	/**
@@ -73,6 +74,10 @@ public class BookmarkManager {
 	 */
 	public HashSet<Integer> getBookmarks() {
 		return bookmarks;
+	}
+
+	public void clearBookmarks() {
+		bookmarks.clear();
 	}
 
 	public void toggleBookmark() {
@@ -96,6 +101,15 @@ public class BookmarkManager {
 		}
 	}
 
+	public void setLine(int line) {
+		if (bookmarkFactory == null) {
+			bookmarkFactory = new BookmarkFactory();
+		}
+		bookmarkFactory.setBookmarks(bookmarks);
+		if (!bookmarks.contains(line)) {
+			bookmarks.add(line);
+		}
+	}
 
 	public void adjustBookmarkLinesAfterAddition(int lineAdded, int numberAdded) {
 		toRemove.clear();
@@ -140,7 +154,10 @@ public class BookmarkManager {
 	}
 
 	public void updateBookmarkIcons() {
-		if (bookmarkFactory != null) {
+		if (numberFactory == null && grammar != null) {
+            numberFactory = grammar.getParagraphGraphicFactory();
+        }
+		if (bookmarkFactory != null && numberFactory != null) {
 			bookmarkFactory.setBookmarks(bookmarks);
 			if (bookmarks.size() == 0) {
 				grammar.setParagraphGraphicFactory(numberFactory);

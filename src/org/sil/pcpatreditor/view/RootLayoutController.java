@@ -49,8 +49,11 @@ import org.sil.utility.view.FilteringEventDispatcher;
 import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
+import org.sil.pcpatreditor.model.BookmarkDocument;
+import org.sil.pcpatreditor.model.BookmarksInDocuments;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
+import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
@@ -113,6 +116,8 @@ public class RootLayoutController implements Initializable {
 	private final String kUnPressedStyle = "buttonunpressed";
 	private final String kFindReplaceDialog = "Find/Replace Dialog";
 	private BookmarkManager bookmarkManager = BookmarkManager.getInstance();
+	private BookmarksInDocumentsManager bookmarksInDocsManager;
+	private BookmarkDocument bookmarkDoc;
 
 	@FXML
 	BorderPane mainPane;
@@ -853,6 +858,7 @@ public class RootLayoutController implements Initializable {
 		cleanupWhenDone.unsubscribe();
 		executor.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
+		saveAnyBookmarks();
 		System.exit(0);
 	}
 
@@ -923,16 +929,19 @@ public class RootLayoutController implements Initializable {
 
 	/**
 	 * Opens a FileChooser to let the user select a tree to load.
+	 * @throws IOException
 	 */
 	@FXML
-	public void handleOpenDocument() {
+	public void handleOpenDocument() throws IOException {
 		if (fIsDirty) {
 			askAboutSaving();
 		}
+		saveAnyBookmarks();
 		doFileOpen(false);
 		initGrammar();
 		grammar.moveTo(0);
 		grammar.requestFocus();
+		initAnyBookmarks();
 	}
 
 
@@ -1011,6 +1020,7 @@ public class RootLayoutController implements Initializable {
 			handleSaveDocumentAs();
 		}
 		grammar.requestFocus();
+		saveAnyBookmarks();
 	}
 
 
@@ -1256,7 +1266,7 @@ public class RootLayoutController implements Initializable {
 		return "_" + currentLocale.getLanguage();
 	}
 
-	public void setMainApp(MainApp mainApp) {
+	public void setMainApp(MainApp mainApp) throws IOException {
 		this.mainApp = mainApp;
 		this.applicationPreferences = mainApp.getApplicationPreferences();
 		menuItemShowMatchingItemWithArrowKeys.setSelected(applicationPreferences
@@ -1266,11 +1276,38 @@ public class RootLayoutController implements Initializable {
 		initializeGrammarFontSize();
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
+		initAnyBookmarks();
 //		grammar.requestFollowCaret();
 //		int caret = applicationPreferences.getLastCaretPosition();
 //		caret = (caret > grammar.getText().length()) ? 0 : caret;
 //		grammar.moveTo(caret);
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
+	}
+
+	private void initAnyBookmarks() throws IOException {
+		bookmarksInDocsManager = BookmarksInDocumentsManager.getInstance(mainApp.getOperatingSystem());
+		bookmarksInDocsManager.loadDocumentHistory();
+		bookmarkDoc = bookmarksInDocsManager.findDocumentInHistory(mainApp.getDocumentFile().getPath());
+		bookmarkManager.setGrammar(grammar);
+		bookmarkManager.clearBookmarks();
+		for (Integer i : bookmarkDoc.getLines()) {
+			bookmarkManager.setLine(i);
+		}
+		bookmarkManager.updateBookmarkIcons();
+	}
+
+	private void saveAnyBookmarks() {
+		if (bookmarkDoc != null) {
+			bookmarkDoc.setPath(mainApp.getDocumentFile().getPath());
+			bookmarkDoc.getLines().clear();
+			for (Integer i : bookmarkManager.getBookmarks()) {
+				if (i < grammar.getParagraphs().size()) {
+					bookmarkDoc.getLines().add(i);
+				}
+			}
+			bookmarksInDocsManager.updateDocument(bookmarkDoc);
+			bookmarksInDocsManager.saveDocumentHistory();
+		}
 	}
 
 	public void setGrammarContents(String contents) {
@@ -1308,7 +1345,7 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	public void handleBookmarkNext() {
 		int caret = bookmarkManager.nextBookmark();
-		if (caret != -1) {
+		if (caret != -1 && caret < grammar.getParagraphs().size()) {
 			grammar.moveTo(caret, 0);
 			grammar.requestFollowCaret();
 		} else {
@@ -1319,7 +1356,7 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	public void handleBookmarkPrevious() {
 		int caret = bookmarkManager.previoustBookmark();
-		if (caret != -1) {
+		if (caret != -1 && caret < grammar.getParagraphs().size()) {
 			grammar.moveTo(caret,0);
 			grammar.requestFollowCaret();
 		} else {
