@@ -78,6 +78,7 @@ public class BookmarkManager {
 
 	public void clearBookmarks() {
 		bookmarks.clear();
+		updateBookmarkIcons();
 	}
 
 	public void toggleBookmark() {

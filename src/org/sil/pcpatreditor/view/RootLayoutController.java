@@ -183,6 +183,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemBookmarkPrevious;
 	@FXML
+	private MenuItem menuItemBookmarkClear;
+	@FXML
 	private Menu menuSettings;
 	@FXML
 	private CheckMenuItem menuItemShowMatchingItemWithArrowKeys;
@@ -1362,6 +1364,11 @@ public class RootLayoutController implements Initializable {
 		} else {
 			MainApp.playBeep();
 		}
+	}
+
+	@FXML
+	public void handleBookmarkClear() {
+		bookmarkManager.clearBookmarks();
 	}
 
 	@FXML

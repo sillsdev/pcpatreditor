@@ -57,6 +57,8 @@
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemBookmarkNext" mnemonicParsing="true" onAction="#handleBookmarkNext" text="%menu.bookmarknext" accelerator="F2" />
 					<MenuItem fx:id="menuItemBookmarkPrevious" mnemonicParsing="true" onAction="#handleBookmarkPrevious" text="%menu.bookmarkprevious" accelerator="Alt+F2" />
+					<SeparatorMenuItem />
+					<MenuItem fx:id="menuItemBookmarkClear" mnemonicParsing="true" onAction="#handleBookmarkClear" text="%menu.bookmarkclear" />
                   </items>
                 </Menu>
 				<Menu fx:id="menuSettings" mnemonicParsing="true" text="%menu.settings">
