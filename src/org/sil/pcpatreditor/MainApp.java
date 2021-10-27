@@ -157,19 +157,6 @@ public class MainApp extends Application  implements MainAppUtilities {
 			Scene scene = new Scene(rootLayout);
 			scene.getStylesheets().add(getClass().getResource("view/fxml/PcPatrEditor.css").toExternalForm());
 
-			// Because we see the ALT character in the tree description when the
-			// tree description node has focus (which it normally does), we need
-			// to catch the ALT and put focus on the menu bar. Otherwise, the
-			// menu accelerator keys are ignored.
-			scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-				public void handle(KeyEvent ke) {
-					if (ke.getCode() == KeyCode.ALT) {
-						controller.getMenuBar().requestFocus();
-						ke.consume();
-					}
-				}
-			});
-
 			primaryStage.setScene(scene);
 			controller = loader.getController();
 			controller.setMainApp(this);
@@ -194,8 +181,6 @@ public class MainApp extends Application  implements MainAppUtilities {
 					System.exit(0);
 				}
 			}
-
-			// updateStatusBarNumberOfItems("");
 
 			primaryStage.show();
 		} catch (IOException e) {

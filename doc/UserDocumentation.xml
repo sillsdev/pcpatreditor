@@ -20,7 +20,7 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->October 26, 2021</date
+>October 27, 2021</date
 ><version
 >Version 0.2.0 Alpha</version
 ><version
@@ -151,7 +151,7 @@ id="sComments"
 ><secTitle
 >Comments</secTitle
 ><p
->When you select a portion of text, you can insert (or remove) the comment character at the beginning of each line in the selected portion.  If the selected text does not start at the beginning of a line, a comment character will still be inserted (or removed) at the beginning of that text material.</p
+>When you select a portion of text, you can insert (or remove) the comment character at the beginning of each line in the selected portion. If the selected text does not start at the beginning of a line, a comment character will still be inserted (or removed) at the beginning of that text material.</p
 ><p
 >To insert comments in selected material, use either <object
 type="tMenuItem"
@@ -159,13 +159,13 @@ type="tMenuItem"
 > or type <object
 type="tKey"
 >Ctrl-Shift-C</object
->.   To remove comments in selected material, use either <object
+>. To remove comments in selected material, use either <object
 type="tMenuItem"
 >Edit / Remove comment</object
 > or type <object
 type="tKey"
 >Ctrl-Shift-R</object
->. </p
+>.</p
 ></section2
 ></section1
 ><section1
@@ -207,7 +207,7 @@ type="tMenuItem"
 > or type <object
 type="tKey"
 >Alt-F2</object
->. For the latter, you may have to use the right-hand Alt key as the left hand one tends to turn on menu keyboard shortcuts. When moving from one bookmark to another, if there are no more bookmarks, an audible beep will sound.</p
+>. When moving from one bookmark to another, if there are no more bookmarks, an audible beep will sound.</p
 ><p
 >If you wish to remove or clear all bookmarks, use <object
 type="tMenuItem"

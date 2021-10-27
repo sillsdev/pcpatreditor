@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.sil.pcpatreditor.Constants;
+import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.backendprovider.XMLBookmarksBackEndProvider;
 import org.sil.pcpatreditor.model.BookmarkDocument;
 import org.sil.pcpatreditor.model.BookmarksInDocuments;
@@ -105,13 +106,18 @@ public class BookmarksInDocumentsManager {
 		this.operatingSystem = operatingSystem;
 	}
 
-	public void loadDocumentHistory() throws IOException {
+	public void loadDocumentHistory() {
 		documentsFile = new File(pathToFile);
 		if (documentsFile.exists()) {
 			xmlBookmarksBackEndProvider.loadBookmarkDataFromFile(documentsFile);
 			documents = xmlBookmarksBackEndProvider.getBookmarks();
 		} else {
-			documentsFile.createNewFile();
+			try {
+				documentsFile.createNewFile();
+			} catch (IOException e) {
+				MainApp.reportException(e, null);
+				e.printStackTrace();
+			}
 		}
 	}
 

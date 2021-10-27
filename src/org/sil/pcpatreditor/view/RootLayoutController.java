@@ -1309,9 +1309,14 @@ public class RootLayoutController implements Initializable {
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
 
-	private void initAnyBookmarks() throws IOException {
+	private void initAnyBookmarks() {
 		bookmarksInDocsManager = BookmarksInDocumentsManager.getInstance(mainApp.getOperatingSystem());
-		bookmarksInDocsManager.loadDocumentHistory();
+		try {
+			bookmarksInDocsManager.loadDocumentHistory();
+		} catch (Exception e) {
+			MainApp.reportException(e, null);
+			e.printStackTrace();
+		}
 		bookmarkDoc = bookmarksInDocsManager.findDocumentInHistory(mainApp.getDocumentFile().getPath());
 		bookmarkManager.setGrammar(grammar);
 		bookmarkManager.clearBookmarks();

@@ -33,22 +33,22 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Andy Black/Documents/eclipse-workspace/org.sil.pcpatreditor/JAXB/jakarta.activation.jar">
+	<classpathentry kind="lib" path="JAXB/jakarta.activation.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Andy Black/Documents/eclipse-workspace/org.sil.pcpatreditor/JAXB/jakarta.xml.bind-api.jar">
+	<classpathentry kind="lib" path="JAXB/jakarta.xml.bind-api.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Andy Black/Documents/eclipse-workspace/org.sil.pcpatreditor/JAXB/jaxb-jxc.jar">
+	<classpathentry kind="lib" path="JAXB/jaxb-jxc.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Andy Black/Documents/eclipse-workspace/org.sil.pcpatreditor/JAXB/jaxb-xjc.jar">
+	<classpathentry kind="lib" path="JAXB/jaxb-xjc.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

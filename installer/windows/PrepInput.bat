@@ -7,6 +7,7 @@ copy ..\..\ANTLR\* input\libs > nul
 copy ..\..\ControlsFX\* input\libs > nul
 copy ..\..\LibJavaDev input\libs > nul
 copy ..\..\Richtextfx input\libs > nul
+copy ..\..\JAXB input\libs > nul
 
 REM Documentation
 if not exist input\doc mkdir input\doc
