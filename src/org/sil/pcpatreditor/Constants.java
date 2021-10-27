@@ -20,6 +20,7 @@ public class Constants {
 			+ PCPATR_EDITOR_DATA_FILE_EXTENSION;
 	public static final String DEFAULT_DIRECTORY_NAME = "My PCPatrEditor";
 	public static final String BOOKMARK_DOCUMENTS_FILE_NAME = "bookmarks.xml";
+	public static final String COMMENT_CHARACTER = "|";
 
 	// Unit Testing constants
 	public static final String UNIT_TEST_DATA_FILE_NAME = "test/org/sil/pcpatreditor/testdata/TestData.";

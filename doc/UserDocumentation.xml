@@ -20,7 +20,7 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->October 25, 2021</date
+>October 26, 2021</date
 ><version
 >Version 0.2.0 Alpha</version
 ><version
@@ -146,6 +146,27 @@ src="resources/GoToLine.png"
 ><p
 >Enter the line number and click the “OK” button. That line number will be shown.</p
 ></section2
+><section2
+id="sComments"
+><secTitle
+>Comments</secTitle
+><p
+>When you select a portion of text, you can insert (or remove) the comment character at the beginning of each line in the selected portion.  If the selected text does not start at the beginning of a line, a comment character will still be inserted (or removed) at the beginning of that text material.</p
+><p
+>To insert comments in selected material, use either <object
+type="tMenuItem"
+>Edit / Insert comment</object
+> or type <object
+type="tKey"
+>Ctrl-Shift-C</object
+>.   To remove comments in selected material, use either <object
+type="tMenuItem"
+>Edit / Remove comment</object
+> or type <object
+type="tKey"
+>Ctrl-Shift-R</object
+>. </p
+></section2
 ></section1
 ><section1
 id="sBookmarksMenu"
@@ -155,16 +176,16 @@ id="sBookmarksMenu"
 ><object
 type="tPcPatrEditor"
 ></object
-> has an ability for you to mark certain lines with bookmarks.  You can then move quickly from one bookmark to another.  <object
+> has an ability for you to mark certain lines with bookmarks. You can then move quickly from one bookmark to another. <object
 type="tPcPatrEditor"
 ></object
 > will remember your bookmarks for each grammar file.<endnote
 id="nBookmarkMemory"
 ><p
->This is done on a machine-by-machine basis.  That is, if you use <object
+>This is done on a machine-by-machine basis. That is, if you use <object
 type="tPcPatrEditor"
 ></object
-> on one computer and then copy a grammar file to another computer, the second computer will not know where the bookmarks are.  You will have to create the bookmarks again.  (On Windows, the bookmarks are stored in C:\ProgramData\SIL\PcPatrEditor\bookmarks.xml; on Linux and Mac OS X, they are in ~/.pcpatreditor/bookmarks.xml.)</p
+> on one computer and then copy a grammar file to another computer, the second computer will not know where the bookmarks are. You will have to create the bookmarks again. (On Windows, the bookmarks are stored in C:\ProgramData\SIL\PcPatrEditor\bookmarks.xml; on Linux and Mac OS X, they are in ~/.pcpatreditor/bookmarks.xml.)</p
 ></endnote
 ></p
 ><p
@@ -174,26 +195,26 @@ type="tMenuItem"
 > or type <object
 type="tKey"
 >Ctrl-F2</object
->.  To go to the next bookmark, use either <object
+>. To go to the next bookmark, use either <object
 type="tMenuItem"
 >Bookmarks / Next bookmark</object
 > or type <object
 type="tKey"
 >F2</object
->.  To go to the previous bookmark, use either <object
+>. To go to the previous bookmark, use either <object
 type="tMenuItem"
 >Bookmarks / Previous bookmark</object
 > or type <object
 type="tKey"
 >Alt-F2</object
->.  For the latter, you may have to use the right-hand Alt key as the left hand one tends to turn on menu keyboard shortcuts.  When moving from one bookmark to another, if there are no more bookmarks, an audible beep will sound.</p
+>. For the latter, you may have to use the right-hand Alt key as the left hand one tends to turn on menu keyboard shortcuts. When moving from one bookmark to another, if there are no more bookmarks, an audible beep will sound.</p
 ><p
 >If you wish to remove or clear all bookmarks, use <object
 type="tMenuItem"
 >Bookmarks / Clear all bookmarks</object
 >.</p
 ><p
->When a line has a bookmark set for it, there will be a tag-like icon before the line number.  It might look like line 9 in example <exampleRef
+>When a line has a bookmark set for it, there will be a tag-like icon before the line number. It might look like line 9 in example <exampleRef
 letter="xBookmark"
 num="xBookmark"
 ></exampleRef

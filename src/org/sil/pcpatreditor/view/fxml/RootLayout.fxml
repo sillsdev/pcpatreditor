@@ -49,6 +49,9 @@
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemEditFindReplace" mnemonicParsing="true" onAction="#handleFindReplace" text="%menu.findreplace" accelerator="ctrl+f" />
 					<MenuItem fx:id="menuItemEditGoToLine" mnemonicParsing="true" onAction="#handleGoToLine" text="%menu.gotoline" accelerator="ctrl+g" />
+					<SeparatorMenuItem />
+					<MenuItem fx:id="menuItemEditInsertComment" mnemonicParsing="true" onAction="#handleInsertComment" text="%menu.insertcomment" accelerator="ctrl+shift+c" />
+					<MenuItem fx:id="menuItemEditRemoveComment" mnemonicParsing="true" onAction="#handleRemoveComment" text="%menu.removecomment" accelerator="ctrl+shift+r" />
                   </items>
                 </Menu>
                 <Menu fx:id="menuBookmarks" mnemonicParsing="true" text="%menu.bookmarks">

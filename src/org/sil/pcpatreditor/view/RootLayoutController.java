@@ -54,9 +54,12 @@ import org.sil.pcpatreditor.model.BookmarksInDocuments;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
+import org.sil.pcpatreditor.service.CommentToggler;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -69,6 +72,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -174,6 +178,10 @@ public class RootLayoutController implements Initializable {
 	private MenuItem menuItemEditFindReplace;
 	@FXML
 	private MenuItem menuItemEditGoToLine;
+	@FXML
+	private MenuItem menuItemEditInsertComment;
+	@FXML
+	private MenuItem menuItemEditRemoveComment;
 	@FXML
 	private Menu menuBookmarks;
 	@FXML
@@ -283,6 +291,20 @@ public class RootLayoutController implements Initializable {
 						}
 					}
 		         }
+			}
+		});
+
+		grammar.selectionProperty().addListener(new ChangeListener<IndexRange>() {
+			@Override
+			public void changed(ObservableValue<? extends IndexRange> observable, IndexRange oldValue,
+					IndexRange newValue) {
+				if (newValue.getLength() > 0) {
+					menuItemEditInsertComment.setDisable(false);
+					menuItemEditRemoveComment.setDisable(false);
+				} else {
+					menuItemEditInsertComment.setDisable(true);
+					menuItemEditRemoveComment.setDisable(true);
+				}
 			}
 		});
 
@@ -984,6 +1006,7 @@ public class RootLayoutController implements Initializable {
 		return file;
 	}
 
+
 	public void askAboutSaving() {
 		Alert alert = new Alert(AlertType.CONFIRMATION, "");
 		alert.setTitle(MainApp.kApplicationTitle);
@@ -1374,6 +1397,22 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	public void handleBookmarkToggle() {
 		bookmarkManager.toggleBookmark();
+	}
+
+	@FXML
+	public void handleInsertComment() {
+		IndexRange range = grammar.getSelection();
+		String selectedText = grammar.getSelectedText();
+		String result = CommentToggler.insertComments(selectedText);
+		grammar.replaceText(range, result);
+	}
+
+	@FXML
+	public void handleRemoveComment() {
+		IndexRange range = grammar.getSelection();
+		String selectedText = grammar.getSelectedText();
+		String result = CommentToggler.removeComments(selectedText);
+		grammar.replaceText(range, result);
 	}
 
 	@FXML
