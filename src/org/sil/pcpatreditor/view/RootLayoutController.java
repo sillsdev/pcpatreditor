@@ -1372,12 +1372,21 @@ public class RootLayoutController implements Initializable {
 		return toggleButton;
 	}
 
+	public void tryToShowLineInMiddleOfWindow() {
+		grammar.showParagraphAtTop(grammar.getCurrentParagraph());
+		var visible = grammar.getVisibleParagraphs();
+		int here = grammar.getCurrentParagraph();
+		int adjust = visible.size() / 2;
+		int moveTo = Math.max(0, here - adjust);
+		grammar.showParagraphAtTop(moveTo);
+	}
+
 	@FXML
 	public void handleBookmarkNext() {
 		int caret = bookmarkManager.nextBookmark();
 		if (caret != -1 && caret < grammar.getParagraphs().size()) {
 			grammar.moveTo(caret, 0);
-			grammar.requestFollowCaret();
+			tryToShowLineInMiddleOfWindow();
 		} else {
 			grammar.moveTo(0,0);
 			grammar.requestFollowCaret();
@@ -1390,7 +1399,7 @@ public class RootLayoutController implements Initializable {
 		int caret = bookmarkManager.previoustBookmark();
 		if (caret != -1 && caret < grammar.getParagraphs().size()) {
 			grammar.moveTo(caret,0);
-			grammar.requestFollowCaret();
+			tryToShowLineInMiddleOfWindow();
 		} else {
 			grammar.moveTo(grammar.getParagraphs().size()-1,0);
 			grammar.requestFollowCaret();
