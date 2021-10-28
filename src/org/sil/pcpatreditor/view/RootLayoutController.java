@@ -122,6 +122,7 @@ public class RootLayoutController implements Initializable {
 	private BookmarkManager bookmarkManager = BookmarkManager.getInstance();
 	private BookmarksInDocumentsManager bookmarksInDocsManager;
 	private BookmarkDocument bookmarkDoc;
+	private FindReplaceDialogController findReplaceController;
 
 	@FXML
 	BorderPane mainPane;
@@ -1170,6 +1171,7 @@ public class RootLayoutController implements Initializable {
 			if (win.getUserData() != null && win.getUserData().equals(kFindReplaceDialog)) {
 				// dialog is already there; give it focus
 				win.requestFocus();
+				findReplaceController.setData(grammar);
 				return;
 			}
 		}
@@ -1191,10 +1193,10 @@ public class RootLayoutController implements Initializable {
 			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
 			dialogStage.setTitle(title);
 
-			FindReplaceDialogController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
-			controller.setMainApp(mainApp);
-			controller.setData(grammar);
+			findReplaceController = loader.getController();
+			findReplaceController.setDialogStage(dialogStage);
+			findReplaceController.setMainApp(mainApp);
+			findReplaceController.setData(grammar);
 			dialogStage.initModality(Modality.NONE);
 			dialogStage.setUserData(kFindReplaceDialog);
 			dialogStage.show();

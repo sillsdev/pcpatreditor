@@ -322,6 +322,9 @@ public class FindReplaceDialogController implements Initializable {
 
 	public void setData(CodeArea grammar) {
 		this.grammar = grammar;
+		if (grammar.getSelectedText().length() > 0) {
+			tfFind.setText(grammar.getSelectedText());
+		}
 	}
 
 	/**
