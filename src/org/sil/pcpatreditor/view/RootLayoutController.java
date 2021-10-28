@@ -1379,7 +1379,9 @@ public class RootLayoutController implements Initializable {
 			grammar.moveTo(caret, 0);
 			grammar.requestFollowCaret();
 		} else {
-			MainApp.playBeep();
+			grammar.moveTo(0,0);
+			grammar.requestFollowCaret();
+			handleBookmarkNext();
 		}
 	}
 
@@ -1390,7 +1392,9 @@ public class RootLayoutController implements Initializable {
 			grammar.moveTo(caret,0);
 			grammar.requestFollowCaret();
 		} else {
-			MainApp.playBeep();
+			grammar.moveTo(grammar.getParagraphs().size()-1,0);
+			grammar.requestFollowCaret();
+			handleBookmarkPrevious();
 		}
 	}
 

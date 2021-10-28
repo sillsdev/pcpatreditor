@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->October 27, 2021</date
+>October 28, 2021</date
 ><version
->Version 0.2.0 Alpha</version
+>Version 0.3.0 Alpha</version
 ><version
 >Copyright © 2021 SIL International</version
 ><contents
@@ -207,7 +207,10 @@ type="tMenuItem"
 > or type <object
 type="tKey"
 >Alt-F2</object
->. When moving from one bookmark to another, if there are no more bookmarks, an audible beep will sound.</p
+>. When moving from one bookmark to another, if there are no more bookmarks in that direction, <object
+type="tPcPatrEditor"
+></object
+> will automatically wrap to the next appropriate bookmark.</p
 ><p
 >If you wish to remove or clear all bookmarks, use <object
 type="tMenuItem"
