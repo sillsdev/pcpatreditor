@@ -1140,12 +1140,14 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	protected void handleUndo() {
 		grammar.undo();
+		tryToShowLineInMiddleOfWindow();
 		enableDisableRedoUndoButtons();
 	}
 
 	@FXML
 	protected void handleRedo() {
 		grammar.redo();
+		tryToShowLineInMiddleOfWindow();
 		enableDisableRedoUndoButtons();
 	}
 
