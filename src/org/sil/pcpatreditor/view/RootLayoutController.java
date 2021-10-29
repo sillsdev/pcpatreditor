@@ -1195,8 +1195,8 @@ public class RootLayoutController implements Initializable {
 
 			findReplaceController = loader.getController();
 			findReplaceController.setDialogStage(dialogStage);
-			findReplaceController.setMainApp(mainApp);
 			findReplaceController.setData(grammar);
+			findReplaceController.setMainApp(mainApp);
 			dialogStage.initModality(Modality.NONE);
 			dialogStage.setUserData(kFindReplaceDialog);
 			dialogStage.show();

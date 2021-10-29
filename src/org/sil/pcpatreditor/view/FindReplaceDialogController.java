@@ -271,7 +271,7 @@ public class FindReplaceDialogController implements Initializable {
 	private void enableDisableActionButtons() {
 		if (tfFind.getText().trim().length() > 0) {
 			btnFind.setDisable(false);
-			if (tfReplace.getText().trim().length() > 0 && textSelected()) {
+			if (tfReplace.getText().length() > 0 && textSelected()) {
 				btnReplace.setDisable(false);
 				btnReplaceFind.setDisable(false);
 				btnReplaceAll.setDisable(false);
