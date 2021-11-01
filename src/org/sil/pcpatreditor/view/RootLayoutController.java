@@ -1377,12 +1377,15 @@ public class RootLayoutController implements Initializable {
 	}
 
 	public void tryToShowLineInMiddleOfWindow() {
-		grammar.showParagraphAtTop(grammar.getCurrentParagraph());
-		var visible = grammar.getVisibleParagraphs();
-		int here = grammar.getCurrentParagraph();
-		int adjust = visible.size() / 2;
-		int moveTo = Math.max(0, here - adjust);
-		grammar.showParagraphAtTop(moveTo);
+		Platform.runLater(() -> {
+			grammar.showParagraphAtTop(grammar.getCurrentParagraph());
+			var visible = grammar.getVisibleParagraphs();
+			int here = grammar.getCurrentParagraph();
+			int adjust = visible.size() / 2;
+			int moveTo = Math.max(0, here - adjust);
+			grammar.showParagraphAtTop(moveTo);
+			//System.out.println("try: here=" + here + "; adjust=" + adjust + "; moveTo=" + moveTo);
+		});
 	}
 
 	@FXML
