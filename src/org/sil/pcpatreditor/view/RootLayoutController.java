@@ -55,6 +55,7 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
+import org.sil.pcpatreditor.service.FindReplaceOperator;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
@@ -88,6 +89,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -177,6 +179,8 @@ public class RootLayoutController implements Initializable {
 	private MenuItem menuItemEditPaste;
 	@FXML
 	private MenuItem menuItemEditFindReplace;
+	@FXML
+	private MenuItem menuItemEditFindNext;
 	@FXML
 	private MenuItem menuItemEditGoToLine;
 	@FXML
@@ -688,6 +692,7 @@ public class RootLayoutController implements Initializable {
 		menuItemEditCopy.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.copy"));
 		menuItemEditPaste.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.paste"));
 		menuItemEditFindReplace.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.findreplace"));
+		menuItemEditFindNext.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.findnext"));
 		menuItemEditGoToLine.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.gotoline"));
 //		menuTree.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.tree"));
 //		menuItemDrawTree.textProperty().bind(RESOURCE_FACTORY.getStringBinding("menu.drawtree"));
@@ -1205,6 +1210,30 @@ public class RootLayoutController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, null);
+		}
+	}
+
+	@FXML
+	protected void handleFindNext() {
+		String findMe = applicationPreferences.getStringValue(ApplicationPreferences.FIND_REPLACE_LAST_FIND, "");
+		if (StringUtilities.isNullOrEmpty(findMe)) {
+			MainApp.playBeep();
+			return;
+		}
+		FindReplaceOperator findReplaceOperator = FindReplaceOperator.getInstance();
+		findReplaceOperator.setContent(grammar.getText());
+		int index = findReplaceOperator.find(grammar.getCaretPosition(), findMe);
+		if (index > -1) {
+			grammar.requestFollowCaret();
+			grammar.moveTo(index);
+			int indexEnd = index + findMe.length();
+			if (findReplaceOperator.isRegularExpression()) {
+				indexEnd = Math.max(index, findReplaceOperator.getRegExEnd());
+			}
+			grammar.selectRange(index, indexEnd);
+			tryToShowLineInMiddleOfWindow();
+		} else {
+			MainApp.playBeep();
 		}
 	}
 

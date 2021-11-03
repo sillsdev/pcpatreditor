@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->October 28, 2021</date
+>3 November, 2021</date
 ><version
->Version 0.3.0 Alpha</version
+>Version 0.5.0 Alpha</version
 ><version
 >Copyright © 2021 SIL International</version
 ><contents
@@ -121,6 +121,16 @@ href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html"
 type="tPcPatrEditor"
 ></object
 > finds an error in the syntax of a regular expression in either the find or replace fields, an error message in red will be shown. Hopefully, it will give you enough information to know how to fix the problem.</p
+></section2
+><section2
+id="sFindNext"
+><secTitle
+>Find next</secTitle
+><p
+>You can use the <object
+type="tMenuItem"
+>Find next</object
+> item to repeat whatever the last find/replace operation was.  There will be an audible beep if cannot go to the next item.</p
 ></section2
 ><section2
 id="sGoToLine"

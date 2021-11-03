@@ -48,6 +48,7 @@
 					<MenuItem fx:id="menuItemEditPaste" mnemonicParsing="true" onAction="#handlePaste" text="%menu.paste" accelerator="ctrl+v" />
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemEditFindReplace" mnemonicParsing="true" onAction="#handleFindReplace" text="%menu.findreplace" accelerator="ctrl+f" />
+					<MenuItem fx:id="menuItemEditFindNext" mnemonicParsing="true" onAction="#handleFindNext" text="%menu.findnext" accelerator="F3" />
 					<MenuItem fx:id="menuItemEditGoToLine" mnemonicParsing="true" onAction="#handleGoToLine" text="%menu.gotoline" accelerator="ctrl+g" />
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemEditInsertComment" mnemonicParsing="true" onAction="#handleInsertComment" text="%menu.insertcomment" accelerator="ctrl+shift+c" />
