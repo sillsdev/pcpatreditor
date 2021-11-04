@@ -1222,7 +1222,13 @@ public class RootLayoutController implements Initializable {
 		}
 		FindReplaceOperator findReplaceOperator = FindReplaceOperator.getInstance();
 		findReplaceOperator.setContent(grammar.getText());
-		int index = findReplaceOperator.find(grammar.getCaretPosition(), findMe);
+		int index = -1;
+		if (findReplaceOperator.isRegularExpression()) {
+			index = findReplaceOperator.findRegularExpression(grammar.getCaretPosition(), findMe);
+		} else
+		{
+			index = findReplaceOperator.find(grammar.getCaretPosition(), findMe);
+		}
 		if (index > -1) {
 			grammar.requestFollowCaret();
 			grammar.moveTo(index);
