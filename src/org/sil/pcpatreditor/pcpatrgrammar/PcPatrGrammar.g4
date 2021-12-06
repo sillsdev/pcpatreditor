@@ -29,10 +29,13 @@ featureTemplate: featureTemplateDefinition featurePathTemplateBody '.'? comment*
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
                         ;
-featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody*;
+featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody*
+                       | featureTemplateAbbreviation featurePathTemplateBody*
+                       ;
 
-featureTemplateName: atomicValue
-                   ;
+featureTemplateName: atomicValue;
+
+featureTemplateAbbreviation: '[' featureTemplateName ']';
                    
 featureTemplateValue: featureTemplateDisjunction
                     | featurePathUnit '.'? comment*

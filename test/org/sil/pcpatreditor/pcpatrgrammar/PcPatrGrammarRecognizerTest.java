@@ -41,13 +41,6 @@ public class PcPatrGrammarRecognizerTest {
 
 	@Test
 	public void validDescriptionsTest() {
-//
-//		checkValidDescription(
-//				"Let AdjP-final              be  <head type AdjP-final>                      = +\r\n"
-//				+ "                                <head type AdjP-initial>                    = -\r\n"
-//				+ "rule\n S = NP VP\r\n"
-//				,
-//				"");
 		checkValidDescription(
 				"rule\n S = NP VP",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
@@ -82,7 +75,17 @@ public class PcPatrGrammarRecognizerTest {
 		checkValidDescription(
 				"Let transitive.optional be  <head type transitive> = {+ -}\nrule S = NP VP\n",
 				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue transitive.optional)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue transitive)))) (closingWedge >)) = (featureTemplateValue (featureTemplateDisjunction (openingBrace {) (featurePath (atomicValue +)) (featurePathOrStructure (featurePath (atomicValue -))) (closingBrace })))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
-
+		checkValidDescription("Let AdjP-final              be  <head type AdjP-final>                      = +\r\n"
+				+ "                                <head type AdjP-initial>                    = -\r\n"
+				+ "rule\n S = NP VP\r\n",
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue AdjP-final)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue AdjP-final)))) (closingWedge >)) = (featureTemplateValue (atomicValue +)) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue AdjP-initial)))) (closingWedge >)) = (featureTemplateValue (atomicValue -)))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
+		checkValidDescription(
+				"Let copular_suffix          be  <head type copular_suffix>                  = +\r\n"
+				+ "                                    [copular]\r\n"
+				+ ""
+				+ "rule\n S = NP VP\r\n"
+				,
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue copular_suffix)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue copular_suffix)))) (closingWedge >)) = (featureTemplateValue (atomicValue +)) (featurePathTemplateBody (featureTemplateAbbreviation [ (featureTemplateName (atomicValue copular)) ]))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
 				"Let causative_syntax                     be   { [head:[infl:[valence:[causative:+]]\r\n"
 				+ "                                                       type:[causative_syntax:+]\r\n"
