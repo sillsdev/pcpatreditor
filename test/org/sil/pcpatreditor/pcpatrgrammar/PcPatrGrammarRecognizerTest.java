@@ -36,14 +36,20 @@ public class PcPatrGrammarRecognizerTest {
 	@Test
 	public void validDescriptionsTest() {
 		checkValidDescription(
+				"rule {IP option 0a-DP - missing final verb IPs}\r\n"
+				+ "IP = IP_1 Conj DP\r\n"
+				+ "    <IP rule> = 0a-DP\r\n"
+				,
+				"");
+		checkValidDescription(
 				"rule\n S = NP VP",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
 				"rule | comment after 'rule'\n S = NP VP",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (comment | comment after 'rule'\\n) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
-				"rule {basic}\nS = NP VP\n",
-				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { basic }) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
+				"rule {basic rule test}\nS = NP VP\n",
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { basic rule test }) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
 				" | This is a comment\nrule {basic with just NP}\nS=NP ",
 				"(patrgrammar (comment | This is a comment\\n) (patrRules (patrRule (ruleKW rule) (ruleIdentifier { basic with just NP }) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP))))) <EOF>)");
@@ -62,31 +68,140 @@ public class PcPatrGrammarRecognizerTest {
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP (nonTerminalIndex _1)) (nonTerminal V) (nonTerminal NP (nonTerminalIndex _2)))))) <EOF>)");
 		checkValidDescription(
 				"rule\n S = NP VP\n<S head cat> = <VP head cat>",
-				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))) (constraints (constraint (unificationConstraint (openingWedge <) (nonTerminal S) (featurePath (featurePathAtom head) (featurePath (featurePathAtom cat))) (closingWedge >) = (openingWedge <) (nonTerminal VP) (featurePath (featurePathAtom head) (featurePath (featurePathAtom cat))) (closingWedge >)))))) <EOF>)");
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal VP) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >))))))) <EOF>)");
 		checkValidDescription(
 				"Let absolutive be <head case> = absolutive\nrule\n S = NP VP\n",
-				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName absolutive) be) (featurePathUnit (openingWedge <) (featurePath (featurePathAtom head) (featurePath (featurePathAtom case))) (closingWedge >)) = (featurePathAtom absolutive))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue absolutive)) be) (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (featureTemplateValue (atomicValue absolutive)))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
+		checkValidDescription(
+				"Let transitive.optional be  <head type transitive> = {+ -}\nrule S = NP VP\n",
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue transitive.optional)) be) (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue transitive)))) (closingWedge >)) = (featureTemplateValue (featureTemplateDisjunction (openingBrace {) (featurePath (atomicValue +)) (featurePathOrStructure (featurePath (atomicValue -))) (closingBrace }))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 
 		checkValidDescription(
-				"(NP (Paul (the bear)))",
-				"(description (node (openParen () (content NP) (node (openParen () (content Paul) (node (openParen () (content the bear) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
+				"Let causative_syntax                     be   { [head:[infl:[valence:[causative:+]]\r\n"
+				+ "                                                       type:[causative_syntax:+]\r\n"
+				+ "                                                       embedded:[cat:IP]]]\r\n"
+				+ "                                                 [head:[type:[causative_syntax:+\r\n"
+				+ "                                                              transitive:+]\r\n"
+				+ "                                                        embedded:[cat:none]]] }\r\nrule S = NP VP\r\n",
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue causative_syntax)) "
+				+ "be) (featureTemplateValue (featureTemplateDisjunction (openingBrace {) (featureStructure (openingBracket [) (featureStructureName"
+			    + " (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue infl)) : "
+				+ "(featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue valence)) : (featureStructureValue "
+			    + "(featureStructure (openingBracket [) (featureStructureName (atomicValue causative)) : (featureStructureValue (atomicValue +)) "
+				+ "(closingBracket ]))) (closingBracket ]))) (embeddedFeatureStructure (featureStructureName (atomicValue type)) : "
+			    + "(featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue causative_syntax)) : "
+				+ "(featureStructureValue (atomicValue +)) (closingBracket ])))) (embeddedFeatureStructure (featureStructureName (atomicValue "
+			    + "embedded)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue cat)) : "
+				+ "(featureStructureValue (atomicValue IP)) (closingBracket ])))) (closingBracket ]))) (closingBracket ])) (featurePathOrStructure "
+			    + "(featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure "
+				+ "(openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) "
+			    + "(featureStructureName (atomicValue causative_syntax)) : (featureStructureValue (atomicValue +)) (embeddedFeatureStructure "
+				+ "(featureStructureName (atomicValue transitive)) : (featureStructureValue (atomicValue +))) (closingBracket ]))) "
+			    + "(embeddedFeatureStructure (featureStructureName (atomicValue embedded)) : (featureStructureValue (featureStructure "
+				+ "(openingBracket [) (featureStructureName (atomicValue cat)) : (featureStructureValue (atomicValue none)) (closingBracket ])))) "
+			    + "(closingBracket ]))) (closingBracket ]))) (closingBrace }))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule "
+				+ "(nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
-				"(S (NP (\\L John)) (VP (V (\\L sleeps))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (type (nodeType \\L)) (content John) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (type (nodeType \\L)) (content sleeps) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
+				"rule {S option start symbol -  final ya na & Quote allowed}\r\n"
+				+ "S = {IP / CP} (Conj Deg) (Quote)\r\n"
+				+ "    <S head> = <IP head>\r\n"
+				+ "    <S head> = <CP head>\r\n"
+				+ "    <IP head type root> = +\r\n"
+				+ "    <IP head type conj_suffix> = -     | 16Jul03 CB\r\n"
+				+ "    <CP head type root> = +\r\n"
+				+ "    <CP head type conj_suffix> = -     | 16Jul03 CB\r\n"
+				+ "    <CP head type relcl> = -          | 21Nov03 CB\r\n"
+				+ "    <Conj gloss> = or\r\n"
+				+ "    <Conj head type CP-final> = +\r\n"
+				+ "    <Deg head type CP-final> = +\r\n"
+				+ "    <Deg head infl polarity> = -\r\n"
+				+ "    <S head type initialP> = - \r\n"
+				+ "    <IP head type relcl> = -            | not a rel clause 21Nov03 CB\r\n"
+				+ "    <CP head type relcl> = -            | not a rel clause 21Nov03 CB\r\n"
+				+ "    <S rule> = start\n",
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { S option start symbol - final ya na & Quote allowed }) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (disjunctiveTerminals { (nonTerminal IP) (disjunctionNonTerminal / (nonTerminal CP)) }) (optionalTerminals ( (nonTerminal Conj) (nonTerminal Deg) )) (optionalTerminals ( (nonTerminal Quote) )))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal CP) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue root)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue conj_suffix)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 16Jul03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal CP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue root)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal CP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue conj_suffix)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 16Jul03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal CP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 21Nov03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Conj) (featurePath (atomicValue gloss)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue or)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Conj) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue CP-final)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Deg) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue CP-final)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Deg) (featurePath (atomicValue head) (featurePath (atomicValue infl) (featurePath (atomicValue polarity)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue initialP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | not a rel clause 21Nov03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal CP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | not a rel clause 21Nov03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue start))))))) <EOF>)");
 		checkValidDescription(
-				"(S (NP (John)) (VP (V (sleeps))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (content John) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content sleeps) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
+				"rule {S option startInitDP with DP initial elements and final ya na & Quote allowed}\r\n"
+				+ "S = InitP IP (Conj Deg) (Quote)\r\n"
+				+ "    <S head> = <IP head>\r\n"
+				+ "    <IP head subject> = <InitP head subject> | pass reflexive info\r\n"
+				+ "    <IP head type root> = +\r\n"
+				+ "    <IP head type pro-drop> = -     | 28May19 \r\n"
+				+ "    <IP head type conj_suffix> = -     | 16Jul03 CB\r\n"
+				+ "    <InitP head type root> = + \r\n"
+				+ "    <Conj gloss> = or\r\n"
+				+ "    <Conj head type CP-final> = +\r\n"
+				+ "    <Deg head type CP-final> = +\r\n"
+				+ "    <Deg head infl polarity> = -\r\n"
+				+ "    <S head type initialP> = + \r\n"
+				+ "    {<InitP head type relcl> = -  | 03Apr03 CB\r\n"
+				+ "    /<InitP head type relcl> = +  |  relcl in InitP only with overt subject\r\n"
+				+ "     <IP head type pro-drop> = -\r\n"
+				+ "    }\r\n"
+				+ "    <InitP head type DP> = +              | 17Feb03 CB for generic/reflex\r\n"
+				+ "    <InitP head type PP> = -              | 17Feb03 CB for generic/reflex\r\n"
+				+ "    <IP head type relcl> = -            | not a rel clause 21Nov03 CB\r\n"
+				+ "    <S rule> = startInitDP\r\n"
+				,
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { S option startInitDP with DP initial elements and final ya na & Quote allowed }) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal InitP) (nonTerminal IP) (optionalTerminals ( (nonTerminal Conj) (nonTerminal Deg) )) (optionalTerminals ( (nonTerminal Quote) )))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue subject))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue subject))) (closingWedge >) (comment | pass reflexive info\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue root)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue pro-drop)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 28May19 \\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue conj_suffix)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 16Jul03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue root)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Conj) (featurePath (atomicValue gloss)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue or)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Conj) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue CP-final)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Deg) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue CP-final)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Deg) (featurePath (atomicValue head) (featurePath (atomicValue infl) (featurePath (atomicValue polarity)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue initialP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (disjunctiveUnificationConstraint { (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 03Apr03 CB\\r\\n))) (disjunctionUnificationConstraint / (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +) (comment |  relcl in InitP only with overt subject\\r\\n))) (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue pro-drop)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) }))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue DP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +) (comment | 17Feb03 CB for generic/reflex\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue PP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 17Feb03 CB for generic/reflex\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | not a rel clause 21Nov03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue startInitDP))))))) <EOF>)");
 		checkValidDescription(
-				"(S (NP (\\L Juan (\\G John))) (VP (V (\\L duerme (\\G sleeps)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (type (nodeType \\L)) (content Juan) (node (openParen () (type (nodeType \\G)) (content John) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (type (nodeType \\L)) (content duerme) (node (openParen () (type (nodeType \\G)) (content sleeps) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
+				"rule {S option startInitDP with DP initial elements and final ya na & Quote allowed}\r\n"
+				+ "S = InitP IP (Conj Deg) (Quote)\r\n"
+				+ "    <S head> = <IP head>\r\n"
+                  // skipping unification constraints to test logical constraint
+				+ "| don't split coordination - these replace logical constraints in subject rules that incorrectly eliminated even adverbial InitPs 17Apr03 CB\r\n"
+				+ "    <IP head> == ~([subject:[head:[type:[coordination:+]]]] \r\n"
+				+ "                   & [type:[pro-drop:-]])\r\n"
+				+ "    <IP head> == ~([object:[head:[type:[coordination:+]]]] \r\n"
+				+ "                   & [type:[pro-drop:+]])\r\n"
+				+ "    <IP head type relcl> = -            | not a rel clause 21Nov03 CB\r\n"
+				+ "    <S rule> = startInitDP\r\n"
+				,
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { S option startInitDP with DP initial elements and final ya na & Quote allowed }) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal InitP) (nonTerminal IP) (optionalTerminals ( (nonTerminal Conj) (nonTerminal Deg) )) (optionalTerminals ( (nonTerminal Quote) )))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >) (comment | don't split coordination - these replace logical constraints in subject rules that incorrectly eliminated even adverbial InitPs 17Apr03 CB\\r\\n)))) (constraint (logicalConstraint (logConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >)) == (logConstraintExpression ~ (logConstraintFactor ( (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue subject)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue coordination)) : (featureStructureValue (atomicValue +)) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (binop &) (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue pro-drop)) : (featureStructureValue (atomicValue -)) (closingBracket ]))) (closingBracket ])))) ))))) (constraint (logicalConstraint (logConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >)) == (logConstraintExpression ~ (logConstraintFactor ( (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue object)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue coordination)) : (featureStructureValue (atomicValue +)) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (binop &) (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue pro-drop)) : (featureStructureValue (atomicValue +)) (closingBracket ]))) (closingBracket ])))) ))))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue relcl)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | not a rel clause 21Nov03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue startInitDP))))))) <EOF>)");
 		checkValidDescription(
-				"(S (NP (\\L Juan (John))) (VP (V (\\L duerme (sleeps)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (type (nodeType \\L)) (content Juan) (node (openParen () (content John) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (type (nodeType \\L)) (content duerme) (node (openParen () (content sleeps) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
+				"rule {InitP option address - DP address or focus/topic - root or nonroot}\r\n"
+				+ "InitP = (Conj / Excl) DP\r\n"
+				+ "    <InitP head> = <DP head>\r\n"
+				+ "    <InitP head type initialP> = +     | restrict conjunctions here and in DP \r\n"
+				+ "    <InitP head type comma> = +        | must have comma\r\n"
+				+ "    <InitP head subject> = <DP head reflexive> | pass reflexive info\r\n"
+				+ "    <Conj head type CP-initial> = +\r\n"
+				+ "    <DP head type coordination> = -       | not a DP coordination construction\r\n"
+				+ "    <DP head type nonfinalcoordination> = -\r\n"
+				+ "    <DP head type DO_contraction> = -   | 17Feb03 CB\r\n"
+				+ "    <DP head type case-marked> = -\r\n"
+				+ "    <DP head case> = nominative\r\n"
+				+ "    <DP head case_for_position> = direct  | for apposition \r\n"
+				+ "    <DP head case_for_position_front> = direct  | for apposition \r\n"
+				+ "    <DP head case_for_position_front_and> = direct  | for apposition \r\n"
+				+ "    <DP head case_for_position_front_and_center> = direct  | for apposition \r\n"
+				+ "    <InitP head type PP> = -          | 17Feb03 CB\r\n"
+				+ "    <InitP head type DP> = +          | 17Feb03 CB\r\n"
+				+ "    <DP head type> == [relative:+] -> [relcl:+]      | require rel suffix to only occur when relative clause present\r\n"
+				+ "    <InitP rule> = address\r\n"
+				,
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { InitP option address - DP address or focus/topic - root or nonroot }) (phraseStructureRule (nonTerminal InitP) (ruleDef =) (rightHandSide (disjunctiveOptionalNonTerminal ( (nonTerminal Conj) (disjunctionOptionalNonTerminal / (nonTerminal Excl)) )) (nonTerminal DP))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue initialP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +) (comment | restrict conjunctions here and in DP \\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue comma)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +) (comment | must have comma\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue subject))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue reflexive))) (closingWedge >) (comment | pass reflexive info\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal Conj) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue CP-initial)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue coordination)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | not a DP coordination construction\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue nonfinalcoordination)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue DO_contraction)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 17Feb03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue case-marked)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue nominative)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case_for_position))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue direct) (comment | for apposition \\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case_for_position_front))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue direct) (comment | for apposition \\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case_for_position_front_and))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue direct) (comment | for apposition \\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case_for_position_front_and_center))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue direct) (comment | for apposition \\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue PP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -) (comment | 17Feb03 CB\\r\\n)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue DP)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +) (comment | 17Feb03 CB\\r\\n)))) (constraint (logicalConstraint (logConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type))) (closingWedge >)) == (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue relative)) : (featureStructureValue (atomicValue +)) (closingBracket ]))) (binop ->) (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue relcl)) : (featureStructureValue (atomicValue +)) (closingBracket ]) (comment | require rel suffix to only occur when relative clause present\\r\\n)))))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal InitP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue address))))))) <EOF>)");
 		checkValidDescription(
-				"(NP (\\T all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (lineType \\T)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (all the King’s men))",
+				"rule {IP option 0a-DP - missing final verb IPs}\r\n"
+				+ "IP = IP_1 Conj DP\r\n"
+				+ "    <IP head> = <IP_1 head>\r\n"
+				+ "    <IP head subject> = <DP head reflexive> | pass reflexive info\r\n"
+				+ "    {<DP head case> = direct\r\n"
+				+ "     <DP head type case-marked> = -\r\n"
+				+ "    /<DP head case> = objective\r\n"
+				+ "     <DP head type case-marked> = +\r\n"
+				+ "    }\r\n"
+				+ "    <DP head type coordination> = -\r\n"
+				+ "    <IP head type conjoined> <= +   | mark for checking compounding constraints (special case with relcl2+kh and 5c) 20Oct03 CB\r\n"
+				+ "|?|    <IP head type final-conjunct compounds_with1> = <DP head type compounds_with1>\r\n"
+				+ "|?|    <IP head type final-conjunct compounds_with2> = <DP head type compounds_with2>\r\n"
+				+ "|?|    <IP head type final-conjunct compounds_with3> = <DP head type compounds_with3>\r\n"
+				+ "|?|    <IP head type final-conjunct compounds_with4> = <DP head type compounds_with4>\r\n"
+				+ "    <IP head type comma> <= <DP head type comma>  | comma placement for InitP\r\n"
+				+ "    <DP head type> == [relative:+] -> [relcl:+]      | require rel suffix to only occur when relative clause present\r\n"
+				+ "    <Conj> == ~[gloss:namely]\r\n"
+				+ "    <IP rule> = 0a-DP\r\n"
+				,
 				"(description (node (openParen () (content NP) (node (openParen () (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
 		checkValidDescription(
 				"((\\O σ (O (\\L t)) (N (R (\\L e)))) (\\O σ (O (\\L p)) (N (R (\\L i)) (C (\\L k)))))",
@@ -197,11 +312,11 @@ public class PcPatrGrammarRecognizerTest {
 		CharStream input = CharStreams.fromString(sInput);
 		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-//		System.out.println(tokens.getTokenSource().getInputStream().toString());
-//		for (Token t : lexer.getAllTokens())
-//		{
-//			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
-//		}
+		System.out.println(tokens.getTokenSource().getInputStream().toString());
+		for (Token t : lexer.getAllTokens())
+		{
+			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
+		}
 		PcPatrGrammarParser parser = new PcPatrGrammarParser(tokens);
 		return parser;
 	}

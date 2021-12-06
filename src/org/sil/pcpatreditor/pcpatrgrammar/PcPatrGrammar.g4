@@ -23,17 +23,44 @@ comment: LINECOMMENT;
 
 featureTemplates: featureTemplate+;
 
-featureTemplate: featureTemplateDefinition featurePathUnit '=' featurePathUnit '.'? comment*
-               | featureTemplateDefinition featurePathUnit '=' featurePathAtom '.'? comment*
+featureTemplate: featureTemplateDefinition featurePathUnit '=' featureTemplateValue '.'? comment*
+               | featureTemplateDefinition featureTemplateValue '.'? comment*
                ;
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
                         ;
 
-featureTemplateName: TEXT
-                   | PSR_SYMBOL
+featureTemplateName: atomicValue
                    ;
                    
+featureTemplateValue: featureTemplateDisjunction
+                    | featurePathUnit '.'? comment*
+                    | atomicValue '.'? comment*
+                    ;
+
+featureTemplateDisjunction: openingBrace featurePath featurePathOrStructure+ closingBrace
+                          | openingBrace featureStructure featurePathOrStructure+ closingBrace
+                          | openingBrace atomicValue atomicValue+ closingBrace
+                          | openingBrace atomicValue featurePathOrStructure+ closingBrace
+                          ;
+
+featurePathOrStructure: featurePath comment*
+                      | featureStructure comment*
+                      | atomicValue comment*
+                      ;
+
+featureStructure: openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
+                ;
+
+featureStructureName: atomicValue
+                    ;
+
+featureStructureValue: featureStructure
+                     | atomicValue
+                     ;
+embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
+                        ;
+
 featurePathUnit: openingWedge featurePath closingWedge;
 
 constraintTemplates: constraintTemplate+;
@@ -57,39 +84,88 @@ ruleDef: '='
        | '->'
        ;
 
-nonTerminal: PSR_SYMBOL nonTerminalIndex
-           | PSR_SYMBOL
+nonTerminal: PSRSYMBOL nonTerminalIndex
+           | PSRSYMBOL
            ;
 
 nonTerminalIndex: INDEX;
 
 
-rightHandSide: nonTerminal+
+rightHandSide: (nonTerminal+
+             | disjunctiveTerminals+
+             | optionalTerminals+
+             | disjunctiveOptionalNonTerminal+
+              )+
              ;
 
+disjunctiveTerminals: '{' nonTerminal+ disjunctionNonTerminal+ '}' comment?;
+disjunctionNonTerminal: '/' nonTerminal+ comment?;
+optionalTerminals: '(' nonTerminal+ ')' comment?; 
+disjunctiveOptionalNonTerminal: '(' nonTerminal+ disjunctionOptionalNonTerminal+ ')' comment?;
+disjunctionOptionalNonTerminal: '/' nonTerminal+ comment?;
 
 constraints: constraint+;
 
 constraint: unificationConstraint
 		  | priorityUnionConstraint
 		  | logicalConstraint
+		  | comment
 		  ;
-unificationConstraint: openingWedge nonTerminal featurePath closingWedge '=' openingWedge nonTerminal featurePath closingWedge comment?;
+unificationConstraint: uniConstraintLeftHandSide '=' uniConstraintRightHandSide comment?
+                     | disjunctiveUnificationConstraint 
+                     ;
+uniConstraintLeftHandSide: openingWedge nonTerminal featurePath closingWedge;
+uniConstraintRightHandSide: openingWedge nonTerminal featurePath closingWedge comment?
+                          | atomicValue comment?
+                          ;
+disjunctiveUnificationConstraint: '{' unificationConstraint+ disjunctionUnificationConstraint+ '}' comment?;
+disjunctionUnificationConstraint: '/' unificationConstraint+ comment?;
 
-featurePath: featurePathAtom featurePath
-           | featurePathAtom
+featurePath: ruleKW
+           | atomicValue featurePath
+           | atomicValue
            ;
 
-featurePathAtom : TEXT
-                | PSR_SYMBOL
-                ;
+atomicValue : TEXT 
+            | PSRSYMBOL
+            | TEXTWITHUNDERSCORE
+            ;
 
-priorityUnionConstraint: openingWedge;
+priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
+priorityUnionLeftHandSide: openingWedge nonTerminal featurePath closingWedge;
+priorityUnionRightHandSide: openingWedge nonTerminal featurePath closingWedge
+                          | atomicValue
+                          ;
 
-logicalConstraint: openingWedge;
+logicalConstraint: logConstraintLeftHandSide '==' logConstraintExpression;
+logConstraintLeftHandSide: openingWedge nonTerminal featurePath closingWedge
+                         | openingWedge nonTerminal closingWedge
+                         ;
+logConstraintExpression: logConstraintFactor
+                       |'~' logConstraintFactor
+					   |     logConstraintFactor binop     logConstraintFactor
+					   | '~' logConstraintFactor binop     logConstraintFactor
+					   |     logConstraintFactor binop '~' logConstraintFactor
+					   | '~' logConstraintFactor binop '~' logConstraintFactor
+                       ;
+logConstraintFactor: featureStructure
+                   | '(' logConstraintExpression ')'
+                   ;
 
-openingWedge : '<';
-closingWedge : '>';
+binop: '&'
+     | '/'
+     | '->'
+     | '<->'
+     ;
+
+openingBrace   : '{';
+closingBrace   : '}';
+openingBracket : '[';
+closingBracket : ']';
+openingParen   : '(';
+closingParen   : ')';
+openingWedge   : '<';
+closingWedge   : '>';
 
 
 
@@ -101,14 +177,17 @@ LINECOMMENT : '|' .*? '\r'? '\n'
             | '|' .*? EOF
             ;
 
-PSR_SYMBOL : [a-zA-Z0-9\u0080-\uFFFF]+;
+PSRSYMBOL : [a-zA-Z0-9\u0080-\uFFFF]+;
 
 INDEX : '_' [0-9];
 
+TEXTWITHUNDERSCORE: TEXT '_' TEXT
+                  | TEXT '_' TEXTWITHUNDERSCORE
+                  ;
 // The lexer is a greedy parser and will always
 // match the longest sequence.
 TEXT : (
-	   [,.;:^!?@#$%&'"a-zA-Z\u0080-\uFFFF+-]
+	   [,.;^!?@#$%&'"a-zA-Z\u0080-\uFFFF+-]
 //     | [_*=<>]
 //     | '['
 //     | ']'
@@ -120,6 +199,7 @@ TEXT : (
      | '~'
      | '`'
      | '\\'
+//     | [0-9]
 //     | '|' 
      )+  ;
 
