@@ -36,12 +36,6 @@ public class PcPatrGrammarRecognizerTest {
 	@Test
 	public void validDescriptionsTest() {
 		checkValidDescription(
-				"rule {IP option 0a-DP - missing final verb IPs}\r\n"
-				+ "IP = IP_1 Conj DP\r\n"
-				+ "    <IP rule> = 0a-DP\r\n"
-				,
-				"");
-		checkValidDescription(
 				"rule\n S = NP VP",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
@@ -201,103 +195,16 @@ public class PcPatrGrammarRecognizerTest {
 				+ "    <DP head type> == [relative:+] -> [relcl:+]      | require rel suffix to only occur when relative clause present\r\n"
 				+ "    <Conj> == ~[gloss:namely]\r\n"
 				+ "    <IP rule> = 0a-DP\r\n"
+				+ "    <IP rule> = start\r\n"
+				+ "    <IP rule> = 1\r\n"
+				+ "    <IP rule> = address2\r\n"
+				+ "    <IP rule> = 2cNon-ImpersonalV-PastIntransitive\r\n"
+				+ "    <IP rule> = F.able\r\n"
+				+ "    <IP rule> = DPCopSuf\r\n"
+				+ "    <IP rule> = object_relcl\r\n"
+				+ "    <IP rule> = double-temporal\r\n"
 				,
-				"(description (node (openParen () (content NP) (node (openParen () (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"((\\O σ (O (\\L t)) (N (R (\\L e)))) (\\O σ (O (\\L p)) (N (R (\\L i)) (C (\\L k)))))",
-				"(description (node (openParen () (node (openParen () (type (lineType \\O)) (content σ) (node (openParen () (content O) (node (openParen () (type (nodeType \\L)) (content t) (closeParen ))) (closeParen ))) (node (openParen () (content N) (node (openParen () (content R) (node (openParen () (type (nodeType \\L)) (content e) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (type (lineType \\O)) (content σ) (node (openParen () (content O) (node (openParen () (type (nodeType \\L)) (content p) (closeParen ))) (closeParen ))) (node (openParen () (content N) (node (openParen () (content R) (node (openParen () (type (nodeType \\L)) (content i) (closeParen ))) (closeParen ))) (node (openParen () (content C) (node (openParen () (type (nodeType \\L)) (content k) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"((σ (O (\\L t)) (N (R (\\L e)))) (σ (O (\\L p)) (N (R (\\L i)) (C (\\L k)))))",
-				"(description (node (openParen () (node (openParen () (content σ) (node (openParen () (content O) (node (openParen () (type (nodeType \\L)) (content t) (closeParen ))) (closeParen ))) (node (openParen () (content N) (node (openParen () (content R) (node (openParen () (type (nodeType \\L)) (content e) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content σ) (node (openParen () (content O) (node (openParen () (type (nodeType \\L)) (content p) (closeParen ))) (closeParen ))) (node (openParen () (content N) (node (openParen () (content R) (node (openParen () (type (nodeType \\L)) (content i) (closeParen ))) (closeParen ))) (node (openParen () (content C) (node (openParen () (type (nodeType \\L)) (content k) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (NP/s1 (N (dogs))) (VP (V (chase)) (NP/s2 (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP (subscript /s 1)) (node (openParen () (content N) (node (openParen () (content dogs) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content NP (subscript /s 2)) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (NP1 (N (dogs))) (VP (V (chase)) (NP2 (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP1) (node (openParen () (content N) (node (openParen () (content dogs) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content NP2) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(IP (DP) (I/S'))",
-				"(description (node (openParen () (content IP) (node (openParen () (content DP) (closeParen ))) (node (openParen () (content I (superscript /S ')) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(IP (DP) (I'))",
-				"(description (node (openParen () (content IP) (node (openParen () (content DP) (closeParen ))) (node (openParen () (content I') (closeParen ))) (closeParen ))) <EOF>)");
-
-		// need examples with both \T and \L, in both orders, etc.
-		checkValidDescription(
-				"(NP (\\T\\L all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\L\\T all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (nodeType \\L) (lineType \\T)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\T \\L all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\L \\T all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (nodeType \\L) (lineType \\T)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\T\\G all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (lineType \\T) (nodeType \\G)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\G\\T all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (nodeType \\G) (lineType \\T)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\O\\L all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (lineType \\O) (nodeType \\L)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\L\\O all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (nodeType \\L) (lineType \\O)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\O\\G all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (lineType \\O) (nodeType \\G)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(NP (\\G\\O all the King’s men))",
-				"(description (node (openParen () (content NP) (node (openParen () (type (nodeType \\G) (lineType \\O)) (content all the King’s men) (closeParen ))) (closeParen ))) <EOF>)");
-
-		// single combined Unicode acute  i (Ã­)
-		checkValidDescription(
-				"(S (NP (\\L \u00ED)) (VP (V (\\L i\u0301))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (type (nodeType \\L)) (content í) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (type (nodeType \\L)) (content i�?) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)"); 
-		// subscript and superscript
-		checkValidDescription(
-				"(S (NP/s1/S' (N (dogs))) (VP (V (chase)) (NP/S'/s2 (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP (subscript /s 1) (superscript /S ')) (node (openParen () (content N) (node (openParen () (content dogs) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content NP (superscript /S ') (subscript /s 2)) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (/s1/S' (N (dogs))) (VP (V (chase)) (/S'/s2 (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content (subscript /s 1) (superscript /S ')) (node (openParen () (content N) (node (openParen () (content dogs) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content (superscript /S ') (subscript /s 2)) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (/s1 (N (dogs))) (VP (V (chase)) (/S' (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content (subscript /s 1)) (node (openParen () (content N) (node (openParen () (content dogs) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content (superscript /S ')) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (/S' (N (dogs))) (VP (V (chase)) (/s2 (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content (superscript /S ')) (node (openParen () (content N) (node (openParen () (content dogs) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content (subscript /s 2)) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-
-		// backslashes and forward slashes with non-keyword items
-		checkValidDescription(
-				"(S (/S'/Comp (N (do\\gs))) (VP (V (chase)) (/s2 (N (cats)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content (superscript /S ' /C omp)) (node (openParen () (content N) (node (openParen () (content do \\g s) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content chase) (closeParen ))) (closeParen ))) (node (openParen () (content (subscript /s 2)) (node (openParen () (content N) (node (openParen () (content cats) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-
-		// empty elements
-		checkValidDescription("(IP (DP/_m (D' (D'/s1 (D (\\L le (\\G FM)))\n" +
-				"(NP (\\T \\L xuz noo (\\G my father))))\n" +
-				"(IP (\\E t/_j))))\n" +
-				"(IP (I' (I/_i (\\T \\L w-guu (\\G C-sow)))\n" +
-				"(VP (VP (DP (\\E t/_m))\n" +
-				"(V' (V (\\E t/_i)) (DP (\\T \\L bni (\\G seed)))))\n" +
-				"(IP/_j (I' (I/_k (\\L y-ra (\\G P-all)))\n" +
-				"(QP (DP/s1 (\\T \\E pro)) (Q' (Q (\\E t/_k))\n" +
-				"(DP/s2 (\\T \\L mee bzaan noo (\\G my brothers)))))))))))",
-				"(description (node (openParen () (content IP) (node (openParen () (content DP (subscript /_ m)) (node (openParen () (content D') (node (openParen () (content D' (subscript /s 1)) (node (openParen () (content D) (node (openParen () (type (nodeType \\L)) (content le) (node (openParen () (type (nodeType \\G)) (content FM) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content NP) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content xuz noo) (node (openParen () (type (nodeType \\G)) (content my father) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content IP) (node (openParen () (type (nodeType \\E)) (content t (subscript /_ j)) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content IP) (node (openParen () (content I') (node (openParen () (content I (subscript /_ i)) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content w-guu) (node (openParen () (type (nodeType \\G)) (content C-sow) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content VP) (node (openParen () (content DP) (node (openParen () (type (nodeType \\E)) (content t (subscript /_ m)) (closeParen ))) (closeParen ))) (node (openParen () (content V') (node (openParen () (content V) (node (openParen () (type (nodeType \\E)) (content t (subscript /_ i)) (closeParen ))) (closeParen ))) (node (openParen () (content DP) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content bni) (node (openParen () (type (nodeType \\G)) (content seed) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content IP (subscript /_ j)) (node (openParen () (content I') (node (openParen () (content I (subscript /_ k)) (node (openParen () (type (nodeType \\L)) (content y-ra) (node (openParen () (type (nodeType \\G)) (content P-all) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content QP) (node (openParen () (content DP (subscript /s 1)) (node (openParen () (type (lineType \\T) (nodeType \\E)) (content pro) (closeParen ))) (closeParen ))) (node (openParen () (content Q') (node (openParen () (content Q) (node (openParen () (type (nodeType \\E)) (content t (subscript /_ k)) (closeParen ))) (closeParen ))) (node (openParen () (content DP (subscript /s 2)) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content mee bzaan noo) (node (openParen () (type (nodeType \\G)) (content my brothers) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		// multiple spaces along with white space
-		checkValidDescription(
-				"(S (NP (Lee)) \n  (VP (V (gets))\n \t  (NP (Det (the)) (N (idea)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (content Lee) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (content gets) (closeParen ))) (closeParen ))) (node (openParen () (content NP) (node (openParen () (content Det) (node (openParen () (content the) (closeParen ))) (closeParen ))) (node (openParen () (content N) (node (openParen () (content idea) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (NP (\\L  Juan (\\G  John))) (VP (V (\\L  duerme (\\G  sleeps)))) (AdvP (\\E  t)))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (type (nodeType \\L)) (content Juan) (node (openParen () (type (nodeType \\G)) (content John) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (type (nodeType \\L)) (content duerme) (node (openParen () (type (nodeType \\G)) (content sleeps) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (node (openParen () (content AdvP) (node (openParen () (type (nodeType \\E)) (content t) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
-		checkValidDescription(
-				"(S (NP (\\L \\T Lee)) \n  (VP (V (\\T \\L gets))\n \t  (NP (Det (the)) (N (idea)))))",
-				"(description (node (openParen () (content S) (node (openParen () (content NP) (node (openParen () (type (nodeType \\L) (lineType \\T)) (content Lee) (closeParen ))) (closeParen ))) (node (openParen () (content VP) (node (openParen () (content V) (node (openParen () (type (lineType \\T) (nodeType \\L)) (content gets) (closeParen ))) (closeParen ))) (node (openParen () (content NP) (node (openParen () (content Det) (node (openParen () (content the) (closeParen ))) (closeParen ))) (node (openParen () (content N) (node (openParen () (content idea) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) (closeParen ))) <EOF>)");
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { IP option 0a-DP - missing final verb IPs }) (phraseStructureRule (nonTerminal IP) (ruleDef =) (rightHandSide (nonTerminal IP (nonTerminalIndex _1)) (nonTerminal Conj) (nonTerminal DP))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal IP (nonTerminalIndex _1)) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue subject))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue reflexive))) (closingWedge >) (comment | pass reflexive info\\r\\n)))) (constraint (unificationConstraint (disjunctiveUnificationConstraint { (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue direct))) (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue case-marked)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -))) (disjunctionUnificationConstraint / (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue objective))) (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue case-marked)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue +)))) }))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue coordination)))) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue -)))) (constraint (priorityUnionConstraint (priorityUnionLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue conjoined)))) (closingWedge >)) <= (priorityUnionRightHandSide (atomicValue +)) (comment | mark for checking compounding constraints (special case with relcl2+kh and 5c) 20Oct03 CB\\r\\n))) (constraint (comment |?|    <IP head type final-conjunct compounds_with1> = <DP head type compounds_with1>\\r\\n)) (constraint (comment |?|    <IP head type final-conjunct compounds_with2> = <DP head type compounds_with2>\\r\\n)) (constraint (comment |?|    <IP head type final-conjunct compounds_with3> = <DP head type compounds_with3>\\r\\n)) (constraint (comment |?|    <IP head type final-conjunct compounds_with4> = <DP head type compounds_with4>\\r\\n)) (constraint (priorityUnionConstraint (priorityUnionLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue comma)))) (closingWedge >)) <= (priorityUnionRightHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue comma)))) (closingWedge >)) (comment | comma placement for InitP\\r\\n))) (constraint (logicalConstraint (logConstraintLeftHandSide (openingWedge <) (nonTerminal DP) (featurePath (atomicValue head) (featurePath (atomicValue type))) (closingWedge >)) == (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue relative)) : (featureStructureValue (atomicValue +)) (closingBracket ]))) (binop ->) (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue relcl)) : (featureStructureValue (atomicValue +)) (closingBracket ]) (comment | require rel suffix to only occur when relative clause present\\r\\n)))))) (constraint (logicalConstraint (logConstraintLeftHandSide (openingWedge <) (nonTerminal Conj) (closingWedge >)) == (logConstraintExpression ~ (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue gloss)) : (featureStructureValue (atomicValue namely)) (closingBracket ])))))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue 0a-DP)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue start)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue 1)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue address2)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue 2cNon-ImpersonalV-PastIntransitive)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue F.able)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue DPCopSuf)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue object_relcl)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (ruleKW rule)) (closingWedge >)) = (uniConstraintRightHandSide (atomicValue double-temporal))))))) <EOF>)");
 	}
 
 	private void checkValidDescription(String sDescription, String sANTLRTree) {
@@ -312,11 +219,11 @@ public class PcPatrGrammarRecognizerTest {
 		CharStream input = CharStreams.fromString(sInput);
 		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		System.out.println(tokens.getTokenSource().getInputStream().toString());
-		for (Token t : lexer.getAllTokens())
-		{
-			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
-		}
+//		System.out.println(tokens.getTokenSource().getInputStream().toString());
+//		for (Token t : lexer.getAllTokens())
+//		{
+//			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
+//		}
 		PcPatrGrammarParser parser = new PcPatrGrammarParser(tokens);
 		return parser;
 	}

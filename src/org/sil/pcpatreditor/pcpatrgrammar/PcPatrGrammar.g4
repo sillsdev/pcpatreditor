@@ -17,7 +17,7 @@ grammar PcPatrGrammar;
 	package org.sil.pcpatreditor.pcpatrgrammar.antlr4generated;
 }
 
-patrgrammar : comment* featureTemplates? constraintTemplates? patrRules parameters? lexicalRules? EOF;
+patrgrammar : comment* featureTemplates? constraintTemplates? patrRules parameters? lexicalRules? comment* EOF;
 
 comment: LINECOMMENT;
 
@@ -129,6 +129,7 @@ featurePath: ruleKW
 atomicValue : TEXT 
             | PSRSYMBOL
             | TEXTWITHUNDERSCORE
+            | RULEID
             ;
 
 priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
@@ -177,9 +178,14 @@ LINECOMMENT : '|' .*? '\r'? '\n'
             | '|' .*? EOF
             ;
 
-PSRSYMBOL : [a-zA-Z0-9\u0080-\uFFFF]+;
+PSRSYMBOL : [A-Z][a-zA-Z0-9\u0080-\uFFFF]*;
 
 INDEX : '_' [0-9];
+
+RULEID: [0-9]*[a-zA-Z]*[-.]*[a-zA-Z]+[-.]*[a-zA-Z]*
+      | [a-zA-Z]*[0-9][a-zA-Z]*
+//      | [0-9]
+      ;
 
 TEXTWITHUNDERSCORE: TEXT '_' TEXT
                   | TEXT '_' TEXTWITHUNDERSCORE
