@@ -23,12 +23,13 @@ comment: LINECOMMENT;
 
 featureTemplates: featureTemplate+;
 
-featureTemplate: featureTemplateDefinition featurePathUnit '=' featureTemplateValue '.'? comment*
+featureTemplate: featureTemplateDefinition featurePathTemplateBody '.'? comment*
                | featureTemplateDefinition featureTemplateValue '.'? comment*
                ;
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
                         ;
+featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody*;
 
 featureTemplateName: atomicValue
                    ;

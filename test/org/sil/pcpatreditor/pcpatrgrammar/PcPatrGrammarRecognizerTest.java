@@ -8,6 +8,11 @@ package org.sil.pcpatreditor.pcpatrgrammar;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,6 +21,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarConstants;
 import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarErrorInfo;
 import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarErrorListener;
@@ -35,6 +41,13 @@ public class PcPatrGrammarRecognizerTest {
 
 	@Test
 	public void validDescriptionsTest() {
+//
+//		checkValidDescription(
+//				"Let AdjP-final              be  <head type AdjP-final>                      = +\r\n"
+//				+ "                                <head type AdjP-initial>                    = -\r\n"
+//				+ "rule\n S = NP VP\r\n"
+//				,
+//				"");
 		checkValidDescription(
 				"rule\n S = NP VP",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
@@ -65,10 +78,10 @@ public class PcPatrGrammarRecognizerTest {
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (nonTerminal S) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (nonTerminal VP) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >))))))) <EOF>)");
 		checkValidDescription(
 				"Let absolutive be <head case> = absolutive\nrule\n S = NP VP\n",
-				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue absolutive)) be) (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (featureTemplateValue (atomicValue absolutive)))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue absolutive)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (featureTemplateValue (atomicValue absolutive))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 		checkValidDescription(
 				"Let transitive.optional be  <head type transitive> = {+ -}\nrule S = NP VP\n",
-				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue transitive.optional)) be) (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue transitive)))) (closingWedge >)) = (featureTemplateValue (featureTemplateDisjunction (openingBrace {) (featurePath (atomicValue +)) (featurePathOrStructure (featurePath (atomicValue -))) (closingBrace }))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue transitive.optional)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue type) (featurePath (atomicValue transitive)))) (closingWedge >)) = (featureTemplateValue (featureTemplateDisjunction (openingBrace {) (featurePath (atomicValue +)) (featurePathOrStructure (featurePath (atomicValue -))) (closingBrace })))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))))) <EOF>)");
 
 		checkValidDescription(
 				"Let causative_syntax                     be   { [head:[infl:[valence:[causative:+]]\r\n"
@@ -215,6 +228,19 @@ public class PcPatrGrammarRecognizerTest {
 				+ "                    / [subject:[head:[type:[compounds_with4:^1]]]]) ) )\r\n"
 				,
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (nonTerminal S) (ruleDef =) (rightHandSide (nonTerminal NP) (nonTerminal VP))) (constraints (constraint (logicalConstraint (logConstraintLeftHandSide (openingWedge <) (nonTerminal IP) (featurePath (atomicValue head)) (closingWedge >)) == (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue rootgloss)) : (featureStructureValue ^1) (closingBracket ]))) (binop ->) ~ (logConstraintFactor ( (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue no_intervening)) : (featureStructureValue (atomicValue +)) (closingBracket ]))) (closingBracket ]))) (binop &) (logConstraintFactor ( (logConstraintExpression (logConstraintFactor ( (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue subject)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue compounds_with1)) : (featureStructureValue ^1) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (binop /) (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue subject)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue compounds_with2)) : (featureStructureValue ^1) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (closingBracket ])))) )) (binop /) (logConstraintFactor ( (logConstraintExpression (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue subject)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue compounds_with3)) : (featureStructureValue ^1) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (binop /) (logConstraintFactor (featureStructure (openingBracket [) (featureStructureName (atomicValue subject)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue head)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue type)) : (featureStructureValue (featureStructure (openingBracket [) (featureStructureName (atomicValue compounds_with4)) : (featureStructureValue ^1) (closingBracket ]))) (closingBracket ]))) (closingBracket ]))) (closingBracket ])))) ))) ))) )))))))) <EOF>)");
+		// Recognize a large grammar
+		File largeGrammarFile = new File(Constants.UNIT_TEST_DATA_FILE);
+		File largeGrammarExpectedResultsFile = new File(Constants.UNIT_TEST_LARGE_GRAMMAR_RECOGNIZER_EXPECTED_RESULTS_FILE);
+		try {
+			String largeFileContent = new String(Files.readAllBytes(largeGrammarFile.toPath()),
+					StandardCharsets.UTF_8);
+			String largeFileExpectedResults = new String(Files.readAllBytes(largeGrammarExpectedResultsFile.toPath()),
+					StandardCharsets.UTF_8);
+			checkValidDescription(largeFileContent, largeFileExpectedResults);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void checkValidDescription(String sDescription, String sANTLRTree) {
