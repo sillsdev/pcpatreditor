@@ -57,6 +57,7 @@ featureStructureName: atomicValue
 
 featureStructureValue: featureStructure
                      | atomicValue
+                     | INDEXEDVARIABLE
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
                         ;
@@ -184,8 +185,10 @@ INDEX : '_' [0-9];
 
 RULEID: [0-9]*[a-zA-Z]*[-.]*[a-zA-Z]+[-.]*[a-zA-Z]*
       | [a-zA-Z]*[0-9][a-zA-Z]*
-//      | [0-9]
+      | [a-zA-Z]+[_][a-zA-Z]+[0-9]
       ;
+
+INDEXEDVARIABLE: '^' [1-9];
 
 TEXTWITHUNDERSCORE: TEXT '_' TEXT
                   | TEXT '_' TEXTWITHUNDERSCORE
