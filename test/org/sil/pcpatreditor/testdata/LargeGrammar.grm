@@ -128,7 +128,7 @@ Let incompletive            be  <head infl aspect completive>               = -
 Let indefinite              be  <head type indefinite>                      = +
                                 <head type relative>                        = -
 Let infinitive              be  <head infl finite>                          = -
-Let interrogative           be  <head infl mood interrogative>              = +
+Let interrogative           be  <head infl mood interrogative>              = +
                                 <head type question>                        = +
 Let -interrogative          be  <head infl mood interrogative>              = -
                                 <head type question>                        = -
