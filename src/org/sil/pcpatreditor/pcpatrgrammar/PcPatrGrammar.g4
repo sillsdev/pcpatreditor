@@ -35,7 +35,7 @@ featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTem
 
 featureTemplateName: atomicValue;
 
-featureTemplateAbbreviation: '[' featureTemplateName ']';
+featureTemplateAbbreviation: '[' featureTemplateName ']' comment*;
                    
 featureTemplateValue: featureTemplateDisjunction
                     | featurePathUnit '.'? comment*
@@ -61,7 +61,6 @@ featureStructureName: atomicValue
 
 featureStructureValue: featureStructure
                      | atomicValue
-                     | INDEXEDVARIABLE
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
                         ;
@@ -89,12 +88,7 @@ ruleDef: '='
        | '->'
        ;
 
-nonTerminal: PSRSYMBOL nonTerminalIndex
-           | PSRSYMBOL
-           ;
-
-nonTerminalIndex: INDEX;
-
+nonTerminal: TEXT;
 
 rightHandSide: (nonTerminal+
              | disjunctiveTerminals+
@@ -131,11 +125,7 @@ featurePath: ruleKW
            | atomicValue
            ;
 
-atomicValue : TEXT 
-            | PSRSYMBOL
-            | TEXTWITHUNDERSCORE
-            | RULEID
-            ;
+atomicValue : TEXT;
 
 priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
 priorityUnionLeftHandSide: openingWedge nonTerminal featurePath closingWedge;
@@ -183,24 +173,10 @@ LINECOMMENT : '|' .*? '\r'? '\n'
             | '|' .*? EOF
             ;
 
-PSRSYMBOL : [A-Z][a-zA-Z0-9\u0080-\uFFFF]*;
-
-INDEX : '_' [0-9];
-
-RULEID: [0-9]*[a-zA-Z]*[-.]*[a-zA-Z]+[-.]*[a-zA-Z]*
-      | [a-zA-Z]*[0-9][a-zA-Z]*
-      | [a-zA-Z]+[_][a-zA-Z]+[0-9]
-      ;
-
-INDEXEDVARIABLE: '^' [1-9];
-
-TEXTWITHUNDERSCORE: TEXT '_' TEXT
-                  | TEXT '_' TEXTWITHUNDERSCORE
-                  ;
 // The lexer is a greedy parser and will always
 // match the longest sequence.
 TEXT : (
-	   [,.;^!?@#$%&'"a-zA-Z\u0080-\uFFFF+-]
+	   [,.;^!?@#$%&'"_a-zA-Z0-9\u0080-\uFFFF+-]
 //     | [_*=<>]
 //     | '['
 //     | ']'
@@ -212,8 +188,6 @@ TEXT : (
      | '~'
      | '`'
      | '\\'
-//     | [0-9]
-//     | '|' 
      )+  ;
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
