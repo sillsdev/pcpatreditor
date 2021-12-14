@@ -79,7 +79,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		psr = extracted(1, "S option start symbol - final ya na & Quote allowed", "S = {IP / CP} (Conj Deg) (Quote)", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
-		assertEquals(2, rhs.size());
+		assertEquals(3, rhs.size());
 		disjunctiveConstituents = (DisjunctiveConstituents) rhs.get(0);
 		assertNotNull(disjunctiveConstituents);
 		assertEquals(1, disjunctiveConstituents.getConstituents().size());
@@ -93,7 +93,59 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		assertEquals(1, disjConstituents1.getConstituents().size());
 		constituent = disjConstituents1.getConstituents().get(0);
 		checkConstituentSymbol(constituent, "CP");
-		
+
+		optionalConstituents = (OptionalConstituents) rhs.get(1);
+		assertNotNull(optionalConstituents);
+		assertEquals(2, optionalConstituents.getConstituents().size());
+		constituent = optionalConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "Conj");
+		constituent = optionalConstituents.getConstituents().get(1);
+		checkConstituentSymbol(constituent, "Deg");
+
+		optionalConstituents = (OptionalConstituents) rhs.get(2);
+		assertNotNull(optionalConstituents);
+		assertEquals(1, optionalConstituents.getConstituents().size());
+		constituent = optionalConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "Quote");
+
+		psr = extracted(1, "S option start symbol - final ya na & Quote allowed", "S = {IP DP / CP Conj Det} (Conj) (Det Quote)", "S");
+		rhs = psr.getRightHandSide();
+		assertNotNull(rhs);
+		assertEquals(3, rhs.size());
+		disjunctiveConstituents = (DisjunctiveConstituents) rhs.get(0);
+		assertNotNull(disjunctiveConstituents);
+		assertEquals(2, disjunctiveConstituents.getConstituents().size());
+		constituent = disjunctiveConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "IP");
+		constituent = disjunctiveConstituents.getConstituents().get(1);
+		checkConstituentSymbol(constituent, "DP");
+		disjunctionConstituents = disjunctiveConstituents.getDisjunctionConstituents();
+		assertNotNull(disjunctionConstituents);
+		assertEquals(1, disjunctionConstituents.size());
+		disjConstituents1 = disjunctionConstituents.get(0);
+		assertNotNull(disjConstituents1);
+		assertEquals(3, disjConstituents1.getConstituents().size());
+		constituent = disjConstituents1.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "CP");
+		constituent = disjConstituents1.getConstituents().get(1);
+		checkConstituentSymbol(constituent, "Conj");
+		constituent = disjConstituents1.getConstituents().get(2);
+		checkConstituentSymbol(constituent, "Det");
+
+		optionalConstituents = (OptionalConstituents) rhs.get(1);
+		assertNotNull(optionalConstituents);
+		assertEquals(1, optionalConstituents.getConstituents().size());
+		constituent = optionalConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "Conj");
+
+		optionalConstituents = (OptionalConstituents) rhs.get(2);
+		assertNotNull(optionalConstituents);
+		assertEquals(2, optionalConstituents.getConstituents().size());
+		constituent = optionalConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "Det");
+		constituent = optionalConstituents.getConstituents().get(1);
+		checkConstituentSymbol(constituent, "Quote");
+
 		// TODO: test for templates
 	}
 

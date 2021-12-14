@@ -121,6 +121,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	}
 	
 	@Override
+	public void exitOptionalConstituents(PcPatrGrammarParser.OptionalConstituentsContext ctx) {
+		List<ConstituentContext> constituentsCtxs = ctx.getRuleContexts(constituentCtx.getClass());
+		List<Constituent> constituentList = addConstituentsToList(constituentsCtxs, 0, constituentsCtxs.size());
+		OptionalConstituents optionalConstituents = new OptionalConstituents(constituentList);
+		rhs.add(optionalConstituents);
+	}
+
+	@Override
 	public void exitRuleIdentifier(PcPatrGrammarParser.RuleIdentifierContext ctx) {
 		// Note: tried to use lexer channel per ANLTR documentation but could not find
 		// the hidden material.  So, we're just manually adding spaces between ctx children
@@ -151,7 +159,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		List<ConstituentContext> constituentCtxs = ctx.getRuleContexts(constituentCtx.getClass());
 		List<Constituent> constituentList = addConstituentsToList(constituentCtxs, 0, constituentCtxs.size());
 		ConstituentsRightHandSide constituentsRhs = new ConstituentsRightHandSide(constituentList);
-		rhs.add(constituentsRhs);
+		if (constituentsRhs.getConstituents().size() > 0) {
+			rhs.add(constituentsRhs);
+		}
 	}
 
 	protected List<Constituent> addConstituentsToList(List<ConstituentContext> constituentCtxs, int iStart, int iEnd) {
