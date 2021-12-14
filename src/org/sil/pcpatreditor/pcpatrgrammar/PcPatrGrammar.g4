@@ -82,26 +82,26 @@ ruleKW: 'Rule'
     
 ruleIdentifier: '{' .*? '}';
 
-phraseStructureRule: nonTerminal ruleDef rightHandSide
+phraseStructureRule: constituent ruleDef rightHandSide
                    ;
 ruleDef: '='
        | '->'
        ;
 
-nonTerminal: TEXT;
+constituent: TEXT;
 
-rightHandSide: (nonTerminal+
-             | disjunctiveTerminals+
-             | optionalTerminals+
-             | disjunctiveOptionalNonTerminal+
+rightHandSide: (constituent+
+             | disjunctiveConstituents+
+             | optionalConstituents+
+             | disjunctiveOptionalConstituents+
               )+
              ;
 
-disjunctiveTerminals: '{' nonTerminal+ disjunctionNonTerminal+ '}' comment?;
-disjunctionNonTerminal: '/' nonTerminal+ comment?;
-optionalTerminals: '(' nonTerminal+ ')' comment?; 
-disjunctiveOptionalNonTerminal: '(' nonTerminal+ disjunctionOptionalNonTerminal+ ')' comment?;
-disjunctionOptionalNonTerminal: '/' nonTerminal+ comment?;
+disjunctiveConstituents: '{' constituent+ disjunctionConstituents+ '}' comment?;
+disjunctionConstituents: '/' constituent+ comment?;
+optionalConstituents: '(' constituent+ ')' comment?;
+disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
+disjunctionOptionalConstituents: '/' constituent+ comment?;
 
 constraints: constraint+;
 
@@ -113,8 +113,8 @@ constraint: unificationConstraint
 unificationConstraint: uniConstraintLeftHandSide '=' uniConstraintRightHandSide comment?
                      | disjunctiveUnificationConstraint 
                      ;
-uniConstraintLeftHandSide: openingWedge nonTerminal featurePath closingWedge;
-uniConstraintRightHandSide: openingWedge nonTerminal featurePath closingWedge comment?
+uniConstraintLeftHandSide: openingWedge constituent featurePath closingWedge;
+uniConstraintRightHandSide: openingWedge constituent featurePath closingWedge comment?
                           | atomicValue comment?
                           ;
 disjunctiveUnificationConstraint: '{' unificationConstraint+ disjunctionUnificationConstraint+ '}' comment?;
@@ -128,14 +128,14 @@ featurePath: ruleKW
 atomicValue : TEXT;
 
 priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
-priorityUnionLeftHandSide: openingWedge nonTerminal featurePath closingWedge;
-priorityUnionRightHandSide: openingWedge nonTerminal featurePath closingWedge
+priorityUnionLeftHandSide: openingWedge constituent featurePath closingWedge;
+priorityUnionRightHandSide: openingWedge constituent featurePath closingWedge
                           | atomicValue
                           ;
 
 logicalConstraint: logConstraintLeftHandSide '==' logConstraintExpression;
-logConstraintLeftHandSide: openingWedge nonTerminal featurePath closingWedge
-                         | openingWedge nonTerminal closingWedge
+logConstraintLeftHandSide: openingWedge constituent featurePath closingWedge
+                         | openingWedge constituent closingWedge
                          ;
 logConstraintExpression: logConstraintFactor
                        |'~' logConstraintFactor
