@@ -98,8 +98,8 @@ rightHandSide: (constituent+
              ;
 
 disjunctiveConstituents: '{' constituent+ disjunctionConstituents+ '}' comment?;
-disjunctionConstituents: '/' (constituent+ | disjunctiveConstituents)+ comment?;
-optionalConstituents: '(' (constituent+ | disjunctiveConstituents+)+ ')' comment?;
+disjunctionConstituents: '/' (constituent | disjunctiveConstituents)+ comment?;
+optionalConstituents: '(' (constituent | disjunctiveConstituents)+ ')' comment?;
 disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
 disjunctionOptionalConstituents: '/' constituent+ comment?;
 

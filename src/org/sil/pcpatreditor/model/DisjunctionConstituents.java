@@ -6,41 +6,13 @@
 
 package org.sil.pcpatreditor.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Andy Black
  *
  */
-public class DisjunctionConstituents extends PhraseStructureRuleRightHandSide {
-
-	List<DisjunctiveConstituents> disjunctiveConstituents = new ArrayList<>();
+public class DisjunctionConstituents extends SequencedConstituents {
 
 	public DisjunctionConstituents() {
 		super();
 	}
-
-	/**
-	 * @param constituents
-	 * @param disjunctiveConstituents
-	 */
-	public DisjunctionConstituents(List<Constituent> constituents) {
-		super(constituents);
-	}
-
-	/**
-	 * @return the disjunctiveConstituents
-	 */
-	public List<DisjunctiveConstituents> getDisjunctiveConstituents() {
-		return disjunctiveConstituents;
-	}
-
-	/**
-	 * @param disjunctiveConstituents the disjunctiveConstituents to set
-	 */
-	public void setDisjunctiveConstituents(List<DisjunctiveConstituents> disjunctiveConstituents) {
-		this.disjunctiveConstituents = disjunctiveConstituents;
-	}
-
 }

@@ -9,11 +9,8 @@ package org.sil.pcpatreditor.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.Grammar;
@@ -21,18 +18,14 @@ import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituents;
+import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarBaseListener;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.ConstituentContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionConstituentsContext;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctiveConstituentsContext;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.PatrRuleContext;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.PhraseStructureRuleContext;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.RuleIdentifierContext;
 
 /**
  * @author Andy Black
@@ -104,12 +97,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			switch (sChildClass) {
 			case "DisjunctiveConstituentsContext":
 				DisjunctiveConstituents dc = disjunctiveConstituentsMap.get(prCtx.hashCode());
-				disjunctionConstituents.getDisjunctiveConstituents().add(dc);
+				disjunctionConstituents.getContents().add(dc);
 				System.out.println("\t add disjunctive");
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				disjunctionConstituents.getConstituents().add(constituent);
+				ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
+				cRhs.getConstituents().add(constituent);
+				disjunctionConstituents.getContents().add(cRhs);
 				System.out.println("\t add constituent " + constituent.getNodeRepresentation());
 				break;
 			case "CommentContext":
@@ -169,12 +164,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			switch (sChildClass) {
 			case "DisjunctiveConstituentsContext":
 				DisjunctiveConstituents dc = disjunctiveConstituentsMap.get(prCtx.hashCode());
-				optionalConstituents.getDisjunctiveConstituents().add(dc);
+				optionalConstituents.getContents().add(dc);
 				System.out.println("\t add disjunctive: dc const=" + dc.getConstituents().size() + "; disj size=" + dc.getDisjunctionConstituents().size());
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				optionalConstituents.getConstituents().add(constituent);
+				ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
+				cRhs.getConstituents().add(constituent);
+				optionalConstituents.getContents().add(cRhs);
 				System.out.println("\t add constituent " + constituent.getNodeRepresentation());
 				break;
 			case "CommentContext":
@@ -255,7 +252,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			case "OptionalConstituentsContext":
 				OptionalConstituents optionalConstituents = optionalConstituentsMap.get(prCtx.hashCode());
 				System.out.println("\tadding optional constituents");
-				rhs.add(optionalConstituents);
+				OptionalConstituentsRightHandSide ocRhs = new OptionalConstituentsRightHandSide();
+				ocRhs.getOptionalConstituents().add(optionalConstituents);
+				rhs.add(ocRhs);
 			break;
 			}
 			lastClass = sClass;
