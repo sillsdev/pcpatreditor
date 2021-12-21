@@ -95,7 +95,6 @@ public class GrammarBuilder {
 	public static Grammar parseAString(String sInput, Grammar origGrammar) {
 
 		sDescription = sInput;
-		System.out.println("input='" + sInput + "'");
 		CharStream input = CharStreams.fromString(sInput);
 		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);

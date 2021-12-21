@@ -73,7 +73,6 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	public void enterPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
 		constituentMap.clear();
 		rule = new PatrRule(true, false);
-		System.out.println("enter rule: " + ctx);
 	}
 	
 	@Override
@@ -93,19 +92,16 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			// we may have comments so we do not know for sure where the '}' terminal is
 			ParseTree prCtx = ctx.getChild(i);
 			String sChildClass = prCtx.getClass().getSimpleName();
-			System.out.println("exit disjunction: child=" + sChildClass);
 			switch (sChildClass) {
 			case "DisjunctiveConstituentsContext":
 				DisjunctiveConstituents dc = disjunctiveConstituentsMap.get(prCtx.hashCode());
 				disjunctionConstituents.getContents().add(dc);
-				System.out.println("\t add disjunctive");
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
 				ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
 				cRhs.getConstituents().add(constituent);
 				disjunctionConstituents.getContents().add(cRhs);
-				System.out.println("\t add constituent " + constituent.getNodeRepresentation());
 				break;
 			case "CommentContext":
 				// do nothing right now
@@ -124,17 +120,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			// we may have comments so we do not know for sure where the '}' terminal is
 			ParseTree prCtx = ctx.getChild(i);
 			String sChildClass = prCtx.getClass().getSimpleName();
-			System.out.println("exit disjunctive: child=" + sChildClass);
 			switch (sChildClass) {
 			case "DisjunctionConstituentsContext":
 				DisjunctionConstituents dc = disjunctionConstituentsMap.get(prCtx.hashCode());
 				disjunctiveConstituents.getDisjunctionConstituents().add(dc);
-				System.out.println("\t add disjunction");
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
 				disjunctiveConstituents.getConstituents().add(constituent);
-				System.out.println("\t add constituent " + constituent.getNodeRepresentation());
 				break;
 			case "CommentContext":
 				// do nothing right now
@@ -148,7 +141,6 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	public void exitConstituent(PcPatrGrammarParser.ConstituentContext ctx) {
 		Constituent constituent = new Constituent(ctx.getText());
 		constituentMap.put(ctx.hashCode(), constituent);
-		System.out.println("exit constituent: " + ctx.getText());
 	}
 	
 	@Override
@@ -160,19 +152,16 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			// we may have comments so we do not know for sure where the ')' terminal is
 			ParseTree prCtx = ctx.getChild(i);
 			String sChildClass = prCtx.getClass().getSimpleName();
-			System.out.println("exit optional: child=" + sChildClass);
 			switch (sChildClass) {
 			case "DisjunctiveConstituentsContext":
 				DisjunctiveConstituents dc = disjunctiveConstituentsMap.get(prCtx.hashCode());
 				optionalConstituents.getContents().add(dc);
-				System.out.println("\t add disjunctive: dc const=" + dc.getConstituents().size() + "; disj size=" + dc.getDisjunctionConstituents().size());
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
 				ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
 				cRhs.getConstituents().add(constituent);
 				optionalConstituents.getContents().add(cRhs);
-				System.out.println("\t add constituent " + constituent.getNodeRepresentation());
 				break;
 			case "CommentContext":
 				// do nothing right now
@@ -212,12 +201,10 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		constituentCtx = (ConstituentContext)ctx.getChild(0);
 		Constituent nt = constituentMap.get(constituentCtx.hashCode());
 		psr = new PhraseStructureRule(nt, rhs);
-		System.out.println("exit psr: " + ctx);
 	}
 
 	@Override
 	public void exitRightHandSide(PcPatrGrammarParser.RightHandSideContext ctx) {
-		System.out.println("exit rhs: " + ctx);
 		String lastClass = "";
 		String nextClass = "";
 		int numChildren = ctx.getChildCount();
@@ -230,28 +217,23 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 				nextClass = prCtxNext.getClass().getSimpleName();
 			}
 			String sClass = prCtx.getClass().getSimpleName();
-			System.out.println("\tclass=" + sClass);
 			switch (sClass) {
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				System.out.println("\tconstituent=" + constituent.getNodeRepresentation());
 				if (!lastClass.equals(sClass)) {
 					cRhs = new ConstituentsRightHandSide();
 				}
 				cRhs.getConstituents().add(constituent);
 				if (i == numChildren-1 || !nextClass.equals(sClass)) {
-					System.out.println("\tadding constituents as last item");
 					rhs.add(cRhs);
 				}
 				break;
 			case "DisjunctiveConstituentsContext":
 				DisjunctiveConstituents disjunctiveConstituents = disjunctiveConstituentsMap.get(prCtx.hashCode());
-				System.out.println("\tadding disjunctive constituents");
 				rhs.add(disjunctiveConstituents);
 			break;
 			case "OptionalConstituentsContext":
 				OptionalConstituents optionalConstituents = optionalConstituentsMap.get(prCtx.hashCode());
-				System.out.println("\tadding optional constituents");
 				OptionalConstituentsRightHandSide ocRhs = new OptionalConstituentsRightHandSide();
 				ocRhs.getOptionalConstituents().add(optionalConstituents);
 				rhs.add(ocRhs);
@@ -285,7 +267,5 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	public void exitPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
 		rule.setPhraseStructureRule(psr);
 		grammar.getRules().add(rule);
-		System.out.println("exit rule: " + ctx);
-
 	}
 }
