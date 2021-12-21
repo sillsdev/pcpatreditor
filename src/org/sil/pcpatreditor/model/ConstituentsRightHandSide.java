@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class ConstituentsRightHandSide extends PhraseStructureRuleRightHandSide {
 
+	public ConstituentsRightHandSide() {
+		super();
+	}
+
 	/**
 	 * @param constituents
 	 */

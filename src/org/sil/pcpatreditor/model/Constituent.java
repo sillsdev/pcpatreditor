@@ -64,4 +64,12 @@ public class Constituent {
 	public void setIndex(int index) {
 		this.index = index;
 	}
+
+	public String getNodeRepresentation() {
+		String sIndex = "";
+		if (index > -1) {
+			sIndex = Integer.toString(index);
+		}
+		return node + sIndex;
+	}
 }

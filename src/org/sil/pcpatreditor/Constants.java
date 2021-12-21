@@ -25,7 +25,8 @@ public class Constants {
 	// Unit Testing constants
 	public static final String UNIT_TEST_DATA_FILE_NAME = "test/org/sil/pcpatreditor/testdata/TestData.";
 	public static final String UNIT_TEST_DATA_FILE = "test/org/sil/pcpatreditor/testdata/LargeGrammar.grm";
+	public static final String UNIT_TEST_DATA_FILE_EXTRAS = "test/org/sil/pcpatreditor/testdata/LargeGrammarExtras.grm";
 	public static final String UNIT_TEST_BOOKMARKS_DATA_FILE = "test/org/sil/pcpatreditor/testdata/Bookmarks1.xml";
-	public static final String UNIT_TEST_LARGE_GRAMMAR_RECOGNIZER_EXPECTED_RESULTS_FILE = "test/org/sil/pcpatreditor/testdata/LargeGrammarRecognizerExpectedResults.txt";
+	public static final String UNIT_TEST_LARGE_GRAMMAR_EXTRAS_RECOGNIZER_EXPECTED_RESULTS_FILE = "test/org/sil/pcpatreditor/testdata/LargeGrammarRecognizerExpectedResults.txt";
 
 }

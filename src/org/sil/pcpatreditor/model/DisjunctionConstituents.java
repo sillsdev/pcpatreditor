@@ -6,6 +6,7 @@
 
 package org.sil.pcpatreditor.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,8 @@ import java.util.List;
  *
  */
 public class DisjunctionConstituents extends PhraseStructureRuleRightHandSide {
+
+	List<DisjunctiveConstituents> disjunctiveConstituents = new ArrayList<>();
 
 	public DisjunctionConstituents() {
 		super();
@@ -25,4 +28,19 @@ public class DisjunctionConstituents extends PhraseStructureRuleRightHandSide {
 	public DisjunctionConstituents(List<Constituent> constituents) {
 		super(constituents);
 	}
+
+	/**
+	 * @return the disjunctiveConstituents
+	 */
+	public List<DisjunctiveConstituents> getDisjunctiveConstituents() {
+		return disjunctiveConstituents;
+	}
+
+	/**
+	 * @param disjunctiveConstituents the disjunctiveConstituents to set
+	 */
+	public void setDisjunctiveConstituents(List<DisjunctiveConstituents> disjunctiveConstituents) {
+		this.disjunctiveConstituents = disjunctiveConstituents;
+	}
+
 }

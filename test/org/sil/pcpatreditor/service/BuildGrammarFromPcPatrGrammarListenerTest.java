@@ -52,7 +52,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildGrammarTest() {
-		psr = extracted(1, "testing 1, 2, 3", "S = NP VP", "S");
+		psr = checkPhraseStuctureRule(1, "testing 1, 2, 3", "S = NP VP", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
 		assertEquals(1, rhs.size());
@@ -63,7 +63,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constituent = constituentRhs.getConstituents().get(1);
 		checkConstituentSymbol(constituent, "VP");
 
-		psr = extracted(1, "", "S = NP_1 V NP_2", "S");
+		psr = checkPhraseStuctureRule(1, "", "S = NP_1 V NP_2", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
 		assertEquals(1, rhs.size());
@@ -76,7 +76,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constituent = constituentRhs.getConstituents().get(2);
 		checkConstituentSymbol(constituent, "NP_2");
 
-		psr = extracted(1, "S option start symbol - final ya na & Quote allowed", "S = {IP / CP} (Conj Deg) (Quote)", "S");
+		psr = checkPhraseStuctureRule(1, "S option start symbol - final ya na & Quote allowed", "S = {IP / CP} (Conj Deg) (Quote)", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
 		assertEquals(3, rhs.size());
@@ -88,10 +88,10 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		List<DisjunctionConstituents> disjunctionConstituents = disjunctiveConstituents.getDisjunctionConstituents();
 		assertNotNull(disjunctionConstituents);
 		assertEquals(1, disjunctionConstituents.size());
-		DisjunctionConstituents disjConstituents1 = disjunctionConstituents.get(0);
-		assertNotNull(disjConstituents1);
-		assertEquals(1, disjConstituents1.getConstituents().size());
-		constituent = disjConstituents1.getConstituents().get(0);
+		DisjunctionConstituents disjion = disjunctionConstituents.get(0);
+		assertNotNull(disjion);
+		assertEquals(1, disjion.getConstituents().size());
+		constituent = disjion.getConstituents().get(0);
 		checkConstituentSymbol(constituent, "CP");
 
 		optionalConstituents = (OptionalConstituents) rhs.get(1);
@@ -108,7 +108,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constituent = optionalConstituents.getConstituents().get(0);
 		checkConstituentSymbol(constituent, "Quote");
 
-		psr = extracted(1, "S option start symbol - final ya na & Quote allowed", "S = {IP DP / CP Conj Det} (Conj) (Det Quote)", "S");
+		psr = checkPhraseStuctureRule(1, "S option start symbol - final ya na & Quote allowed", "S = {IP DP / CP Conj Det} (Conj) (Det Quote)", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
 		assertEquals(3, rhs.size());
@@ -122,14 +122,14 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		disjunctionConstituents = disjunctiveConstituents.getDisjunctionConstituents();
 		assertNotNull(disjunctionConstituents);
 		assertEquals(1, disjunctionConstituents.size());
-		disjConstituents1 = disjunctionConstituents.get(0);
-		assertNotNull(disjConstituents1);
-		assertEquals(3, disjConstituents1.getConstituents().size());
-		constituent = disjConstituents1.getConstituents().get(0);
+		disjion = disjunctionConstituents.get(0);
+		assertNotNull(disjion);
+		assertEquals(3, disjion.getConstituents().size());
+		constituent = disjion.getConstituents().get(0);
 		checkConstituentSymbol(constituent, "CP");
-		constituent = disjConstituents1.getConstituents().get(1);
+		constituent = disjion.getConstituents().get(1);
 		checkConstituentSymbol(constituent, "Conj");
-		constituent = disjConstituents1.getConstituents().get(2);
+		constituent = disjion.getConstituents().get(2);
 		checkConstituentSymbol(constituent, "Det");
 
 		optionalConstituents = (OptionalConstituents) rhs.get(1);
@@ -146,10 +146,131 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constituent = optionalConstituents.getConstituents().get(1);
 		checkConstituentSymbol(constituent, "Quote");
 
+		psr = checkPhraseStuctureRule(1, "VP option 5cPastNew - V final, transitive",
+				"VP = DP ({PP / {DP_1 / AdvP} / PP_1 {DP_1 / AdvP} / {DP_2 / AdvP} PP / PP_1 {DP_2 / AdvP} PP}) V (CP)",
+				"VP");
+		rhs = psr.getRightHandSide();
+		assertNotNull(rhs);
+		assertEquals(4, rhs.size());
+		// DP
+		constituentRhs = (ConstituentsRightHandSide) rhs.get(0);
+		assertEquals(1, constituentRhs.getConstituents().size());
+		constituent = constituentRhs.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "DP");
+		// ({PP / {DP_1 / AdvP} / PP_1 {DP_1 / AdvP} / {DP_2 / AdvP} PP / PP_1 {DP_2 / AdvP} PP})
+		optionalConstituents = (OptionalConstituents) rhs.get(1);
+		assertNotNull(optionalConstituents);
+		assertEquals(0, optionalConstituents.getConstituents().size());
+		List<DisjunctiveConstituents> dcList = optionalConstituents.getDisjunctiveConstituents();
+		assertNotNull(dcList);
+		assertEquals(1, dcList.size());
+		// {PP / {DP_1 / AdvP} / PP_1 {DP_1 / AdvP} / {DP_2 / AdvP} PP / PP_1 {DP_2 / AdvP} PP}
+		disjunctiveConstituents = dcList.get(0);
+		assertNotNull(disjunctiveConstituents);
+		assertNotNull(disjunctiveConstituents.getConstituents());
+		assertEquals(1, disjunctiveConstituents.getConstituents().size());
+		constituent = disjunctiveConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "PP");
+		disjunctionConstituents = disjunctiveConstituents.getDisjunctionConstituents();
+		assertNotNull(disjunctionConstituents);
+		assertEquals(4, disjunctionConstituents.size());
+		// {DP_1 / AdvP}
+		disjion = disjunctionConstituents.get(0);
+		assertNotNull(disjion);
+		assertEquals(0, disjion.getConstituents().size());
+		assertNotNull(disjion.getDisjunctiveConstituents());
+		assertEquals(1, disjion.getDisjunctiveConstituents().size());
+		DisjunctiveConstituents disjive = disjion.getDisjunctiveConstituents().get(0);
+		assertNotNull(disjive);
+		assertEquals(1, disjive.getConstituents().size());
+		constituent = disjive.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "DP_1");
+		DisjunctionConstituents disjion2 = disjive.getDisjunctionConstituents().get(0);
+		assertNotNull(disjion2.getConstituents());
+		assertEquals(1, disjion2.getConstituents().size());
+		constituent = disjion2.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "AdvP");
+		assertNotNull(disjion2.getDisjunctiveConstituents());
+		assertEquals(0, disjion2.getDisjunctiveConstituents().size());
+		// PP_1 {DP_1 / AdvP}
+		disjion = disjunctionConstituents.get(1);
+		assertNotNull(disjion);
+		assertEquals(1, disjion.getConstituents().size());
+		constituent = disjion.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "PP_1");
+		assertNotNull(disjion.getDisjunctiveConstituents());
+		assertEquals(1, disjion.getDisjunctiveConstituents().size());
+		disjive = disjion.getDisjunctiveConstituents().get(0);
+		assertNotNull(disjive);
+		assertEquals(1, disjive.getConstituents().size());
+		constituent = disjive.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "DP_1");
+		disjion2 = disjive.getDisjunctionConstituents().get(0);
+		assertNotNull(disjion2.getConstituents());
+		assertEquals(1, disjion2.getConstituents().size());
+		constituent = disjion2.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "AdvP");
+		assertNotNull(disjion2.getDisjunctiveConstituents());
+		assertEquals(0, disjion2.getDisjunctiveConstituents().size());
+		// {DP_2 / AdvP} PP
+		disjion = disjunctionConstituents.get(2);
+		assertNotNull(disjion);
+		assertEquals(1, disjion.getConstituents().size());
+		constituent = disjion.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "PP");
+		assertNotNull(disjion.getDisjunctiveConstituents());
+		assertEquals(1, disjion.getDisjunctiveConstituents().size());
+		disjive = disjion.getDisjunctiveConstituents().get(0);
+		assertNotNull(disjive);
+		assertEquals(1, disjive.getConstituents().size());
+		constituent = disjive.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "DP_2");
+		disjion2 = disjive.getDisjunctionConstituents().get(0);
+		assertNotNull(disjion2.getConstituents());
+		assertEquals(1, disjion2.getConstituents().size());
+		constituent = disjion2.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "AdvP");
+		assertNotNull(disjion2.getDisjunctiveConstituents());
+		assertEquals(0, disjion2.getDisjunctiveConstituents().size());
+		// PP_1 {DP_2 / AdvP} PP
+		disjion = disjunctionConstituents.get(3);
+		assertNotNull(disjion);
+		assertEquals(2, disjion.getConstituents().size());
+		constituent = disjion.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "PP_1");
+		constituent = disjion.getConstituents().get(1);
+		checkConstituentSymbol(constituent, "PP");
+		assertNotNull(disjion.getDisjunctiveConstituents());
+		assertEquals(1, disjion.getDisjunctiveConstituents().size());
+		disjive = disjion.getDisjunctiveConstituents().get(0);
+		assertNotNull(disjive);
+		assertEquals(1, disjive.getConstituents().size());
+		constituent = disjive.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "DP_2");
+		disjion2 = disjive.getDisjunctionConstituents().get(0);
+		assertNotNull(disjion2.getConstituents());
+		assertEquals(1, disjion2.getConstituents().size());
+		constituent = disjion2.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "AdvP");
+		assertNotNull(disjion2.getDisjunctiveConstituents());
+		assertEquals(0, disjion2.getDisjunctiveConstituents().size());
+		// V
+		constituentRhs = (ConstituentsRightHandSide) rhs.get(2);
+		assertEquals(1, constituentRhs.getConstituents().size());
+		constituent = constituentRhs.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "V");
+		// (CP)
+		optionalConstituents = (OptionalConstituents) rhs.get(3);
+		assertNotNull(optionalConstituents);
+		assertEquals(1, optionalConstituents.getConstituents().size());
+		constituent = optionalConstituents.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "CP");
+		assertEquals(0, optionalConstituents.getDisjunctiveConstituents().size());
+
 		// TODO: test for templates
 	}
 
-	protected PhraseStructureRule extracted(int numberOfRules, String sId, String sPsr, String sLhs) {
+	protected PhraseStructureRule checkPhraseStuctureRule(int numberOfRules, String sId, String sPsr, String sLhs) {
 		rhs.clear();
 		Grammar grammar = new Grammar();
 		grammar = GrammarBuilder.parseAString("rule {" + sId + "}\n " + sPsr, grammar);
