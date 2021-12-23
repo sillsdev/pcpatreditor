@@ -39,7 +39,7 @@ public class OptionalConstituentsRightHandSide extends PhraseStructureRuleRightH
 
 	public String psrRepresentation() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(" (");
+		sb.append("(");
 		for (int i = 0; i < optionalConstituents.size(); i++) {
 			OptionalConstituents oc = optionalConstituents.get(i);
 			sb.append(oc.psrRepresentation());

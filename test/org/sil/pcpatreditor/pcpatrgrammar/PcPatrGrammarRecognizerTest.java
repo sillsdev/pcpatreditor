@@ -61,6 +61,9 @@ public class PcPatrGrammarRecognizerTest {
 		checkValidGrammar(
 				"rule\n S = NP_1 V NP_2",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP_1) (constituent V) (constituent NP_2))))) <EOF>)");
+		checkValidGrammar("rule {testing}\r\n"
+				+ "S = AdvP / DP    |/ VP / PP "
+				, "(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { testing }) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent AdvP) (disjunctionConstituents / (constituent DP) (comment |/ VP / PP )))))) <EOF>)");
 		checkValidGrammar(
 				"rule\n S = NP VP\n<S head cat> = <VP head cat>",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP) (constituent VP))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (constituent S) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (constituent VP) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >))))))) <EOF>)");
@@ -232,7 +235,7 @@ public class PcPatrGrammarRecognizerTest {
 				+ "    <S head> = <DP head>\r\n"
 				+ "|    <S head> = <VP head>\r\n"
 				+ "|    <S head> = <PP head>\r\n"
-				, "(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { testing }) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent AdvP) (disjunctionOptionalConstituents / (constituent DP) (comment |/ VP / PP \\r\\n)))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (constituent S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (constituent AdvP) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (constituent S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (constituent DP) (featurePath (atomicValue head)) (closingWedge >) (comment |    <S head> = <VP head>\\r\\n)) (comment |    <S head> = <PP head>\\r\\n)))))) <EOF>)");
+				, "(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { testing }) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent AdvP) (disjunctionConstituents / (constituent DP) (comment |/ VP / PP \\r\\n)))) (constraints (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (constituent S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (constituent AdvP) (featurePath (atomicValue head)) (closingWedge >)))) (constraint (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (constituent S) (featurePath (atomicValue head)) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (constituent DP) (featurePath (atomicValue head)) (closingWedge >) (comment |    <S head> = <VP head>\\r\\n)) (comment |    <S head> = <PP head>\\r\\n)))))) <EOF>)");
 		checkValidGrammar("rule {IP option 2cImpersonalV - subject initial, required, root clause}  \r\n"
 				+ "IP = DP I'\r\n"
 				+ "    <IP head> = <I' head>\r\n"

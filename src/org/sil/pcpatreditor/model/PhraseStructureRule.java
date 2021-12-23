@@ -59,7 +59,7 @@ public class PhraseStructureRule {
 		sb.append(" = ");
 		for (int i = 0; i < rightHandSide.size(); i++) {
 			PhraseStructureRuleRightHandSide rhs = rightHandSide.get(i);
-			if (i > 0 && rhs instanceof ConstituentsRightHandSide) {
+			if (i > 0) {
 				sb.append(Constants.PSR_SEPARATOR);
 			}
 			sb.append(rhs.psrRepresentation());

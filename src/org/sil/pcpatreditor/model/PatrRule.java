@@ -84,4 +84,7 @@ public class PatrRule extends PcPatrBase {
 		this.lineNumber = lineNumber;
 	}
 
+	public String psrRepresentation() {
+		return phraseStructureRule.psrRepresentation();
+	}
 }

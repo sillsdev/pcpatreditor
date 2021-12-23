@@ -21,6 +21,7 @@ import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
+import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
@@ -64,6 +65,30 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constituent = constituentRhs.getConstituents().get(1);
 		checkConstituentSymbol(constituent, "VP");
 
+		psr = checkPhraseStuctureRule(1, "testing", "S = AdvP / DP", "S");
+		rhs = psr.getRightHandSide();
+		assertNotNull(rhs);
+		assertEquals(2, rhs.size());
+		constituentRhs = (ConstituentsRightHandSide) rhs.get(0);
+		assertEquals(1, constituentRhs.getConstituents().size());
+		constituent = constituentRhs.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "AdvP");
+		DisjunctionConstituentsRightHandSide dcRhs = (DisjunctionConstituentsRightHandSide) rhs.get(1);
+		DisjunctionConstituents disjion = dcRhs.getDisjunctionConstituents().get(0);
+		assertNotNull(disjion);
+		assertEquals(1, disjion.getContents().size());
+		ConstituentsRightHandSide cRhs = (ConstituentsRightHandSide) disjion.getContents().get(0);
+		constituent = cRhs.getConstituents().get(0);
+		checkConstituentSymbol(constituent, "DP");
+
+		psr = checkPhraseStuctureRule(1,
+				"S option startInitPP symbol with PP initial elements and final ya na & Quote allowed",
+				"S = InitP {IP / CP} (Conj Deg) (Quote)", "S");
+		rhs = psr.getRightHandSide();
+		assertNotNull(rhs);
+		assertEquals(4, rhs.size());
+		// testing for the PSR combination so we won't look further here
+
 		psr = checkPhraseStuctureRule(1, "", "S = NP_1 V NP_2", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
@@ -89,10 +114,10 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		List<DisjunctionConstituents> disjunctionConstituents = disjunctiveConstituents.getDisjunctionConstituents();
 		assertNotNull(disjunctionConstituents);
 		assertEquals(1, disjunctionConstituents.size());
-		DisjunctionConstituents disjion = disjunctionConstituents.get(0);
+		disjion = disjunctionConstituents.get(0);
 		assertNotNull(disjion);
 		assertEquals(1, disjion.getContents().size());
-		ConstituentsRightHandSide cRhs = (ConstituentsRightHandSide) disjion.getContents().get(0);
+		cRhs = (ConstituentsRightHandSide) disjion.getContents().get(0);
 		constituent = cRhs.getConstituents().get(0);
 		checkConstituentSymbol(constituent, "CP");
 

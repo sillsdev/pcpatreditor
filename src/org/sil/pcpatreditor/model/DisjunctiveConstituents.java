@@ -53,7 +53,6 @@ public class DisjunctiveConstituents extends PhraseStructureRuleRightHandSide {
 			sb.append(Constants.PSR_SEPARATOR);
 		}
 		for (int i = 0; i < disjunctionConstituents.size(); i++) {
-			sb.append("/ ");
 			DisjunctionConstituents dc = disjunctionConstituents.get(i);
 			sb.append(dc.psrRepresentation());
 			if (i < disjunctionConstituents.size() - 1) {

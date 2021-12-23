@@ -94,7 +94,7 @@ rightHandSide: (constituent
              | disjunctiveConstituents
              | optionalConstituents
              | disjunctiveOptionalConstituents
-             | disjunctionOptionalConstituents
+             | disjunctionConstituents
               )+
              ;
 

@@ -6,6 +6,8 @@
 
 package org.sil.pcpatreditor.model;
 
+import org.sil.pcpatreditor.Constants;
+
 /**
  * @author Andy Black
  *
@@ -14,5 +16,12 @@ public class DisjunctionConstituents extends SequencedConstituents {
 
 	public DisjunctionConstituents() {
 		super();
+	}
+
+	public String psrRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/ ");
+		sb.append(super.psrRepresentation());
+		return sb.toString();
 	}
 }

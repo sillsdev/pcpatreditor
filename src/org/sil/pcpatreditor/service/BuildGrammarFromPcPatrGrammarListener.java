@@ -17,6 +17,7 @@ import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
+import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.OptionalConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.PatrRule;
@@ -78,7 +79,6 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	
 	@Override
 	public void enterRightHandSide(PcPatrGrammarParser.RightHandSideContext ctx) {
-		rhs.clear();
 		disjunctionConstituentsMap.clear();
 		disjunctiveConstituentsMap.clear();
 		optionalConstituentsMap.clear();
@@ -206,6 +206,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 
 	@Override
 	public void exitRightHandSide(PcPatrGrammarParser.RightHandSideContext ctx) {
+		rhs = new ArrayList<>();
 		String lastClass = "";
 		String nextClass = "";
 		int numChildren = ctx.getChildCount();
@@ -239,6 +240,12 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 				ocRhs.getOptionalConstituents().add(optionalConstituents);
 				rhs.add(ocRhs);
 			break;
+			case "DisjunctionConstituentsContext":
+				DisjunctionConstituents dc = disjunctionConstituentsMap.get(prCtx.hashCode());
+				DisjunctionConstituentsRightHandSide dcRhs = new DisjunctionConstituentsRightHandSide();
+				dcRhs.getDisjunctionConstituents().add(dc);
+				rhs.add(dcRhs);
+				break;
 			}
 			lastClass = sClass;
 		}
