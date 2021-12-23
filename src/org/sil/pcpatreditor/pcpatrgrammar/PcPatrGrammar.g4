@@ -90,16 +90,17 @@ ruleDef: '='
 
 constituent: TEXT;
 
-rightHandSide: (constituent+
-             | disjunctiveConstituents+
-             | optionalConstituents+
-             | disjunctiveOptionalConstituents+
+rightHandSide: (constituent
+             | disjunctiveConstituents
+             | optionalConstituents
+             | disjunctiveOptionalConstituents
+             | disjunctionOptionalConstituents
               )+
              ;
 
 disjunctiveConstituents: '{' constituent+ disjunctionConstituents+ '}' comment?;
 disjunctionConstituents: '/' (constituent | disjunctiveConstituents)+ comment?;
-optionalConstituents: '(' (constituent | disjunctiveConstituents)+ ')' comment?;
+optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ ')' comment?;
 disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
 disjunctionOptionalConstituents: '/' constituent+ comment?;
 
@@ -114,7 +115,7 @@ unificationConstraint: uniConstraintLeftHandSide '=' uniConstraintRightHandSide 
                      | disjunctiveUnificationConstraint 
                      ;
 uniConstraintLeftHandSide: openingWedge constituent featurePath closingWedge;
-uniConstraintRightHandSide: openingWedge constituent featurePath closingWedge comment?
+uniConstraintRightHandSide: openingWedge constituent featurePath? closingWedge comment?
                           | atomicValue comment?
                           ;
 disjunctiveUnificationConstraint: '{' unificationConstraint+ disjunctionUnificationConstraint+ '}' comment?;
@@ -134,8 +135,7 @@ priorityUnionRightHandSide: openingWedge constituent featurePath closingWedge
                           ;
 
 logicalConstraint: logConstraintLeftHandSide '==' logConstraintExpression;
-logConstraintLeftHandSide: openingWedge constituent featurePath closingWedge
-                         | openingWedge constituent closingWedge
+logConstraintLeftHandSide: openingWedge constituent featurePath? closingWedge
                          ;
 logConstraintExpression: logConstraintFactor
                        |'~' logConstraintFactor
@@ -148,10 +148,10 @@ logConstraintFactor: featureStructure
                    | '(' logConstraintExpression ')'
                    ;
 
-binop: '&'
-     | '/'
-     | '->'
-     | '<->'
+binop: '&'   comment*
+     | '/'   comment*
+     | '->'  comment*
+     | '<->' comment*
      ;
 
 openingBrace   : '{';

@@ -150,8 +150,8 @@ public class GrammarBuilder {
 		BuildGrammarFromPcPatrGrammarListener validator = new BuildGrammarFromPcPatrGrammarListener(parser);
 		walker.walk(validator, parseTree); // initiate walk of tree with
 											// listener
-		Grammar dsTree = validator.getGrammar();
-		return dsTree;
+		Grammar newGrammar = validator.getGrammar();
+		return newGrammar;
 	}
 
 	public static String buildErrorMessage(ResourceBundle bundle) {

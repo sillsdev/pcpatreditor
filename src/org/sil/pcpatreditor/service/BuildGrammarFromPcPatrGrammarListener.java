@@ -73,6 +73,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	public void enterPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
 		constituentMap.clear();
 		rule = new PatrRule(true, false);
+		rule.setLineNumber(ctx.start.getLine());
 	}
 	
 	@Override

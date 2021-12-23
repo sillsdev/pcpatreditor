@@ -18,6 +18,7 @@ public class PatrRule extends PcPatrBase {
 	String identifier = "";
 	PhraseStructureRule phraseStructureRule;
 	List<Constraint> constraints = new ArrayList<Constraint>();
+	int lineNumber = -1;
 
 	/**
 	 * @param enabled
@@ -67,6 +68,20 @@ public class PatrRule extends PcPatrBase {
 	 */
 	public void setConstraints(List<Constraint> constraints) {
 		this.constraints = constraints;
+	}
+
+	/**
+	 * @return the lineNumber
+	 */
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
+	/**
+	 * @param lineNumber the lineNumber to set
+	 */
+	public void setLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
 	}
 
 }
