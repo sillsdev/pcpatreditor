@@ -18,7 +18,7 @@ import org.junit.Test;
  */
 public class ConstituentTest {
 
-	Constituent nt;
+	Constituent constituent;
 	
 	/**
 	 * @throws java.lang.Exception
@@ -36,23 +36,24 @@ public class ConstituentTest {
 
 	@Test
 	public void constructorTest() {
-		nt = new Constituent("S");
-		checkSymbolAndIndex("S", -1);
-		nt = new Constituent("S1");
-		checkSymbolAndIndex("S1", -1);
-		nt = new Constituent("S_0");
-		checkSymbolAndIndex("S", 0);
-		nt = new Constituent("NP_1");
-		checkSymbolAndIndex("NP", 1);
-		nt = new Constituent("_0");
-		checkSymbolAndIndex("_0", -1);
-		nt = new Constituent("1S");
-		checkSymbolAndIndex("1S", -1);
+		constituent = new Constituent("S");
+		checkSymbolAndIndex("S", -1, "S");
+		constituent = new Constituent("S1");
+		checkSymbolAndIndex("S1", -1, "S1");
+		constituent = new Constituent("S_0");
+		checkSymbolAndIndex("S", 0, "S_0");
+		constituent = new Constituent("NP_1");
+		checkSymbolAndIndex("NP", 1, "NP_1");
+		constituent = new Constituent("_0");
+		checkSymbolAndIndex("_0", -1, "_0");
+		constituent = new Constituent("1S");
+		checkSymbolAndIndex("1S", -1, "1S");
 	}
 
-	protected void checkSymbolAndIndex(String symbol, int index) {
-		assertEquals(symbol, nt.getNode());
-		assertEquals(index, nt.getIndex());
+	protected void checkSymbolAndIndex(String symbol, int index, String representation) {
+		assertEquals(symbol, constituent.getNode());
+		assertEquals(index, constituent.getIndex());
+		assertEquals(representation, constituent.nodeRepresentation());
 	}
 
 }

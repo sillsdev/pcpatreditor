@@ -9,6 +9,8 @@ package org.sil.pcpatreditor.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sil.pcpatreditor.Constants;
+
 /**
  * @author Andy Black
  *
@@ -35,5 +37,18 @@ public class OptionalConstituentsRightHandSide extends PhraseStructureRuleRightH
 		this.optionalConstituents = optionalConstituents;
 	}
 
+	public String psrRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(" (");
+		for (int i = 0; i < optionalConstituents.size(); i++) {
+			OptionalConstituents oc = optionalConstituents.get(i);
+			sb.append(oc.psrRepresentation());
+			if (i < optionalConstituents.size() - 1) {
+				sb.append(Constants.PSR_SEPARATOR);
+			}
+		}
+		sb.append(")");
+		return sb.toString();
+	}
 	
 }

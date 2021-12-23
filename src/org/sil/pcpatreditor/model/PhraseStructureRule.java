@@ -9,6 +9,8 @@ package org.sil.pcpatreditor.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sil.pcpatreditor.Constants;
+
 /**
  * @author Andy Black
  *
@@ -50,5 +52,19 @@ public class PhraseStructureRule {
 	public void setRightHandSide(List<PhraseStructureRuleRightHandSide> rightHandSide) {
 		this.rightHandSide = rightHandSide;
 	}
-	
+
+	public String psrRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(leftHandSide.nodeRepresentation());
+		sb.append(" = ");
+		for (int i = 0; i < rightHandSide.size(); i++) {
+			PhraseStructureRuleRightHandSide rhs = rightHandSide.get(i);
+			if (i > 0 && rhs instanceof ConstituentsRightHandSide) {
+				sb.append(Constants.PSR_SEPARATOR);
+			}
+			sb.append(rhs.psrRepresentation());
+		}
+		return sb.toString();
+	}
+
 }

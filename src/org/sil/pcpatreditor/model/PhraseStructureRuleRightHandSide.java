@@ -43,4 +43,12 @@ public abstract class PhraseStructureRuleRightHandSide {
 		this.constituents = constituents;
 	}
 
+	public String psrRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		for (Constituent c : constituents) {
+			sb.append(c.psrRepresentation());
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
 }

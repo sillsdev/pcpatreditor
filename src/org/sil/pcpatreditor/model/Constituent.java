@@ -65,11 +65,15 @@ public class Constituent {
 		this.index = index;
 	}
 
-	public String getNodeRepresentation() {
+	public String nodeRepresentation() {
 		String sIndex = "";
 		if (index > -1) {
-			sIndex = Integer.toString(index);
+			sIndex = "_" + Integer.toString(index);
 		}
 		return node + sIndex;
+	}
+
+	public String psrRepresentation() {
+		return nodeRepresentation();
 	}
 }

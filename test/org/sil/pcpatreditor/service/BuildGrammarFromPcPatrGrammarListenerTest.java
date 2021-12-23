@@ -286,6 +286,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		assertEquals(sId, rule.getIdentifier());
 		PhraseStructureRule psr = rule.getPhraseStructureRule();
 		checkConstituentSymbol(psr.getLeftHandSide(), sLhs);
+		assertEquals(sPsr, psr.psrRepresentation());
 		return psr;
 	}
 

@@ -9,6 +9,8 @@ package org.sil.pcpatreditor.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sil.pcpatreditor.Constants;
+
 /**
  * @author Andy Black
  *
@@ -33,6 +35,18 @@ public abstract class SequencedConstituents {
 	 */
 	public void setContents(List<PhraseStructureRuleRightHandSide> contents) {
 		this.contents = contents;
+	}
+
+	public String psrRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < contents.size(); i++) {
+			PhraseStructureRuleRightHandSide c = contents.get(i);
+			sb.append(c.psrRepresentation());
+			if (i < contents.size() - 1) {
+				sb.append(Constants.PSR_SEPARATOR);
+			}
+		}
+		return sb.toString();
 	}
 
 }

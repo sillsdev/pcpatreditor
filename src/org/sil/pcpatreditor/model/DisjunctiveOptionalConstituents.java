@@ -9,13 +9,14 @@ package org.sil.pcpatreditor.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sil.pcpatreditor.Constants;
+
 /**
  * @author Andy Black
  *
  */
 public class DisjunctiveOptionalConstituents extends PhraseStructureRuleRightHandSide {
 
-	List<Constituent> constituents = new ArrayList<>();
 	List<DisjunctiveOptionalConstituents> disjunctiveOptionalConstituents = new ArrayList<>();
 	/**
 	 * @param constituents
@@ -25,18 +26,6 @@ public class DisjunctiveOptionalConstituents extends PhraseStructureRuleRightHan
 			List<DisjunctiveOptionalConstituents> disjunctiveConstituents) {
 		super(constituents);
 		this.disjunctiveOptionalConstituents = disjunctiveConstituents;
-	}
-	/**
-	 * @return the constituents
-	 */
-	public List<Constituent> getConstituents() {
-		return constituents;
-	}
-	/**
-	 * @param constituents the constituents to set
-	 */
-	public void setConstituents(List<Constituent> constituents) {
-		this.constituents = constituents;
 	}
 	/**
 	 * @return the disjunctiveConstituents
@@ -51,5 +40,16 @@ public class DisjunctiveOptionalConstituents extends PhraseStructureRuleRightHan
 		this.disjunctiveOptionalConstituents = disjunctiveConstituents;
 	}
 	
-	
+	public String psrRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		for (int i = 0; i < disjunctiveOptionalConstituents.size(); i++) {
+			DisjunctiveOptionalConstituents dc = disjunctiveOptionalConstituents.get(i);
+			if (i < disjunctiveOptionalConstituents.size() - 1) {
+				sb.append(Constants.PSR_SEPARATOR);
+			}
+		}
+		sb.append(")");
+		return sb.toString();
+	}
 }
