@@ -18,21 +18,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sil.pcpatreditor.Constants;
-import org.sil.pcpatreditor.model.Grammar;
 
 /**
  * @author Andy Black
  *
  */
-public class PhraseStructureRuleInfoCollectorTest {
+public class RuleLocatorTest {
 
-	PhraseStructureRuleInfoCollector collector; 
+	RuleLocator locator;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		collector = PhraseStructureRuleInfoCollector.getInstance();
+		locator = RuleLocator.getInstance();
 	}
 
 	/**
@@ -43,21 +42,21 @@ public class PhraseStructureRuleInfoCollectorTest {
 	}
 
 	@Test
-	public void collectorTest() {
+	public void locatorTest() {
 		File largeGrammarFile = new File(Constants.UNIT_TEST_DATA_FILE);
 		try {
 			String largeFileContent = new String(Files.readAllBytes(largeGrammarFile.toPath()),
 					StandardCharsets.UTF_8);
-			collector.collectRuleInfo(largeFileContent);
-			List<PhraseStructureRuleInfo> rulesInfo = collector.getRulesInfo();
-			assertNotNull(rulesInfo);
-			assertEquals(182, rulesInfo.size());
-			checkInfo(rulesInfo.get(0), 1027, "testing", "S = AdvP / DP");
-			checkInfo(rulesInfo.get(2), 1052,
+			locator.findRuleLocations(largeFileContent);
+			List<RuleLocationInfo> ruleLocations = locator.getRuleLocations();
+			assertNotNull(ruleLocations);
+			assertEquals(182, ruleLocations.size());
+			checkInfo(ruleLocations.get(0), 1027, "testing", "S = AdvP / DP");
+			checkInfo(ruleLocations.get(2), 1052,
 					"S option startInitPP symbol with PP initial elements and final ya na & Quote allowed",
 					"S = InitP {IP / CP} (Conj Deg) (Quote)");
-			checkInfo(rulesInfo.get(27), 1463, "IP option 0b - 2 IPs, initial IP in participle form", "IP = IP_1 IP_2");
-			checkInfo(rulesInfo.get(180), 7450, "AdvP option 1 - no modifiers", "AdvP = Adv");
+			checkInfo(ruleLocations.get(27), 1463, "IP option 0b - 2 IPs, initial IP in participle form", "IP = IP_1 IP_2");
+			checkInfo(ruleLocations.get(180), 7450, "AdvP option 1 - no modifiers", "AdvP = Adv");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +64,7 @@ public class PhraseStructureRuleInfoCollectorTest {
 
 	}
 
-	protected void checkInfo(PhraseStructureRuleInfo info, int line, String sId, String sPsr) {
+	protected void checkInfo(RuleLocationInfo info, int line, String sId, String sPsr) {
 		assertEquals(line, info.lineNumber());
 		assertEquals(sId, info.id());
 		assertEquals(sPsr, info.psrRepresentation());

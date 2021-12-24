@@ -10,7 +10,7 @@ package org.sil.pcpatreditor.service;
  * @author Andy Black
  *
  */
-public record PhraseStructureRuleInfo(
+public record RuleLocationInfo(
 		int lineNumber,
 		String id,
 		String psrRepresentation
