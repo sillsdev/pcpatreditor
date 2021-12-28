@@ -12,6 +12,7 @@ package org.sil.pcpatreditor.service;
  */
 public record RuleLocationInfo(
 		int lineNumber,
+		int characterIndex,
 		String id,
 		String psrRepresentation
 		) {}

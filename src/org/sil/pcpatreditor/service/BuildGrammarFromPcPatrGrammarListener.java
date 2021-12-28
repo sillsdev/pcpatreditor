@@ -75,6 +75,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		constituentMap.clear();
 		rule = new PatrRule(true, false);
 		rule.setLineNumber(ctx.start.getLine());
+		rule.setCharacterIndex(ctx.start.getStartIndex());
 	}
 	
 	@Override

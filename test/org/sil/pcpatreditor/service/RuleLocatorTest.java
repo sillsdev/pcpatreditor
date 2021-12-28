@@ -51,21 +51,20 @@ public class RuleLocatorTest {
 			List<RuleLocationInfo> ruleLocations = locator.getRuleLocations();
 			assertNotNull(ruleLocations);
 			assertEquals(182, ruleLocations.size());
-			checkInfo(ruleLocations.get(0), 1027, "testing", "S = AdvP / DP");
+			checkInfo(ruleLocations.get(0), 1027, 70895, "testing", "S = AdvP / DP");
 			checkInfo(ruleLocations.get(2), 1052,
-					"S option startInitPP symbol with PP initial elements and final ya na & Quote allowed",
-					"S = InitP {IP / CP} (Conj Deg) (Quote)");
-			checkInfo(ruleLocations.get(27), 1463, "IP option 0b - 2 IPs, initial IP in participle form", "IP = IP_1 IP_2");
-			checkInfo(ruleLocations.get(180), 7450, "AdvP option 1 - no modifiers", "AdvP = Adv");
+					71739,
+					"S option startInitPP symbol with PP initial elements and final ya na & Quote allowed", "S = InitP {IP / CP} (Conj Deg) (Quote)");
+			checkInfo(ruleLocations.get(27), 1463, 90753, "IP option 0b - 2 IPs, initial IP in participle form", "IP = IP_1 IP_2");
+			checkInfo(ruleLocations.get(180), 7450, 412225, "AdvP option 1 - no modifiers", "AdvP = Adv");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
 
-	protected void checkInfo(RuleLocationInfo info, int line, String sId, String sPsr) {
+	protected void checkInfo(RuleLocationInfo info, int line, int charIndex, String sId, String sPsr) {
 		assertEquals(line, info.lineNumber());
+		assertEquals(charIndex, info.characterIndex());
 		assertEquals(sId, info.id());
 		assertEquals(sPsr, info.psrRepresentation());
 	}
