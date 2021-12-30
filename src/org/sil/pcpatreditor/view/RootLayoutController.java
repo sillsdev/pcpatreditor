@@ -1060,7 +1060,7 @@ public class RootLayoutController implements Initializable {
 	public void handleSaveDocument() throws IOException {
 		File file = mainApp.getDocumentFile();
 		if (file != null) {
-			writeGrammarToFile(file);
+			writeGrammarToFile(file, grammar.getText());
 		} else {
 			handleSaveDocumentAs();
 		}
@@ -1071,13 +1071,14 @@ public class RootLayoutController implements Initializable {
 
 	/**
 	 * @param file
+	 * @param contentToSave
 	 * @throws IOException
 	 */
-	private void writeGrammarToFile(File file) throws IOException {
+	private void writeGrammarToFile(File file, String contentToSave) throws IOException {
 		Writer out = new BufferedWriter(new OutputStreamWriter(
 			    new FileOutputStream(file.getPath()), "UTF-8"));
 			try {
-			    out.write(grammar.getText());
+			    out.write(contentToSave);
 			} finally {
 			    out.close();
 			}
@@ -1095,7 +1096,7 @@ public class RootLayoutController implements Initializable {
 				null, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION,
 				Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS, Constants.RESOURCE_LOCATION);
 		if (file != null) {
-			writeGrammarToFile(file);
+			writeGrammarToFile(file, grammar.getText());
 		}
 		markAsClean();
 	}
@@ -1249,6 +1250,18 @@ public class RootLayoutController implements Initializable {
 					extractor.setRuleLocations(rulesInfo);
 					String extractedGrammar = extractor.extractRules(rulesToExtract, grammar.getText());
 					System.out.println("extractedGrammar='" + extractedGrammar + "'");
+					File file = ControllerUtilities.doFileSaveAs(mainApp, currentLocale, false, pcPatrEditorFilterDescription,
+							null, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION,
+							Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS, Constants.RESOURCE_LOCATION);
+					if (file != null) {
+						try {
+							writeGrammarToFile(file, extractedGrammar);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
 				}
 //			}
 //		});

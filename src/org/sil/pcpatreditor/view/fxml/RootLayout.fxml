@@ -30,7 +30,7 @@
                     <MenuItem fx:id="menuItemFileNew" accelerator="Ctrl+n" mnemonicParsing="true" onAction="#handleNewDocument" text="%menu.new" />
 					<MenuItem fx:id="menuItemFileOpen" accelerator="Ctrl+o" mnemonicParsing="true" onAction="#handleOpenDocument" text="%menu.open" />
 					<MenuItem fx:id="menuItemFileSave" accelerator="Ctrl+s" mnemonicParsing="true" onAction="#handleSaveDocument" text="%menu.save" />
-<!-- 					<MenuItem fx:id="menuItemFileSaveAs" mnemonicParsing="true" onAction="#handleSaveTreeAs" text="%menu.saveas" /> -->
+					<MenuItem fx:id="menuItemFileSaveAs" mnemonicParsing="true" onAction="#handleSaveDocumentAs" text="%menu.saveas" />
 <!-- 					<SeparatorMenuItem /> -->
 <!-- 					<CheckMenuItem fx:id="menuItemSaveAsPng" mnemonicParsing="true" onAction="#handleMenuSaveAsPng" text="%menu.saveaspng" /> -->
 <!-- 					<CheckMenuItem fx:id="menuItemSaveAsSVG" mnemonicParsing="true" onAction="#handleMenuSaveAsSVG" text="%menu.saveassvg" /> -->
