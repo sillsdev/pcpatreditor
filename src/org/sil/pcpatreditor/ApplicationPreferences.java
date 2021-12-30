@@ -33,6 +33,9 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public static final String FIND_REPLACE_LAST_FIND = "lastFindReplaceFind";
 	public static final String FIND_REPLACE_LAST_REPLACE = "lastFindReplaceReplace";
 
+	// Controller table column widths and splitter position
+	public static final String RULE_EXTRACTOR_CHOOSER = "RULE_EXTRACTOR_CHOOSER_";
+
 	// Window parameters to remember
 	static final String POSITION_X = "PositionX";
 	static final String POSITION_Y = "PositionY";
@@ -43,6 +46,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public static final String LAST_WINDOW = "lastWindow";
 	public static final String LAST_SPLIT_PANE_POSITION = "lastSplitPanePosition";
 	public static final String LAST_FIND_REPLACE_DIALOG = "lastFindReplaceDialog";
+	public static final String LAST_RULE_EXTRACTOR_DIALOG = "lastRuleExtractorDialog";
 
 	Preferences prefs;
 
@@ -159,6 +163,10 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 		return prefs.get(sKey, defaultValue);
 	}
 
+	public Double getDoubleValue(String sKey, Double defaultValue) {
+		return prefs.getDouble(sKey, defaultValue);
+	}
+
 	public void setPreferencesKey(String key, boolean value) {
 		if (!StringUtilities.isNullOrEmpty(key)) {
 			if (key != null) {
@@ -181,7 +189,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 //		}
 //	}
 //
-	private void setPreferencesKey(String key, Double value) {
+	public void setPreferencesKey(String key, Double value) {
 		if (!StringUtilities.isNullOrEmpty(key)) {
 			if (key != null && value != null) {
 				prefs.putDouble(key, value);

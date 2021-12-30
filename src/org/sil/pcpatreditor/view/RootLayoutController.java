@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -51,11 +52,17 @@ import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.model.BookmarkDocument;
 import org.sil.pcpatreditor.model.BookmarksInDocuments;
+import org.sil.pcpatreditor.model.Grammar;
+import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
+import org.sil.pcpatreditor.service.GrammarBuilder;
+import org.sil.pcpatreditor.service.RuleExtractor;
+import org.sil.pcpatreditor.service.RuleLocationInfo;
+import org.sil.pcpatreditor.service.RuleLocator;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
@@ -67,6 +74,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -87,6 +95,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -99,6 +108,7 @@ public class RootLayoutController implements Initializable {
 	
 	MainApp mainApp;
 	ResourceBundle bundle;
+	URL location;
 	private Locale currentLocale;
 	ApplicationPreferences applicationPreferences;
 	private String sAboutHeader;
@@ -198,6 +208,10 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemBookmarkClear;
 	@FXML
+	private Menu menuTools;
+	@FXML
+	private MenuItem menuItemExportSelectedRules;
+	@FXML
 	private Menu menuSettings;
 	@FXML
 	private CheckMenuItem menuItemShowMatchingItemWithArrowKeys;
@@ -249,12 +263,12 @@ public class RootLayoutController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.location = location;
 		bundle = resources;
 		sFileFilterDescription = RESOURCE_FACTORY.getStringBinding("file.filterdescription").get();
 		createToolbarButtons(bundle);
 		initMenuItemsForLocalization();
-		statusBar.textProperty().bind(RESOURCE_FACTORY.getStringBinding("label.key"));
-
+		statusBar.setText(bundle.getString("label.key"));
         executor = Executors.newSingleThreadExecutor();
         grammar = new CodeArea();
         grammar.setPrefHeight(1200.0);
@@ -1212,6 +1226,69 @@ public class RootLayoutController implements Initializable {
 			MainApp.reportException(e, null);
 		}
 	}
+
+	@FXML
+	protected void handleExportSelectedRules() {
+//		Platform.runLater(new Runnable() {
+//			@Override
+//			public void run() {
+				// cursor change not working...
+				mainApp.getPrimaryStage().getScene().setCursor(Cursor.WAIT);
+				grammar.getScene().setCursor(Cursor.WAIT);
+				statusBar.setText(bundle.getString("label.wait"));
+				statusBar.requestFocus();
+
+				RuleLocator psrCollector = RuleLocator.getInstance();
+				psrCollector.findRuleLocations(grammar.getText());
+				List<RuleLocationInfo> rulesInfo = psrCollector.getRuleLocations();
+				mainApp.getPrimaryStage().getScene().setCursor(Cursor.DEFAULT);
+				statusBar.setText(bundle.getString("label.key"));
+				List<Integer> rulesToExtract = showRuleExtractorChooser(rulesInfo);
+				if (rulesToExtract.size() > 0) {
+					RuleExtractor extractor = RuleExtractor.getInstance();
+					extractor.setRuleLocations(rulesInfo);
+					String extractedGrammar = extractor.extractRules(rulesToExtract, grammar.getText());
+					System.out.println("extractedGrammar='" + extractedGrammar + "'");
+				}
+//			}
+//		});
+	}
+
+	//////
+	public List<Integer> showRuleExtractorChooser(List<RuleLocationInfo> rulesInfo) {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(RootLayoutController.class.getResource("fxml/RuleExtractorChooser.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			RuleExtractorChooserController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setData(rulesInfo);
+			controller.initialize(location, bundle);
+			controller.initializeTableColumnWidths(mainApp.getApplicationPreferences());
+
+			dialogStage.showAndWait();
+			return controller.getRulesToExtract();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
+		return null;
+	}
+
+	///////
 
 	@FXML
 	protected void handleFindNext() {

@@ -19,6 +19,7 @@ public class PatrRule extends PcPatrBase {
 	PhraseStructureRule phraseStructureRule;
 	List<Constraint> constraints = new ArrayList<Constraint>();
 	int lineNumber = -1;
+	int characterIndex = -1;
 
 	/**
 	 * @param enabled
@@ -82,6 +83,20 @@ public class PatrRule extends PcPatrBase {
 	 */
 	public void setLineNumber(int lineNumber) {
 		this.lineNumber = lineNumber;
+	}
+
+	/**
+	 * @return the characterIndex
+	 */
+	public int getCharacterIndex() {
+		return characterIndex;
+	}
+
+	/**
+	 * @param characterIndex the characterIndex to set
+	 */
+	public void setCharacterIndex(int characterIndex) {
+		this.characterIndex = characterIndex;
 	}
 
 	public String psrRepresentation() {

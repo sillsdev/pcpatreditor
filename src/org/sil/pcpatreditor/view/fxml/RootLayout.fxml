@@ -65,6 +65,11 @@
 					<MenuItem fx:id="menuItemBookmarkClear" mnemonicParsing="true" onAction="#handleBookmarkClear" text="%menu.bookmarkclear" />
                   </items>
                 </Menu>
+                <Menu fx:id="menuTools" mnemonicParsing="true" text="%menu.tools">
+                  <items>
+					<MenuItem fx:id="menuItemExportSelectedRules" mnemonicParsing="true" onAction="#handleExportSelectedRules" text="%menu.toolsexportselectedrules" />
+                  </items>
+                </Menu>
 				<Menu fx:id="menuSettings" mnemonicParsing="true" text="%menu.settings">
 				  <items>
 <!-- 					<MenuItem fx:id="menuItemDescriptionFontSize" mnemonicParsing="true" onAction="#handleMenuDescriptionFontSize" text="%menu.descriptionfontsize" /> -->
@@ -134,7 +139,7 @@
    <bottom>
       <VBox prefHeight="21.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
-            <Text fx:id="statusBar" strokeType="OUTSIDE" strokeWidth="0.0" text="%label.key" />
+            <Text fx:id="statusBar" strokeType="OUTSIDE" strokeWidth="0.0" />
          </children>
       </VBox>
    </bottom>
