@@ -47,7 +47,9 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 	@FXML
 	private TableColumn<RuleExtractorRule, Boolean> checkBoxColumn;
 	@FXML
-	private TableColumn<RuleExtractorRule, String> ruleIdPstColumn;
+	private TableColumn<RuleExtractorRule, String> rulePSRColumn;
+	@FXML
+	private TableColumn<RuleExtractorRule, String> ruleIdColumn;
 	Stage dialogStage;
 	private boolean okClicked = false;
 	private MainApp mainApp;
@@ -73,17 +75,24 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 		checkBoxColumnHead.setOnAction((event) -> {
 			handleCheckBoxColumnHead();
 		});
-		ruleIdPstColumn.setCellValueFactory(cellData -> {
-			return cellData.getValue().ruleDescriptionProperty();
+		rulePSRColumn.setCellValueFactory(cellData -> {
+			return cellData.getValue().rulePhraseStructureRuleProperty();
 		});
-		ruleExtractorTable.setEditable(false);
 		// Custom rendering of the table cell.
-		ruleIdPstColumn.setCellFactory(column -> {
+		rulePSRColumn.setCellFactory(column -> {
+			return new WrappingTableCell();
+		});
+		ruleIdColumn.setCellValueFactory(cellData -> {
+			return cellData.getValue().ruleIDProperty();
+		});
+		// Custom rendering of the table cell.
+		ruleIdColumn.setCellFactory(column -> {
 			return new WrappingTableCell();
 		});
 
 		initializeCheckBoxContextMenu(resources);
 
+		ruleExtractorTable.setEditable(false);
 		ruleExtractorTable.setOnMouseClicked(mouseEvent -> {
 			RuleExtractorRule rule = ruleExtractorTable.getSelectionModel().getSelectedItem();
 			if (rule != null) {

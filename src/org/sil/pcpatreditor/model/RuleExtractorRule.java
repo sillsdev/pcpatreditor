@@ -26,7 +26,8 @@ public class RuleExtractorRule extends ChooserBase {
 	boolean fChecked;
 	String sDescription = "";
 	BooleanProperty checked;
-	StringProperty ruleDescription;
+	StringProperty rulePhraseStructureRule;
+	StringProperty ruleID;
 	RuleLocationInfo ruleLocationInfo;
 	/**
 	 * @param checked
@@ -36,7 +37,8 @@ public class RuleExtractorRule extends ChooserBase {
 		super();
 		this.ruleLocationInfo = ruleLocationInfo;
 		this.checked = new SimpleBooleanProperty(false);
-		this.ruleDescription = new SimpleStringProperty(ruleLocationInfo.id() + "\n" + ruleLocationInfo.psrRepresentation());
+		this.rulePhraseStructureRule = new SimpleStringProperty(ruleLocationInfo.psrRepresentation());
+		this.ruleID = new SimpleStringProperty(ruleLocationInfo.id());
 	}
 	/**
 	 * @return the checked
@@ -68,17 +70,29 @@ public class RuleExtractorRule extends ChooserBase {
 	public ObservableValue<Boolean> checkedProperty() {
 		return checked;
 	}
-	public String getRuleDescription() {
-		return ruleDescription.get().trim();
+
+	public String getPhraseStructureRule() {
+		return rulePhraseStructureRule.get().trim();
 	}
 
-	public StringProperty ruleDescriptionProperty() {
-		return ruleDescription;
+	public StringProperty rulePhraseStructureRuleProperty() {
+		return rulePhraseStructureRule;
 	}
 
-	public void setRuleDescription(String description) {
-		this.ruleDescription.set(description);
+	public void setRulePhraseStructureRule(String psr) {
+		this.rulePhraseStructureRule.set(psr);
 	}
 
+	public String getID() {
+		return ruleID.get().trim();
+	}
+
+	public StringProperty ruleIDProperty() {
+		return ruleID;
+	}
+
+	public void setRuleID(String id) {
+		this.rulePhraseStructureRule.set(id);
+	}
 	
 }
