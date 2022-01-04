@@ -1,4 +1,4 @@
-// Copyright (c) 2021 SIL International
+// Copyright (c) 2021-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 package org.sil.pcpatreditor;
@@ -6,6 +6,7 @@ package org.sil.pcpatreditor;
 import java.io.File;
 import java.util.prefs.Preferences;
 
+import org.sil.pcpatreditor.service.ExtractorAction;
 import org.sil.utility.*;
 
 import javafx.stage.Stage;
@@ -20,6 +21,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	static final String SHOW_MATCHING_ITEM_WITH_ARROW_KEYS = "showmatchingitemwitharrowkeys";
 	static final String GRAMMAR_FONT_SIZE = "grammarfontsize";
 	static final String LAST_CARET_POSITION = "lastCaretPosition";
+	static final String LAST_EXTRACTOR_ACTION = "lastExtractorAction";
 	// Not trying to be anglo-centric, but we have to start with something...
 	static final String DEFAULT_LOCALE_LANGUAGE = "en";
 
@@ -68,6 +70,14 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 
 	public void setLastLocaleLanguage(String lastLocaleLanguage) {
 		setPreferencesKey(LAST_LOCALE_LANGUAGE, lastLocaleLanguage);
+	}
+
+	public String getLastExtractorAction() {
+		return prefs.get(LAST_EXTRACTOR_ACTION, ExtractorAction.NO_ACTION.name());
+	}
+
+	public void setLastExtractorAction(String lastExtractorAction) {
+		prefs.put(LAST_EXTRACTOR_ACTION, lastExtractorAction);
 	}
 
 	public int getLastCaretPosition() {

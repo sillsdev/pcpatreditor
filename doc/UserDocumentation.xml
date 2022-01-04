@@ -20,11 +20,11 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->3 November, 2021</date
+>4 January, 2022</date
 ><version
->Version 0.5.0 Alpha</version
+>Version 0.6.0 Alpha</version
 ><version
->Copyright © 2021 SIL International</version
+>Copyright © 2021-2022 SIL International</version
 ><contents
 ></contents
 ></frontMatter
@@ -53,6 +53,7 @@ num="xSample"
 num="xSample"
 ><chart
 ><img
+XeLaTeXSpecial="scaled='650' "
 src="resources/PcPatrEditor.png"
 width="450"
 ></img
@@ -130,7 +131,7 @@ id="sFindNext"
 >You can use the <object
 type="tMenuItem"
 >Find next</object
-> item to repeat whatever the last find/replace operation was.  There will be an audible beep if cannot go to the next item.</p
+> item to repeat whatever the last find/replace operation was. There will be an audible beep if cannot go to the next item.</p
 ></section2
 ><section2
 id="sGoToLine"
@@ -242,6 +243,62 @@ src="resources/bookmark.png"
 ></example
 ></section1
 ><section1
+id="sTools"
+><secTitle
+>Tools menu item</secTitle
+><p
+><object
+type="tPcPatrEditor"
+></object
+> currently has one tool option.</p
+><section2
+id="sExportSelected"
+><secTitle
+>Export selected rules for debugging</secTitle
+><p
+>This tool option is available under the <object
+type="tMenuItem"
+>Tools</object
+> menu item as <object
+type="tMenuItem"
+>Export selected rules for debugging</object
+>.  This is useful when you are trying to debug a <object
+type="tPcPatr"
+></object
+> grammar file and want to create a separate grammar file that contains only selected rules.</p
+><p
+>When you invoke this option, it may take a while but <object
+type="tPcPatrEditor"
+></object
+> will eventually bring up a dialog box containing a list of the rules.  In one grammar file, it looked like what is in example <exampleRef
+letter="xRuleSelector"
+num="xRuleSelector"
+></exampleRef
+>.</p
+><example
+num="xRuleSelector"
+><chart
+><img
+src="resources/RuleSelector.png"
+width="500"
+></img
+></chart
+></example
+><p
+>For each rule, it has a check box, the phrase structure rule and the rule identifier.  You select which rules you want to export by clicking on them.  (You can also use the up and down arrows and the space bar to select/deselect rules).</p
+><p
+>When you have chosen the rules you want to use, click on the “OK” button.  <object
+type="tPcPatrEditor"
+></object
+> will ask you to save the file, giving it a new name.  This new file will contain all of the templates but just the selected rules.</p
+><p
+>See section <sectionRef
+sec="sAfterExport"
+></sectionRef
+> for what the options are for what happens next after saving the file containing the selected rules.</p
+></section2
+></section1
+><section1
 id="sSettings"
 ><secTitle
 >User convenience options</secTitle
@@ -348,13 +405,66 @@ id="sSyntagmemeFontSize"
 ><secTitle
 >Font size for the grammar</secTitle
 ><p
->The last item under the main <object
+>The third item under the main <object
 type="tMenuItem"
 >Settings</object
 > menu item is <object
 type="tMenuItem"
 >Font size</object
 >. This lets you set the font size for the text of the grammar file.</p
+></section2
+><section2
+id="sAfterExport"
+><secTitle
+>Action to take after exporting selected rules</secTitle
+><p
+>The last item under the main <object
+type="tMenuItem"
+>Settings</object
+> menu item is <object
+type="tMenuItem"
+>After export</object
+>. This lets you choose what you want <object
+type="tPcPatrEditor"
+></object
+> to do after you have saved a new grammar file for debugging.  See section <sectionRef
+sec="sExportSelected"
+></sectionRef
+>.</p
+><p
+>When you hover over <object
+type="tMenuItem"
+>After export, </object
+> three possible actions are shown:</p
+><ol
+><li
+><object
+type="tMenuItem"
+>Continue editing in the current file</object
+></li
+><li
+><object
+type="tMenuItem"
+>Open the exported file</object
+></li
+><li
+><object
+type="tMenuItem"
+>Open the exported file in a new instance</object
+></li
+></ol
+><p
+>The one with a check mark by it is the currently selected one.</p
+><p
+>The first one is the default option.  The third one will open yet another instance of the <object
+type="tPcPatrEditor"
+></object
+> that has the exported file in it.  This way you can still see the original file (in one instance of the <object
+type="tPcPatrEditor"
+></object
+>) as well as the exported file.</p
+><p
+>To select one of the options, merely click on it.</p
 ></section2
 ><section2
 contentType="ctNotNow"

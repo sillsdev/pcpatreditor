@@ -1,6 +1,7 @@
 module org.sil.pcpatreditor {
 	// Exports
 	exports org.sil.pcpatreditor;
+	exports org.sil.pcpatreditor.service;
 	exports org.sil.pcpatreditor.view;
 
 	opens org.sil.pcpatreditor.view to javafx.fxml;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -58,6 +58,7 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
+import org.sil.pcpatreditor.service.ExtractorAction;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
 import org.sil.pcpatreditor.service.GrammarBuilder;
 import org.sil.pcpatreditor.service.RuleExtractor;
@@ -85,9 +86,11 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -135,6 +138,7 @@ public class RootLayoutController implements Initializable {
 	private BookmarksInDocumentsManager bookmarksInDocsManager;
 	private BookmarkDocument bookmarkDoc;
 	private FindReplaceDialogController findReplaceController;
+	protected ExtractorAction extractorAction = ExtractorAction.NO_ACTION;
 
 	@FXML
 	BorderPane mainPane;
@@ -219,6 +223,16 @@ public class RootLayoutController implements Initializable {
 	private MenuItem menuItemShowMatchingItemDelay;
 	@FXML
 	private MenuItem menuItemFontSize;
+	@FXML
+	private Menu menuAfterExtract;
+	@FXML
+	private ToggleGroup extractSelectedRulesOptionsGroup;
+	@FXML
+	private RadioMenuItem menuItemNoActionAfterExtract;
+	@FXML
+	private RadioMenuItem menuItemOpenExtracted;
+	@FXML
+	private RadioMenuItem menuItemOpenExtractedInNewInstance;
 	@FXML
 	private Menu menuHelp;
 	@FXML
@@ -610,6 +624,24 @@ public class RootLayoutController implements Initializable {
 		grammar.setStyle("-fx-font-size: " + Double.toString(size) + "pt;");
 	}
 
+	private void initializeExtractorAction() {
+		String lastAction = applicationPreferences.getLastExtractorAction();
+		switch (lastAction) {
+		case "NO_ACTION":
+			menuItemNoActionAfterExtract.setSelected(true);
+			extractorAction = ExtractorAction.NO_ACTION;
+			break;
+		case "OPEN_EXTRACTED_FILE":
+			menuItemOpenExtracted.setSelected(true);
+			extractorAction = ExtractorAction.OPEN_EXTRACTED_FILE;
+			break;
+		case "OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE":
+			menuItemOpenExtractedInNewInstance.setSelected(true);
+			extractorAction = ExtractorAction.OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE;
+			break;
+		}
+	}
+
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = grammar.getText();
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
@@ -902,10 +934,20 @@ public class RootLayoutController implements Initializable {
 		cleanupWhenDone.unsubscribe();
 		executor.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
+		rememberExtractorAction();
 		saveAnyBookmarks();
 		System.exit(0);
 	}
 
+	private void rememberExtractorAction() {
+		String action = ExtractorAction.NO_ACTION.name();
+		if (menuItemOpenExtracted.isSelected()) {
+			action = ExtractorAction.OPEN_EXTRACTED_FILE.name();
+		} else if (menuItemOpenExtractedInNewInstance.isSelected()) {
+			action = ExtractorAction.OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE.name();
+		}
+		applicationPreferences.setLastExtractorAction(action);
+	}
 
 	@FXML
 	public void handleNewDocument() {
@@ -988,7 +1030,6 @@ public class RootLayoutController implements Initializable {
 		initAnyBookmarks();
 	}
 
-
 	public void initGrammar() {
 		bookmarkManager.setGrammar(grammar);
 		grammar.getUndoManager().forgetHistory();
@@ -1009,8 +1050,7 @@ public class RootLayoutController implements Initializable {
 				mainApp.loadDocument(file);
 				String content = new String(Files.readAllBytes(file.toPath()),
 						StandardCharsets.UTF_8);
-		        grammar.replaceText(content);
-
+				grammar.replaceText(content);
 			} catch (IOException e) {
 				e.printStackTrace();
 				MainApp.reportException(e, null);
@@ -1025,7 +1065,6 @@ public class RootLayoutController implements Initializable {
 		}
 		return file;
 	}
-
 
 	public void askAboutSaving() {
 		Alert alert = new Alert(AlertType.CONFIRMATION, "");
@@ -1249,15 +1288,34 @@ public class RootLayoutController implements Initializable {
 					RuleExtractor extractor = RuleExtractor.getInstance();
 					extractor.setRuleLocations(rulesInfo);
 					String extractedGrammar = extractor.extractRules(rulesToExtract, grammar.getText());
-					System.out.println("extractedGrammar='" + extractedGrammar + "'");
+					File currentFile = mainApp.getDocumentFile();
 					File file = ControllerUtilities.doFileSaveAs(mainApp, currentLocale, false, pcPatrEditorFilterDescription,
 							null, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION,
 							Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS, Constants.RESOURCE_LOCATION);
 					if (file != null) {
 						try {
 							writeGrammarToFile(file, extractedGrammar);
+							switch (extractorAction) {
+							case NO_ACTION:
+								rememberCurrentFile(currentFile);
+								break;
+							case OPEN_EXTRACTED_FILE:
+								mainApp.loadDocument(file);
+								break;
+							case OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE:
+								rememberCurrentFile(currentFile);
+								Platform.runLater(new Runnable() {
+									public void run() {
+										String[] args = new String[1];
+										args[0] = file.getAbsolutePath();
+										MainApp.setUserArgs(args);
+										new MainApp().start(new Stage());
+									}
+								});
+								break;
+							}
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
+							MainApp.reportException(e, bundle);
 							e.printStackTrace();
 						}
 					}
@@ -1267,7 +1325,28 @@ public class RootLayoutController implements Initializable {
 //		});
 	}
 
-	//////
+	protected void rememberCurrentFile(File currentFile) {
+		mainApp.updateStageTitle(currentFile);
+		mainApp.setDocumentFile(currentFile);
+		applicationPreferences.setLastOpenedFilePath(currentFile);
+		applicationPreferences.setLastOpenedDirectoryPath(currentFile.getParent());
+	}
+
+	@FXML
+	protected void handleExtractNoActionAfterExtract() {
+		extractorAction = ExtractorAction.NO_ACTION;
+	}
+
+	@FXML
+	protected void handleExtractOpenExtracted() {
+		extractorAction = ExtractorAction.OPEN_EXTRACTED_FILE;
+	}
+
+	@FXML
+	protected void handleExtractOpenExtractedInNewInstance() {
+		extractorAction = ExtractorAction.OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE;
+	}
+
 	public List<Integer> showRuleExtractorChooser(List<RuleLocationInfo> rulesInfo) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
@@ -1300,8 +1379,6 @@ public class RootLayoutController implements Initializable {
 		}
 		return null;
 	}
-
-	///////
 
 	@FXML
 	protected void handleFindNext() {
@@ -1428,6 +1505,7 @@ public class RootLayoutController implements Initializable {
 		toggleButtonShowMatchingItemWithArrowKeys = setToggleButtonStyle(
 				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		initializeGrammarFontSize();
+		initializeExtractorAction();
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
 		initAnyBookmarks();

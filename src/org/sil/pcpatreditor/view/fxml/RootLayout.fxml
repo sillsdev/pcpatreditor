@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- Copyright (c) 2021-2022 SIL International
+    This software is licensed under the LGPL, version 2.1 or later
+    (http://www.gnu.org/licenses/lgpl-2.1.html) -->
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -80,7 +86,18 @@
 <!-- 					<MenuItem fx:id="menuItemChangeInterfaceLanguage" mnemonicParsing="true" onAction="#handleChangeInterfaceLanguage" text="%menu.changeinterfacelanguage" /> -->
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemFontSize" mnemonicParsing="false" onAction="#handleFontSize" text="%menu.fontsize" />
-				  </items>
+					<SeparatorMenuItem />
+					<fx:define>
+					   <ToggleGroup fx:id="extractSelectedRulesOptionsGroup" />
+                    </fx:define>
+					<Menu fx:id="menuAfterExtract" mnemonicParsing="true" text="%menu.extractafterextract">
+					   <items>
+                          <RadioMenuItem fx:id="menuItemNoActionAfterExtract" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractNoActionAfterExtract" text="%menu.extractednoaction" />
+                          <RadioMenuItem fx:id="menuItemOpenExtracted" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractOpenExtracted" text="%menu.extractedopen" />
+                          <RadioMenuItem fx:id="menuItemOpenExtractedInNewInstance" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractOpenExtractedInNewInstance" text="%menu.extractedopeninnewinstance" />
+                       </items>
+				   </Menu>
+				</items>
 				</Menu>
                 <Menu fx:id="menuHelp" mnemonicParsing="true" text="%menu.help">
                   <items>
