@@ -1269,60 +1269,50 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	protected void handleExportSelectedRules() {
-//		Platform.runLater(new Runnable() {
-//			@Override
-//			public void run() {
-				// cursor change not working...
-				mainApp.getPrimaryStage().getScene().setCursor(Cursor.WAIT);
-				grammar.getScene().setCursor(Cursor.WAIT);
-				statusBar.setText(bundle.getString("label.wait"));
-				statusBar.requestFocus();
-
-				RuleLocator psrCollector = RuleLocator.getInstance();
-				psrCollector.findRuleLocations(grammar.getText());
-				List<RuleLocationInfo> rulesInfo = psrCollector.getRuleLocations();
-				mainApp.getPrimaryStage().getScene().setCursor(Cursor.DEFAULT);
-				statusBar.setText(bundle.getString("label.key"));
-				List<Integer> rulesToExtract = showRuleExtractorChooser(rulesInfo);
-				if (rulesToExtract.size() > 0) {
-					RuleExtractor extractor = RuleExtractor.getInstance();
-					extractor.setRuleLocations(rulesInfo);
-					String extractedGrammar = extractor.extractRules(rulesToExtract, grammar.getText());
-					File currentFile = mainApp.getDocumentFile();
-					File file = ControllerUtilities.doFileSaveAs(mainApp, currentLocale, false, pcPatrEditorFilterDescription,
-							null, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION,
-							Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS, Constants.RESOURCE_LOCATION);
-					if (file != null) {
-						try {
-							writeGrammarToFile(file, extractedGrammar);
-							switch (extractorAction) {
-							case NO_ACTION:
-								rememberCurrentFile(currentFile);
-								break;
-							case OPEN_EXTRACTED_FILE:
-								mainApp.loadDocument(file);
-								break;
-							case OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE:
-								rememberCurrentFile(currentFile);
-								Platform.runLater(new Runnable() {
-									public void run() {
-										String[] args = new String[1];
-										args[0] = file.getAbsolutePath();
-										MainApp.setUserArgs(args);
-										new MainApp().start(new Stage());
-									}
-								});
-								break;
+		// I've tried many thing including run later, but the cursor never changes.  Sigh.
+		mainPane.getScene().setCursor(Cursor.WAIT);
+		RuleLocator psrCollector = RuleLocator.getInstance();
+		psrCollector.findRuleLocations(grammar.getText());
+		List<RuleLocationInfo> rulesInfo = psrCollector.getRuleLocations();
+		mainPane.getScene().setCursor(Cursor.DEFAULT);
+		List<Integer> rulesToExtract = showRuleExtractorChooser(rulesInfo);
+		if (rulesToExtract.size() > 0) {
+			RuleExtractor extractor = RuleExtractor.getInstance();
+			extractor.setRuleLocations(rulesInfo);
+			String extractedGrammar = extractor.extractRules(rulesToExtract, grammar.getText());
+			File currentFile = mainApp.getDocumentFile();
+			File file = ControllerUtilities.doFileSaveAs(mainApp, currentLocale, false, pcPatrEditorFilterDescription,
+					null, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSION, Constants.PCPATR_EDITOR_DATA_FILE_EXTENSIONS,
+					Constants.RESOURCE_LOCATION);
+			if (file != null) {
+				try {
+					writeGrammarToFile(file, extractedGrammar);
+					switch (extractorAction) {
+					case NO_ACTION:
+						rememberCurrentFile(currentFile);
+						break;
+					case OPEN_EXTRACTED_FILE:
+						mainApp.loadDocument(file);
+						break;
+					case OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE:
+						rememberCurrentFile(currentFile);
+						Platform.runLater(new Runnable() {
+							public void run() {
+								String[] args = new String[1];
+								args[0] = file.getAbsolutePath();
+								MainApp.setUserArgs(args);
+								new MainApp().start(new Stage());
 							}
-						} catch (IOException e) {
-							MainApp.reportException(e, bundle);
-							e.printStackTrace();
-						}
+						});
+						break;
 					}
-
+				} catch (IOException e) {
+					MainApp.reportException(e, bundle);
+					e.printStackTrace();
 				}
-//			}
-//		});
+			}
+
+		}
 	}
 
 	protected void rememberCurrentFile(File currentFile) {
