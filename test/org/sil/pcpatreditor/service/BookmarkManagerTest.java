@@ -44,7 +44,7 @@ public class BookmarkManagerTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		manager = BookmarkManager.getInstance();
+		manager = new BookmarkManager();
 		manager.getBookmarks().clear();
 	}
 

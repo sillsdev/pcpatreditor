@@ -66,4 +66,26 @@ public class BookmarkDocument {
 		this.lines = lines;
 	}
 
+	@Override
+	public int hashCode() {
+		String sCombo = path + lines.stream().hashCode();
+		return sCombo.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		boolean result = true;
+		BookmarkDocument seg = (BookmarkDocument) obj;
+		if (!getPath().equals(seg.getPath())) {
+			result = false;
+		}
+		return result;
+	}
+
 }

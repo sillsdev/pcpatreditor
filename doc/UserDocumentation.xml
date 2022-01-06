@@ -20,7 +20,7 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->4 January, 2022</date
+>6 January, 2022</date
 ><version
 >Version 0.6.0 Alpha</version
 ><version
@@ -262,7 +262,7 @@ type="tMenuItem"
 > menu item as <object
 type="tMenuItem"
 >Export selected rules for debugging</object
->.  This is useful when you are trying to debug a <object
+>. This is useful when you are trying to debug a <object
 type="tPcPatr"
 ></object
 > grammar file and want to create a separate grammar file that contains only selected rules.</p
@@ -270,7 +270,7 @@ type="tPcPatr"
 >When you invoke this option, it may take a while but <object
 type="tPcPatrEditor"
 ></object
-> will eventually bring up a dialog box containing a list of the rules.  In one grammar file, it looked like what is in example <exampleRef
+> will eventually bring up a dialog box containing a list of the rules. In one grammar file, it looked like what is in example <exampleRef
 letter="xRuleSelector"
 num="xRuleSelector"
 ></exampleRef
@@ -285,12 +285,12 @@ width="500"
 ></chart
 ></example
 ><p
->For each rule, it has a check box, the phrase structure rule and the rule identifier.  You select which rules you want to export by clicking on them.  (You can also use the up and down arrows and the space bar to select/deselect rules).</p
+>For each rule, it has a check box, the phrase structure rule and the rule identifier. You select which rules you want to export by clicking on them. (You can also use the up and down arrows and the space bar to select/deselect rules).</p
 ><p
->When you have chosen the rules you want to use, click on the “OK” button.  <object
+>When you have chosen the rules you want to use, click on the “OK” button. <object
 type="tPcPatrEditor"
 ></object
-> will ask you to save the file, giving it a new name.  This new file will contain all of the templates but just the selected rules.</p
+> will ask you to save the file, giving it a new name. This new file will contain all of the templates but just the selected rules.</p
 ><p
 >See section <sectionRef
 sec="sAfterExport"
@@ -427,7 +427,7 @@ type="tMenuItem"
 >. This lets you choose what you want <object
 type="tPcPatrEditor"
 ></object
-> to do after you have saved a new grammar file for debugging.  See section <sectionRef
+> to do after you have saved a new grammar file for debugging. See section <sectionRef
 sec="sExportSelected"
 ></sectionRef
 >.</p
@@ -456,10 +456,10 @@ type="tMenuItem"
 ><p
 >The one with a check mark by it is the currently selected one.</p
 ><p
->The first one is the default option.  The third one will open yet another instance of the <object
+>The first one is the default option. The third one will open yet another instance of the <object
 type="tPcPatrEditor"
 ></object
-> that has the exported file in it.  This way you can still see the original file (in one instance of the <object
+> that has the exported file in it. This way you can still see the original file (in one instance of the <object
 type="tPcPatrEditor"
 ></object
 >) as well as the exported file.</p
@@ -606,7 +606,6 @@ type="tErrorType"
 ></example
 ></section1
 ><section1
-contentType="ctNotNow"
 id="sKnownProblems"
 ><secTitle
 >Known problems</secTitle
@@ -617,24 +616,7 @@ type="tPcPatrEditor"
 >:</p
 ><ul
 ><li
->When you have a <object
-type="tPcPatrEditor"
-></object
-> description file created by the older version of <object
-type="tPcPatrEditor"
-></object
-> (version 0.7.5 or earlier), this newer version of <object
-type="tPcPatrEditor"
-></object
-> will open and attempt to convert the file to the new format. Sometimes, the conversion process works less than ideally.<endnote
-id="nMigration"
-><p
->The main issue here is that the size units in the older version were in .01 mm while the new version uses pixels. With some high resolution screens (at least on Windows operating systems), the conversion process is not always correct.</p
-></endnote
-> For example, the line thickness may be quite large. In such cases, use the items in the <object
-type="tMenuItem"
->Format</object
-> menu to fix the problem (see section , especially and ).</li
+>When you are using bookmarks and export selected rules with the “Open the exported file in a new instance” option, the bookmarks of the original file may be stored as the bookmarks for the exported file.</li
 ><li
 >When showing matching parentheses while using arrow keys (see section <sectionRef
 sec="sArrowKeysShowMatching"

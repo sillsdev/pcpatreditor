@@ -41,8 +41,8 @@ public class TableViewWithCheckBoxColumnController extends CheckBoxColumnControl
 			}
 	}
 
-	public void setChoser(String sApproach) {
-		this.sChooser = sApproach;
+	public void setChoser(String sChooser) {
+		this.sChooser = sChooser;
 	}
 
 	public void setTableView(TableView<? extends ChooserBase> tableView) {

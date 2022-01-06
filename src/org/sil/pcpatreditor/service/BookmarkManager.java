@@ -30,7 +30,6 @@ import javafx.scene.layout.HBox;
  */
 public class BookmarkManager {
 
-	private static BookmarkManager instance;
 	CodeArea grammar;
 	Image bookmarkImage;
 	IntFunction<? extends Node> numberFactory;
@@ -39,13 +38,6 @@ public class BookmarkManager {
 	HashSet<Integer> bookmarks = new HashSet<Integer>();
 	List<Integer> toRemove = new ArrayList<Integer>();
 	List<Integer> toAdd = new ArrayList<Integer>();
-
-	public static BookmarkManager getInstance() {
-		if (instance == null) {
-			instance = new BookmarkManager();
-		}
-		return instance;
-	}
 
 	public BookmarkManager() {
 		super();

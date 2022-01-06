@@ -174,6 +174,8 @@ public class MainApp extends Application  implements MainAppUtilities {
 				// User double-clicked on file name
 				// userArgs[0] is the file path
 				file = new File(userArgs[0]);
+				setDocumentFile(file);
+				controller.initAnyBookmarks(file.getPath());
 			} else {
 				// Try to load last opened file.
 				file = applicationPreferences.getLastOpenedFile();

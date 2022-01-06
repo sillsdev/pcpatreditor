@@ -134,7 +134,7 @@ public class RootLayoutController implements Initializable {
 	private final String kPressedStyle = "buttonpressed";
 	private final String kUnPressedStyle = "buttonunpressed";
 	private final String kFindReplaceDialog = "Find/Replace Dialog";
-	private BookmarkManager bookmarkManager = BookmarkManager.getInstance();
+	private BookmarkManager bookmarkManager = new BookmarkManager();
 	private BookmarksInDocumentsManager bookmarksInDocsManager;
 	private BookmarkDocument bookmarkDoc;
 	private FindReplaceDialogController findReplaceController;
@@ -935,7 +935,7 @@ public class RootLayoutController implements Initializable {
 		executor.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
 		rememberExtractorAction();
-		saveAnyBookmarks();
+		saveAnyBookmarks(mainApp.getDocumentFile().getPath());
 		System.exit(0);
 	}
 
@@ -1022,12 +1022,12 @@ public class RootLayoutController implements Initializable {
 		if (fIsDirty) {
 			askAboutSaving();
 		}
-		saveAnyBookmarks();
+		saveAnyBookmarks(mainApp.getDocumentFile().getPath());
 		doFileOpen(false);
 		initGrammar();
 		grammar.moveTo(0);
 		grammar.requestFocus();
-		initAnyBookmarks();
+		initAnyBookmarks(mainApp.getDocumentFile().getPath());
 	}
 
 	public void initGrammar() {
@@ -1104,7 +1104,7 @@ public class RootLayoutController implements Initializable {
 			handleSaveDocumentAs();
 		}
 		grammar.requestFocus();
-		saveAnyBookmarks();
+		saveAnyBookmarks(file.getPath());
 	}
 
 
@@ -1292,10 +1292,14 @@ public class RootLayoutController implements Initializable {
 						rememberCurrentFile(currentFile);
 						break;
 					case OPEN_EXTRACTED_FILE:
+						rememberCurrentFile(currentFile);
+						handleSaveDocument();
 						mainApp.loadDocument(file);
+						initAnyBookmarks(file.getPath());
 						break;
 					case OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE:
 						rememberCurrentFile(currentFile);
+						saveAnyBookmarks(currentFile.getPath());
 						Platform.runLater(new Runnable() {
 							public void run() {
 								String[] args = new String[1];
@@ -1304,6 +1308,7 @@ public class RootLayoutController implements Initializable {
 								new MainApp().start(new Stage());
 							}
 						});
+						rememberCurrentFile(currentFile);
 						break;
 					}
 				} catch (IOException e) {
@@ -1498,7 +1503,7 @@ public class RootLayoutController implements Initializable {
 		initializeExtractorAction();
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
-		initAnyBookmarks();
+		initAnyBookmarks(mainApp.getDocumentFile().getPath());
 //		grammar.requestFollowCaret();
 //		int caret = applicationPreferences.getLastCaretPosition();
 //		caret = (caret > grammar.getText().length()) ? 0 : caret;
@@ -1506,7 +1511,7 @@ public class RootLayoutController implements Initializable {
 //		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
 
-	private void initAnyBookmarks() {
+	public void initAnyBookmarks(String sPath) {
 		bookmarksInDocsManager = BookmarksInDocumentsManager.getInstance(mainApp.getOperatingSystem());
 		try {
 			bookmarksInDocsManager.loadDocumentHistory();
@@ -1514,7 +1519,7 @@ public class RootLayoutController implements Initializable {
 			MainApp.reportException(e, null);
 			e.printStackTrace();
 		}
-		bookmarkDoc = bookmarksInDocsManager.findDocumentInHistory(mainApp.getDocumentFile().getPath());
+		bookmarkDoc = bookmarksInDocsManager.findDocumentInHistory(sPath);
 		bookmarkManager.setGrammar(grammar);
 		bookmarkManager.clearBookmarks();
 		for (Integer i : bookmarkDoc.getLines()) {
@@ -1523,9 +1528,9 @@ public class RootLayoutController implements Initializable {
 		bookmarkManager.updateBookmarkIcons();
 	}
 
-	private void saveAnyBookmarks() {
+	private void saveAnyBookmarks(String sPath) {
 		if (bookmarkDoc != null) {
-			bookmarkDoc.setPath(mainApp.getDocumentFile().getPath());
+			bookmarkDoc.setPath(sPath);
 			bookmarkDoc.getLines().clear();
 			for (Integer i : bookmarkManager.getBookmarks()) {
 				if (i < grammar.getParagraphs().size()) {

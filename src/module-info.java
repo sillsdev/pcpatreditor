@@ -1,6 +1,7 @@
 module org.sil.pcpatreditor {
 	// Exports
 	exports org.sil.pcpatreditor;
+	exports org.sil.pcpatreditor.model;
 	exports org.sil.pcpatreditor.service;
 	exports org.sil.pcpatreditor.view;
 
