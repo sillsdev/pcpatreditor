@@ -616,6 +616,8 @@ type="tPcPatrEditor"
 >:</p
 ><ul
 ><li
+>When exporting selected rules, there will probably be a pause before the chooser dialog comes up.  We would like to have the mouse cursor have the “wait” shape during this processing, but have not figured out how to do it.</li
+><li
 >When you are using bookmarks and export selected rules with the “Open the exported file in a new instance” option, the bookmarks of the original file may be stored as the bookmarks for the exported file.</li
 ><li
 >When showing matching parentheses while using arrow keys (see section <sectionRef
