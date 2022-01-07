@@ -1269,7 +1269,7 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	protected void handleExportSelectedRules() {
-		// I've tried many thing including run later, but the cursor never changes.  Sigh.
+		// I've tried many things including run later, but the cursor never changes.  Sigh.
 		mainPane.getScene().setCursor(Cursor.WAIT);
 		RuleLocator psrCollector = RuleLocator.getInstance();
 		psrCollector.findRuleLocations(grammar.getText());
