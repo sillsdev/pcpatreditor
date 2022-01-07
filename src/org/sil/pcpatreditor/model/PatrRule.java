@@ -102,4 +102,12 @@ public class PatrRule extends PcPatrBase {
 	public String psrRepresentation() {
 		return phraseStructureRule.psrRepresentation();
 	}
+
+	public String getNonTerminalSymbol() {
+		return getPhraseStructureRule().getNonTerminalSymbol();
+	}
+
+	public List<String> getTerminalSymbols() {
+		return getPhraseStructureRule().getTerminalSymbols();
+	}
 }

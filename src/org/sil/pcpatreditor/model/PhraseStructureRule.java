@@ -67,4 +67,17 @@ public class PhraseStructureRule {
 		return sb.toString();
 	}
 
+	public String getNonTerminalSymbol() {
+		return getLeftHandSide().getNode();
+	}
+
+	public List<String> getTerminalSymbols() {
+		List<String> terminals = new ArrayList<>();
+		for (PhraseStructureRuleRightHandSide rhs : getRightHandSide()) {
+			for (Constituent c : rhs.getConstituents()) {
+				terminals.add(c.getNode());
+			}
+		}
+		return terminals;
+	}
 }
