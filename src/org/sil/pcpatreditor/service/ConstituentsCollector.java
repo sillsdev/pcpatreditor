@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.PatrRule;
-import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
 
 /**
  * @author Andy Black
@@ -67,15 +65,12 @@ public class ConstituentsCollector {
 		pcpatrGrammar = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
 		List<PatrRule> rules = pcpatrGrammar.getRules();
 		nonTerminals.clear();
-		rules.stream().forEach(r -> nonTerminals.add(r.getPhraseStructureRule().getLeftHandSide().getNode()));
+		rules.stream().forEach(r -> nonTerminals.add(r.getNonTerminalSymbol()));
 		terminals.clear();
 		rules.stream().forEach(r -> {
-			for (PhraseStructureRuleRightHandSide rhs : r.getPhraseStructureRule().getRightHandSide()) {
-				for (Constituent c : rhs.getConstituents()) {
-					String node = c.getNode();
-					if (!nonTerminals.contains(node)) {
-						terminals.add(c.getNode());
-					}
+			for (String node : r.getTerminalSymbols()) {
+				if (!nonTerminals.contains(node)) {
+					terminals.add(node);
 				}
 			}
 		});

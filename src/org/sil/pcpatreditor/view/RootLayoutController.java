@@ -58,6 +58,7 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
+import org.sil.pcpatreditor.service.ConstituentsCollector;
 import org.sil.pcpatreditor.service.ExtractorAction;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
 import org.sil.pcpatreditor.service.GrammarBuilder;
@@ -215,6 +216,10 @@ public class RootLayoutController implements Initializable {
 	private Menu menuTools;
 	@FXML
 	private MenuItem menuItemExportSelectedRules;
+	@FXML
+	private Menu menuReports;
+	@FXML
+	private MenuItem menuItemShowConstituents;
 	@FXML
 	private Menu menuSettings;
 	@FXML
@@ -909,6 +914,40 @@ public class RootLayoutController implements Initializable {
 	 */
 	public CodeArea getGrammar() {
 		return grammar;
+	}
+
+	@FXML
+	private void handleShowConstituents() {
+		mainPane.getScene().setCursor(Cursor.WAIT);
+		ConstituentsCollector collector = new ConstituentsCollector(grammar.getText());
+		collector.collect();
+		mainPane.getScene().setCursor(Cursor.DEFAULT);
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(ConstituentsDialogController.class.getResource("fxml/ConstituentsDialog.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.NONE);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			ConstituentsDialogController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setData(collector.getNonTerminals(), collector.getTerminals());
+			controller.initialize(location, bundle);
+
+			dialogStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
 	}
 
 	@FXML

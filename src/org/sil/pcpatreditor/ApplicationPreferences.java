@@ -49,6 +49,8 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public static final String LAST_SPLIT_PANE_POSITION = "lastSplitPanePosition";
 	public static final String LAST_FIND_REPLACE_DIALOG = "lastFindReplaceDialog";
 	public static final String LAST_RULE_EXTRACTOR_DIALOG = "lastRuleExtractorDialog";
+	public static final String LAST_CONSTITUENTS_DIALOG = "lastConstituentsDialog";
+	public static final String LAST_CONSTITUENTS_DIALOG_SPLITTER_POSITION = "lastConstituentsDialogSplitterPosition";
 
 	Preferences prefs;
 

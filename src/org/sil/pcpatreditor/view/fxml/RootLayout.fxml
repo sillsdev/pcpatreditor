@@ -76,6 +76,11 @@
 					<MenuItem fx:id="menuItemExportSelectedRules" mnemonicParsing="true" onAction="#handleExportSelectedRules" text="%menu.toolsexportselectedrules" />
                   </items>
                 </Menu>
+                <Menu fx:id="menuReports" mnemonicParsing="true" text="%menu.reports">
+                  <items>
+					<MenuItem fx:id="menuItemShowConstituents" mnemonicParsing="true" onAction="#handleShowConstituents" text="%menu.reportshowconstituents" />
+                  </items>
+                </Menu>
 				<Menu fx:id="menuSettings" mnemonicParsing="true" text="%menu.settings">
 				  <items>
 <!-- 					<MenuItem fx:id="menuItemDescriptionFontSize" mnemonicParsing="true" onAction="#handleMenuDescriptionFontSize" text="%menu.descriptionfontsize" /> -->
