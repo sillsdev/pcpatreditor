@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->6 January, 2022</date
+>7 January, 2022</date
 ><version
->Version 0.6.0 Alpha</version
+>Version 0.7.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -296,6 +296,49 @@ type="tPcPatrEditor"
 sec="sAfterExport"
 ></sectionRef
 > for what the options are for what happens next after saving the file containing the selected rules.</p
+></section2
+></section1
+><section1
+id="sReports"
+><secTitle
+>Reports menu item</secTitle
+><p
+><object
+type="tPcPatrEditor"
+></object
+> currently has one report option.</p
+><section2
+id="sConstituents"
+><secTitle
+>Show phrase structure constituents</secTitle
+><p
+>This report option is available under the <object
+type="tMenuItem"
+>Reports</object
+> menu item as <object
+type="tMenuItem"
+>Show phrase structure constituents</object
+>. This is useful when you want to see what the current set of non-terminal and terminal constituents are.</p
+><p
+>When you invoke this option, it may take a while but <object
+type="tPcPatrEditor"
+></object
+> will eventually bring up a dialog box showing the non-terminals and terminals. In one grammar file, it looked like what is in example <exampleRef
+letter="xConstituentsDialog"
+num="xConstituentsDialog"
+></exampleRef
+>.</p
+><example
+num="xConstituentsDialog"
+><chart
+><img
+src="resources/ConstituentsDialog.png"
+width="500"
+></img
+></chart
+></example
+><p
+>Unlike most dialog boxes, you can still edit the grammar, etc., in the main program.  Note, however, that it shows the set of constituents at the time the report was generated.  If you make changes after that, you will need to invoke the report again.  We suggest you close the older dialog first.</p
 ></section2
 ></section1
 ><section1
@@ -616,7 +659,7 @@ type="tPcPatrEditor"
 >:</p
 ><ul
 ><li
->When exporting selected rules, there will probably be a pause before the chooser dialog comes up.  We would like to have the mouse cursor have the “wait” shape during this processing, but have not figured out how to do it.</li
+>When exporting selected rules or showing constituents, there will probably be a pause before the dialog comes up. We would like to have the mouse cursor have the “wait” shape during this processing, but have not figured out how to do it.</li
 ><li
 >When you are using bookmarks and export selected rules with the “Open the exported file in a new instance” option, the bookmarks of the original file may be stored as the bookmarks for the exported file.</li
 ><li
