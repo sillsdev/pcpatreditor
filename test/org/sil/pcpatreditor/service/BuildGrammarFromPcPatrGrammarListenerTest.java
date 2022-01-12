@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -23,6 +23,11 @@ import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
+import org.sil.pcpatreditor.model.FeaturePath;
+import org.sil.pcpatreditor.model.FeaturePathUnit;
+import org.sil.pcpatreditor.model.FeatureTemplate;
+import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
+import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
@@ -38,6 +43,11 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	OptionalConstituents optionalConstituents;
 	PhraseStructureRule psr;
 	List<PhraseStructureRuleRightHandSide> rhs = new ArrayList<>();
+	FeatureTemplate featureTemplate;
+	FeaturePath featurePath;
+	FeaturePathUnit featurePathUnit;
+	FeatureTemplateValue featureTemplateValue;
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -53,7 +63,57 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	}
 
 	@Test
-	public void buildGrammarTest() {
+	public void buildFeatureTemplateTest() {
+		checkFeatureTemplate("Let direct be <head case> = direct", "direct");
+		checkFeaturePathUnit(2, "head case");
+		checkFeatureTemplateAtomicValue("direct");
+
+		checkFeatureTemplate("Let generic be <head type generic> = +", "generic");
+		checkFeaturePathUnit(3, "head type generic");
+		checkFeatureTemplateAtomicValue("+");
+
+		checkFeatureTemplate("Let generic be <head type generic> = !+", "generic");
+		checkFeaturePathUnit(3, "head type generic");
+		checkFeatureTemplateAtomicValue("!+");
+
+		checkFeatureTemplate("Let -absolutive be <head case> = {ergative genitive dative}", "-absolutive");
+		checkFeaturePathUnit(2, "head case");
+		checkFeatureTemplateDisjunctiveValue("{ergative genitive dative}");
+
+	}
+
+	protected void checkFeatureTemplateDisjunctiveValue(String sDisjunction) {
+		featureTemplateValue = featureTemplate.getFeatureTemplateValue();
+		FeatureTemplateDisjunction ftdisj = featureTemplateValue.getFeatureTemplateDisjunction();
+		assertNotNull(ftdisj);
+		assertEquals(sDisjunction, ftdisj.contentsRepresentation());
+		assertEquals(null, featureTemplateValue.getAtomicValue());
+		assertEquals(null, featureTemplateValue.getFeaturePath());
+	}
+
+	protected void checkFeatureTemplateAtomicValue(String value) {
+		featureTemplateValue = featureTemplate.getFeatureTemplateValue();
+		assertEquals(value, featureTemplateValue.getAtomicValue());
+		assertEquals(null, featureTemplateValue.getFeaturePath());
+		assertEquals(null, featureTemplateValue.getFeatureTemplateDisjunction());
+	}
+
+	protected void checkFeaturePathUnit(int featurePathLength, String sPath) {
+		featurePathUnit = featureTemplate.getFeaturePathUnit();
+		assertEquals(sPath, featurePathUnit.contentsRepresentation());
+	}
+
+	protected void checkFeatureTemplate(String sTemplate, String sName) {
+		Grammar grammar = new Grammar();
+		grammar = GrammarBuilder.parseAString(sTemplate + "\nrule S = V\n", grammar);
+		List<FeatureTemplate> featureTemplates = grammar.getFeatureTemplates();
+		assertEquals(1, featureTemplates.size());
+		featureTemplate = featureTemplates.get(0);
+		assertEquals(sName, featureTemplate.getName());
+	}
+
+	@Test
+	public void buildPhraseStructureRuleTest() {
 		psr = checkPhraseStuctureRule(1, "testing 1, 2, 3", "S = NP VP", "S");
 		rhs = psr.getRightHandSide();
 		assertNotNull(rhs);
@@ -297,8 +357,6 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		cRhs = (ConstituentsRightHandSide)optionalConstituents.getContents().get(0);
 		constituent = cRhs.getConstituents().get(0);
 		checkConstituentSymbol(constituent, "CP");
-
-		// TODO: test for templates
 	}
 
 	protected PhraseStructureRule checkPhraseStuctureRule(int numberOfRules, String sId, String sPsr, String sLhs) {
@@ -325,6 +383,20 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildGrammarFailuresTest() {
+//		String sInput = "Let -absolutive be <head case> = {ergative genitive dative}\nrule S = V\n";
+//		CharStream input = CharStreams.fromString(sInput);
+//		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
+//		CommonTokenStream tokens = new CommonTokenStream(lexer);
+////		System.out.println(tokens.getTokenSource().getInputStream().toString());
+////		for (Token t : lexer.getAllTokens())
+////		{
+////			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
+////		}
+//		PcPatrGrammarParser parser = new PcPatrGrammarParser(tokens);
+//		ParseTree tree = parser.patrgrammar();
+//		System.out.println(tree.toStringTree(parser));
+
+
 		// TODO: when get there
 	}
 
