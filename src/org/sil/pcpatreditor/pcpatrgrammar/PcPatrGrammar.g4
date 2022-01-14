@@ -29,8 +29,8 @@ featureTemplate: featureTemplateDefinition featurePathTemplateBody '.'? comment*
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
                         ;
 featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody?
-                       | featureTemplateAbbreviation featurePathTemplateBody*
-                       | featureTemplateDisjunction featurePathTemplateBody*
+                       | featureTemplateAbbreviation featurePathTemplateBody?
+                       | featureTemplateDisjunction featurePathTemplateBody?
                        ;
 
 featureTemplateName: atomicValue;

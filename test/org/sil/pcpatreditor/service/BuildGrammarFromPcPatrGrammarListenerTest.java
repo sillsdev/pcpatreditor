@@ -73,6 +73,39 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildFeatureTemplateTest() {
+		checkFeatureTemplate("Let causative_syntax be { [head:[infl:[valence:[causative:+]]\r\n"
+				+ "type:[causative_syntax:+]\r\n"
+				+ "embedded:[cat:IP]]]\r\n"
+				+ "[head:[type:[causative_syntax:+\r\n"
+				+ "transitive:+]\r\n"
+				+ "embedded:[cat:none]]] }"
+				, "causative_syntax");
+
+		checkFeatureTemplate("Let poss_first be [poss_exclusive]", "poss_first");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		assertEquals("poss_exclusive", featurePathTemplateBody.getFeatureTemplateAbbreviation());
+
+		checkFeatureTemplate("Let copular_suffix be <head type copular_suffix> = +\r\n"
+				+ "[copular]"
+				, "copular_suffix");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(featurePathTemplateBody.getFeaturePathUnit(), "head type copular_suffix");
+		checkFeatureTemplateAtomicValue(featurePathTemplateBody, "+");
+		embeddedFeaturePathTemplateBody = featurePathTemplateBody.getFeaturePathTemplateBody();
+		assertEquals("copular", embeddedFeaturePathTemplateBody.getFeatureTemplateAbbreviation());
+
+		checkFeatureTemplate("Let Cop be <cat> = !V\r\n"
+				+ "[V]\r\n"
+				+ "[copular]"
+				, "Cop");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(featurePathTemplateBody.getFeaturePathUnit(), "cat");
+		checkFeatureTemplateAtomicValue(featurePathTemplateBody, "!V");
+		embeddedFeaturePathTemplateBody = featurePathTemplateBody.getFeaturePathTemplateBody();
+		assertEquals("V", embeddedFeaturePathTemplateBody.getFeatureTemplateAbbreviation());
+		embeddedFeaturePathTemplateBody = embeddedFeaturePathTemplateBody.getFeaturePathTemplateBody();
+		assertEquals("copular", embeddedFeaturePathTemplateBody.getFeatureTemplateAbbreviation());
+
 		checkFeatureTemplate("Let direct be <head case> = direct", "direct");
 		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head case");
 		checkFeatureTemplateAtomicValue(featureTemplate.getFeaturePathTemplateBody(), "direct");
@@ -100,6 +133,19 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "-");
 		embeddedFeaturePathTemplateBody = embeddedFeaturePathTemplateBody.getFeaturePathTemplateBody();
 		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head type object_agr_suffix");
+		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "+");
+
+		checkFeatureTemplate("Let compounds_with_آوردن،داشتن be <head type compounds_with1> = آوردن\r\n"
+				+ "<head type compounds_with2> = داشتن\r\n"
+				+ "<head type compound> = +", "compounds_with_آوردن،داشتن");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head type compounds_with1");
+		checkFeatureTemplateAtomicValue(featurePathTemplateBody, "آوردن");
+		embeddedFeaturePathTemplateBody = featurePathTemplateBody.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head type compounds_with2");
+		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "داشتن");
+		embeddedFeaturePathTemplateBody = embeddedFeaturePathTemplateBody.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head type compound");
 		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "+");
 
 		checkFeatureTemplate("Let -absolutive be <head case> = {ergative genitive dative}", "-absolutive");

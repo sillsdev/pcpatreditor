@@ -15,6 +15,7 @@ public class FeaturePathTemplateBody extends PcPatrBase {
 	FeaturePathUnit featurePathUnit;
 	FeatureTemplateValue featureTemplateValue;
 	FeaturePathTemplateBody featurePathTemplateBody;
+	String featureTemplateAbbreviation;
 
 	/**
 	 * @param enabled
@@ -50,6 +51,20 @@ public class FeaturePathTemplateBody extends PcPatrBase {
 	 */
 	public void setFeatureTemplateValue(FeatureTemplateValue featureTemplateValue) {
 		this.featureTemplateValue = featureTemplateValue;
+	}
+
+	/**
+	 * @return the featureTemplateAbbreviation
+	 */
+	public String getFeatureTemplateAbbreviation() {
+		return featureTemplateAbbreviation;
+	}
+
+	/**
+	 * @param featureTemplateAbbreviation the featureTemplateAbbreviation to set
+	 */
+	public void setFeatureTemplateAbbreviation(String featureTemplateAbbreviation) {
+		this.featureTemplateAbbreviation = featureTemplateAbbreviation;
 	}
 
 	/**

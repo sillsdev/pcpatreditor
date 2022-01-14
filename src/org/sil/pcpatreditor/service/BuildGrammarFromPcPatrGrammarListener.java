@@ -36,6 +36,8 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.Co
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionConstituentsContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathOrStructureContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathUnitContext;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateAbbreviationContext;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateDisjunctionContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateValueContext;
 
@@ -280,6 +282,15 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 				FeatureTemplateValue ftv = featureTemplateValueMap.get(ftvCtx.hashCode());
 				fptb.setFeatureTemplateValue(ftv);
 			}
+		} else if (childCtx instanceof FeatureTemplateAbbreviationContext abbrCtx) {
+			ParserRuleContext parentCtx = ctx.getParent();
+			String sParentClass = parentCtx.getClass().getSimpleName();
+			if (sParentClass.equals("FeatureTemplateContext")) {
+				featureTemplate.setFeaturePathTemplateBody(fptb);
+			} else if (sParentClass.equals("FeaturePathTemplateBodyContext")) {
+				FeaturePathTemplateBody fptbParent = featurePathTemplateBodyMap.get(parentCtx.hashCode());
+				fptbParent.setFeaturePathTemplateBody(fptb);
+			}
 		} else {
 			System.out.println("\tchild not fpu " + childCtx);
 
@@ -287,8 +298,19 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	}
 
 	@Override
+	public void exitFeatureTemplateAbbreviation(PcPatrGrammarParser.FeatureTemplateAbbreviationContext ctx) {
+		ParseTree childCtx = ctx.getChild(1);
+		ParserRuleContext parentCtx = ctx.getParent();
+		FeaturePathTemplateBody fptb = featurePathTemplateBodyMap.get(parentCtx.hashCode());
+		fptb.setFeatureTemplateAbbreviation(childCtx.getText());
+	}
+
+	@Override
 	public void exitFeatureTemplateName(PcPatrGrammarParser.FeatureTemplateNameContext ctx) {
-		featureTemplate.setName(ctx.getText());
+		ParserRuleContext parentCtx = ctx.getParent();
+		if (parentCtx instanceof PcPatrGrammarParser.FeatureTemplateDefinitionContext) {
+			featureTemplate.setName(ctx.getText());
+		}
 	}
 
 	@Override
