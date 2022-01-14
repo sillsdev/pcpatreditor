@@ -11,6 +11,10 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +28,7 @@ import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.FeaturePath;
+import org.sil.pcpatreditor.model.FeaturePathTemplateBody;
 import org.sil.pcpatreditor.model.FeaturePathUnit;
 import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
@@ -31,6 +36,8 @@ import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
 /**
  * @author Andy Black
  *
@@ -45,6 +52,8 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	List<PhraseStructureRuleRightHandSide> rhs = new ArrayList<>();
 	FeatureTemplate featureTemplate;
 	FeaturePath featurePath;
+	FeaturePathTemplateBody featurePathTemplateBody;
+	FeaturePathTemplateBody embeddedFeaturePathTemplateBody;
 	FeaturePathUnit featurePathUnit;
 	FeatureTemplateValue featureTemplateValue;
 
@@ -65,25 +74,42 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	@Test
 	public void buildFeatureTemplateTest() {
 		checkFeatureTemplate("Let direct be <head case> = direct", "direct");
-		checkFeaturePathUnit(2, "head case");
-		checkFeatureTemplateAtomicValue("direct");
+		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head case");
+		checkFeatureTemplateAtomicValue(featureTemplate.getFeaturePathTemplateBody(), "direct");
 
 		checkFeatureTemplate("Let generic be <head type generic> = +", "generic");
-		checkFeaturePathUnit(3, "head type generic");
-		checkFeatureTemplateAtomicValue("+");
+		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head type generic");
+		checkFeatureTemplateAtomicValue(featureTemplate.getFeaturePathTemplateBody(), "+");
 
 		checkFeatureTemplate("Let generic be <head type generic> = !+", "generic");
-		checkFeaturePathUnit(3, "head type generic");
-		checkFeatureTemplateAtomicValue("!+");
+		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head type generic");
+		checkFeatureTemplateAtomicValue(featureTemplate.getFeaturePathTemplateBody(), "!+");
+
+		checkFeatureTemplate("Let first_object be <head object head agr person first> = +\r\n"
+				+ "<head object head agr person second> = -\r\n"
+				+ "<head object head agr person third> = -\r\n"
+				+ "<head type object_agr_suffix> = +", "first_object");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head object head agr person first");
+		checkFeatureTemplateAtomicValue(featurePathTemplateBody, "+");
+		embeddedFeaturePathTemplateBody = featurePathTemplateBody.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head object head agr person second");
+		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "-");
+		embeddedFeaturePathTemplateBody = embeddedFeaturePathTemplateBody.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head object head agr person third");
+		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "-");
+		embeddedFeaturePathTemplateBody = embeddedFeaturePathTemplateBody.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head type object_agr_suffix");
+		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "+");
 
 		checkFeatureTemplate("Let -absolutive be <head case> = {ergative genitive dative}", "-absolutive");
-		checkFeaturePathUnit(2, "head case");
+		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head case");
 		checkFeatureTemplateDisjunctiveValue("{ergative genitive dative}");
 
 	}
 
 	protected void checkFeatureTemplateDisjunctiveValue(String sDisjunction) {
-		featureTemplateValue = featureTemplate.getFeatureTemplateValue();
+		featureTemplateValue = featureTemplate.getFeaturePathTemplateBody().getFeatureTemplateValue();
 		FeatureTemplateDisjunction ftdisj = featureTemplateValue.getFeatureTemplateDisjunction();
 		assertNotNull(ftdisj);
 		assertEquals(sDisjunction, ftdisj.contentsRepresentation());
@@ -91,15 +117,14 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		assertEquals(null, featureTemplateValue.getFeaturePath());
 	}
 
-	protected void checkFeatureTemplateAtomicValue(String value) {
-		featureTemplateValue = featureTemplate.getFeatureTemplateValue();
+	protected void checkFeatureTemplateAtomicValue(FeaturePathTemplateBody fptb, String value) {
+		FeatureTemplateValue featureTemplateValue = fptb.getFeatureTemplateValue();
 		assertEquals(value, featureTemplateValue.getAtomicValue());
 		assertEquals(null, featureTemplateValue.getFeaturePath());
 		assertEquals(null, featureTemplateValue.getFeatureTemplateDisjunction());
 	}
 
-	protected void checkFeaturePathUnit(int featurePathLength, String sPath) {
-		featurePathUnit = featureTemplate.getFeaturePathUnit();
+	protected void checkFeaturePathUnit(FeaturePathUnit featurePathUnit, String sPath) {
 		assertEquals(sPath, featurePathUnit.contentsRepresentation());
 	}
 
@@ -383,7 +408,10 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildGrammarFailuresTest() {
-//		String sInput = "Let -absolutive be <head case> = {ergative genitive dative}\nrule S = V\n";
+//		String sInput = "Let first_object be <head object head agr person first> = +\n"
+//				+ "<head object head agr person second> = -\n"
+//				+ "<head object head agr person third> = -\n"
+//				+ "<head type object_agr_suffix> = +\nrule S = V\n";
 //		CharStream input = CharStreams.fromString(sInput);
 //		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
 //		CommonTokenStream tokens = new CommonTokenStream(lexer);

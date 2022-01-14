@@ -13,8 +13,7 @@ package org.sil.pcpatreditor.model;
 public class FeatureTemplate extends PcPatrBase {
 
 	String name;
-	FeaturePathUnit featurePathUnit;
-	FeatureTemplateValue featureTemplateValue;
+	FeaturePathTemplateBody featurePathTemplateBody;
 	
 	/**
 	 * @param enabled
@@ -39,31 +38,17 @@ public class FeatureTemplate extends PcPatrBase {
 	}
 
 	/**
-	 * @return the featurePathUnit
+	 * @return the featurePathTemplateBody
 	 */
-	public FeaturePathUnit getFeaturePathUnit() {
-		return featurePathUnit;
+	public FeaturePathTemplateBody getFeaturePathTemplateBody() {
+		return featurePathTemplateBody;
 	}
 
 	/**
-	 * @param featurePathUnit the featurePathUnit to set
+	 * @param featurePathTemplateBody the featurePathTemplateBody to set
 	 */
-	public void setFeaturePathUnit(FeaturePathUnit featurePathUnit) {
-		this.featurePathUnit = featurePathUnit;
-	}
-
-	/**
-	 * @return the featureTemplateValue
-	 */
-	public FeatureTemplateValue getFeatureTemplateValue() {
-		return featureTemplateValue;
-	}
-
-	/**
-	 * @param featureTemplateValue the featureTemplateValue to set
-	 */
-	public void setFeatureTemplateValue(FeatureTemplateValue featureTemplateValue) {
-		this.featureTemplateValue = featureTemplateValue;
+	public void setFeaturePathTemplateBody(FeaturePathTemplateBody featurePathTemplateBody) {
+		this.featurePathTemplateBody = featurePathTemplateBody;
 	}
 
 }
