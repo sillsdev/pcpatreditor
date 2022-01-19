@@ -26,6 +26,8 @@ import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
+import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
+import org.sil.pcpatreditor.model.ConstraintRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.OptionalConstituents;
@@ -33,6 +35,7 @@ import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
+import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarBaseListener;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.ConstituentContext;
@@ -65,6 +68,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	private HashMap<Integer, FeatureStructureValue> featureStructureValueMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateDisjunction> featureTemplateDisjunctionMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateValue> featureTemplateValueMap = new HashMap<>();
+	private HashMap<Integer, UnificationConstraint> unificationConstraintMap = new HashMap<>();
 
 	ConstituentContext constituentCtx = new ConstituentContext(null, 0);
 	DisjunctionConstituentsContext disjunctionConstituentCtx = new DisjunctionConstituentsContext(null, 0);
@@ -164,6 +168,12 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		disjunctionConstituentsMap.clear();
 		disjunctiveConstituentsMap.clear();
 		optionalConstituentsMap.clear();
+	}
+
+	@Override
+	public void enterUnificationConstraint(PcPatrGrammarParser.UnificationConstraintContext ctx) {
+		UnificationConstraint uc = new UnificationConstraint(true, false, null);
+		unificationConstraintMap.put(ctx.hashCode(), uc);
 	}
 
 	@Override
@@ -513,6 +523,42 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			}
 			lastClass = sClass;
 		}
+	}
+
+	@Override
+	public void exitUniConstraintLeftHandSide(PcPatrGrammarParser.UniConstraintLeftHandSideContext ctx) {
+		ConstraintLeftHandSide lhs = new ConstraintLeftHandSide(null, null);
+		ParseTree childCtx = ctx.getChild(1);
+		lhs.setConstituent(constituentMap.get(childCtx.hashCode()));
+		childCtx = ctx.getChild(2);
+		lhs.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
+		UnificationConstraint uc = unificationConstraintMap.get(ctx.getParent().hashCode());
+		uc.setLeftHandSide(lhs);
+	}
+
+	@Override
+	public void exitUniConstraintRightHandSide(PcPatrGrammarParser.UniConstraintRightHandSideContext ctx) {
+		ConstraintRightHandSide rhs = new ConstraintRightHandSide(null, null);
+		ParseTree childCtx = ctx.getChild(0);
+		if (childCtx instanceof PcPatrGrammarParser.AtomicValueContext) {
+			rhs.setAtomicValue(childCtx.getText());
+		} else {
+			childCtx = ctx.getChild(1);
+			rhs.setConstituent(constituentMap.get(childCtx.hashCode()));
+			if (ctx.getChildCount() > 2) {
+				childCtx = ctx.getChild(2);
+				if (childCtx instanceof PcPatrGrammarParser.FeaturePathContext) {
+					rhs.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
+				}
+			}
+		}
+		UnificationConstraint uc = unificationConstraintMap.get(ctx.getParent().hashCode());
+		uc.setRightHandSide(rhs);
+	}
+
+	@Override
+	public void exitUnificationConstraint(PcPatrGrammarParser.UnificationConstraintContext ctx) {
+		rule.getConstraints().add(unificationConstraintMap.get(ctx.hashCode()));
 	}
 
 	protected List<Constituent> addConstituentsToList(List<ConstituentContext> constituentCtxs, int iStart, int iEnd) {

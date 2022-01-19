@@ -71,7 +71,7 @@ constraintTemplate: 'Constraint' '.'?
 
 patrRules: patrRule+;
 
-patrRule: comment* ruleKW ruleIdentifier? comment* phraseStructureRule comment* constraints* comment* '.'?;
+patrRule: comment* ruleKW ruleIdentifier? comment* phraseStructureRule comment* constraints? comment* '.'?;
 
 ruleKW: 'Rule'
       | 'rule'
@@ -101,13 +101,8 @@ optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConst
 disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
 disjunctionOptionalConstituents: '/' constituent+ comment?;
 
-constraints: constraint+;
+constraints: (unificationConstraint | priorityUnionConstraint | logicalConstraint | comment)+;
 
-constraint: unificationConstraint
-		  | priorityUnionConstraint
-		  | logicalConstraint
-		  | comment
-		  ;
 unificationConstraint: uniConstraintLeftHandSide '=' uniConstraintRightHandSide comment?
                      | disjunctiveUnificationConstraint 
                      ;

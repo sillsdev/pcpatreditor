@@ -24,6 +24,9 @@ import org.sil.pcpatreditor.model.OptionalConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
+import org.sil.pcpatreditor.model.Constraint;
+import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
+import org.sil.pcpatreditor.model.ConstraintRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
@@ -40,6 +43,7 @@ import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
+import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
 /**
@@ -54,6 +58,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	OptionalConstituents optionalConstituents;
 	PhraseStructureRule psr;
 	List<PhraseStructureRuleRightHandSide> rhs = new ArrayList<>();
+	List<Constraint> constraints = new ArrayList<>();
 	FeatureTemplate featureTemplate;
 	FeaturePath featurePath;
 	FeaturePathOrStructure featurePathOrStructure;
@@ -66,6 +71,9 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	FeatureStructureValue featureStructureValue;
 	FeatureTemplateDisjunction featureTemplateDisjunction;
 	FeatureTemplateValue featureTemplateValue;
+	UnificationConstraint unificationConstraint;
+	ConstraintLeftHandSide constraintLhs;
+	ConstraintRightHandSide constraintRhs;
 
 	/**
 	 * @throws java.lang.Exception
@@ -236,6 +244,10 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		assertEquals(value, featureTemplateValue.getAtomicValue());
 		assertEquals(null, featureTemplateValue.getFeaturePath());
 		assertEquals(null, featureTemplateValue.getFeatureTemplateDisjunction());
+	}
+
+	protected void checkFeaturePath(FeaturePath fp, String sPath) {
+		assertEquals(sPath, fp.contentsRepresentation());
 	}
 
 	protected void checkFeaturePathUnit(FeaturePathUnit featurePathUnit, String sPath) {
@@ -518,6 +530,57 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 			ntSymbol += "_" + nt.getIndex();
 		}
 		assertEquals(sExpected, ntSymbol);
+	}
+
+	@Test
+	public void buildConstraintsTest() {
+		constraints = checkConstraints("<S head> = <IP head>\r\n"
+				+ "<IP head type root> = +\r\n"
+				+ "<IP head type conj_suffix> = -     | 16Jul03 CB\r\n"
+				+ "<S rule> = start"
+				+ "<I' head subject> = <DP>\r\n"
+				, 5);
+		unificationConstraint = (UnificationConstraint) constraints.get(0);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "S");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "IP");
+		checkFeaturePath(constraintRhs.getFeaturePath(), "head");
+		unificationConstraint = (UnificationConstraint) constraints.get(1);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "IP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type root");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		assertEquals("+", constraintRhs.getAtomicValue());
+		unificationConstraint = (UnificationConstraint) constraints.get(2);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "IP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type conj_suffix");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		assertEquals("-", constraintRhs.getAtomicValue());
+		unificationConstraint = (UnificationConstraint) constraints.get(3);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "S");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "rule");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		assertEquals("start", constraintRhs.getAtomicValue());
+		unificationConstraint = (UnificationConstraint) constraints.get(4);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "I'");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head subject");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "DP");
+		assertNull(constraintRhs.getFeaturePath());
+	}
+
+	protected List<Constraint> checkConstraints(String sConstraint, int size) {
+		Grammar grammar = new Grammar();
+		grammar = GrammarBuilder.parseAString("\nrule S = V\n" + sConstraint, grammar);
+		PatrRule rule = grammar.getRules().get(0);
+		constraints = rule.getConstraints();
+		assertEquals(size, constraints.size());
+		return constraints;
 	}
 
 	@Test
