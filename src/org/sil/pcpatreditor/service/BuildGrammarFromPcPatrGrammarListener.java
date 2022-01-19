@@ -13,10 +13,13 @@ import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
+import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
 import org.sil.pcpatreditor.model.FeaturePath;
 import org.sil.pcpatreditor.model.FeaturePathOrStructure;
 import org.sil.pcpatreditor.model.FeaturePathTemplateBody;
 import org.sil.pcpatreditor.model.FeaturePathUnit;
+import org.sil.pcpatreditor.model.FeatureStructure;
+import org.sil.pcpatreditor.model.FeatureStructureValue;
 import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
 import org.sil.pcpatreditor.model.FeatureTemplateValue;
@@ -37,7 +40,6 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.Di
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathOrStructureContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathUnitContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateAbbreviationContext;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateDisjunctionContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateValueContext;
 
@@ -54,10 +56,13 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	private HashMap<Integer, DisjunctiveConstituents> disjunctiveConstituentsMap = new HashMap<>();
 	private HashMap<Integer, OptionalConstituents> optionalConstituentsMap = new HashMap<>();
 	private HashMap<Integer, Constituent> constituentMap = new HashMap<>();
+	private HashMap<Integer, EmbeddedFeatureStructure> embeddedFeatureStuctureMap = new HashMap<>();
 	private HashMap<Integer, FeaturePath> featurePathMap = new HashMap<>();
 	private HashMap<Integer, FeaturePathUnit> featurePathUnitMap = new HashMap<>();
 	private HashMap<Integer, FeaturePathOrStructure> featurePathOrStructureMap = new HashMap<>();
 	private HashMap<Integer, FeaturePathTemplateBody> featurePathTemplateBodyMap = new HashMap<>();
+	private HashMap<Integer, FeatureStructure> featureStructureMap = new HashMap<>();
+	private HashMap<Integer, FeatureStructureValue> featureStructureValueMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateDisjunction> featureTemplateDisjunctionMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateValue> featureTemplateValueMap = new HashMap<>();
 
@@ -87,6 +92,12 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	}
 
 	@Override
+	public void enterEmbeddedFeatureStructure(PcPatrGrammarParser.EmbeddedFeatureStructureContext ctx) {
+		EmbeddedFeatureStructure efs = new EmbeddedFeatureStructure(null, null);
+		embeddedFeatureStuctureMap.put(ctx.hashCode(), efs);
+	}
+
+	@Override
 	public void enterFeaturePath(PcPatrGrammarParser.FeaturePathContext ctx) {
 		FeaturePath featurePath = new FeaturePath();
 		featurePathMap.put(ctx.hashCode(), featurePath);
@@ -103,6 +114,18 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		featurePathMap.clear();
 		FeaturePathUnit featurePathUnit = new FeaturePathUnit();
 		featurePathUnitMap.put(ctx.hashCode(), featurePathUnit);
+	}
+
+	@Override
+	public void enterFeatureStructure(PcPatrGrammarParser.FeatureStructureContext ctx) {
+		FeatureStructure featureStructure = new FeatureStructure();
+		featureStructureMap.put(ctx.hashCode(), featureStructure);
+	}
+
+	@Override
+	public void enterFeatureStructureValue(PcPatrGrammarParser.FeatureStructureValueContext ctx) {
+		FeatureStructureValue fsValue = new FeatureStructureValue();
+		featureStructureValueMap.put(ctx.hashCode(), fsValue);
 	}
 
 	@Override
@@ -212,6 +235,18 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	}
 
 	@Override
+	public void exitEmbeddedFeatureStructure(PcPatrGrammarParser.EmbeddedFeatureStructureContext ctx) {
+		EmbeddedFeatureStructure efs = embeddedFeatureStuctureMap.get(ctx.hashCode());
+		ParseTree childCtx = ctx.getChild(0);
+		efs.setName(childCtx.getText());
+		childCtx = ctx.getChild(2);
+		if (childCtx instanceof PcPatrGrammarParser.FeatureStructureValueContext fsvCtx) {
+			FeatureStructureValue fsv = featureStructureValueMap.get(fsvCtx.hashCode());
+			efs.setValue(fsv);
+		}
+	}
+
+	@Override
 	public void exitFeaturePath(PcPatrGrammarParser.FeaturePathContext ctx) {
 		FeaturePath featurePath = featurePathMap.get(ctx.hashCode());
 		if (ctx.getChildCount() == 1) {
@@ -236,6 +271,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			fpos.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
 			break;
 		case "FeatureStructureContext":
+			fpos.setFeatureStructure(featureStructureMap.get(childCtx.hashCode()));
 			break;
 		default:
 			System.out.println("exitFeatureTemplateValue: Unhandled child class: " + sClass);
@@ -255,6 +291,34 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		FeaturePathUnit featurePathUnit = featurePathUnitMap.get(ctx.hashCode());
 		FeaturePath featurePath = featurePathMap.get(ctx.getChild(1).hashCode());
 		featurePathUnit.setFeaturePath(featurePath);
+	}
+
+	@Override
+	public void exitFeatureStructure(PcPatrGrammarParser.FeatureStructureContext ctx) {
+		FeatureStructure fs = featureStructureMap.get(ctx.hashCode());
+		ParseTree childCtx = ctx.getChild(1);
+		fs.setName(childCtx.getText());
+		childCtx = ctx.getChild(3);
+		fs.setValue(featureStructureValueMap.get(childCtx.hashCode()));
+		for (int i = 4; i < ctx.getChildCount(); i++) {
+			childCtx = ctx.getChild(i);
+			if (childCtx instanceof PcPatrGrammarParser.EmbeddedFeatureStructureContext efsCtx) {
+				EmbeddedFeatureStructure efs = embeddedFeatureStuctureMap.get(efsCtx.hashCode());
+				fs.getEmbeddedFeatureStructures().add(efs);
+			}
+		}
+	}
+
+	@Override
+	public void exitFeatureStructureValue(PcPatrGrammarParser.FeatureStructureValueContext ctx) {
+		FeatureStructureValue fsValue = featureStructureValueMap.get(ctx.hashCode());
+		ParseTree childCtx = ctx.getChild(0);
+		if (childCtx instanceof PcPatrGrammarParser.AtomicValueContext) {
+			fsValue.setAtomicValue(childCtx.getText());
+		} else {
+			FeatureStructure fs = featureStructureMap.get(childCtx.hashCode());
+			fsValue.setFeatureStructure(fs);
+		}
 	}
 
 	@Override
@@ -283,17 +347,25 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 				fptb.setFeatureTemplateValue(ftv);
 			}
 		} else if (childCtx instanceof FeatureTemplateAbbreviationContext abbrCtx) {
-			ParserRuleContext parentCtx = ctx.getParent();
-			String sParentClass = parentCtx.getClass().getSimpleName();
-			if (sParentClass.equals("FeatureTemplateContext")) {
-				featureTemplate.setFeaturePathTemplateBody(fptb);
-			} else if (sParentClass.equals("FeaturePathTemplateBodyContext")) {
-				FeaturePathTemplateBody fptbParent = featurePathTemplateBodyMap.get(parentCtx.hashCode());
-				fptbParent.setFeaturePathTemplateBody(fptb);
-			}
+			setParentOfFeaturePathTemplateBody(ctx, fptb);
+		} else if (childCtx instanceof FeatureTemplateDisjunctionContext disjCtx) {
+			FeatureTemplateDisjunction disj = featureTemplateDisjunctionMap.get(disjCtx.hashCode());
+			fptb.setFeatureTemplateDisjunction(disj);
+			setParentOfFeaturePathTemplateBody(ctx, fptb);
 		} else {
 			System.out.println("\tchild not fpu " + childCtx);
+		}
+	}
 
+	protected void setParentOfFeaturePathTemplateBody(PcPatrGrammarParser.FeaturePathTemplateBodyContext ctx,
+			FeaturePathTemplateBody fptb) {
+		ParserRuleContext parentCtx = ctx.getParent();
+		String sParentClass = parentCtx.getClass().getSimpleName();
+		if (sParentClass.equals("FeatureTemplateContext")) {
+			featureTemplate.setFeaturePathTemplateBody(fptb);
+		} else if (sParentClass.equals("FeaturePathTemplateBodyContext")) {
+			FeaturePathTemplateBody fptbParent = featurePathTemplateBodyMap.get(parentCtx.hashCode());
+			fptbParent.setFeaturePathTemplateBody(fptb);
 		}
 	}
 

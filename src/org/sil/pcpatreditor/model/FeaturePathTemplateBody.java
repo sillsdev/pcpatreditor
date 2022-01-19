@@ -15,6 +15,7 @@ public class FeaturePathTemplateBody extends PcPatrBase {
 	FeaturePathUnit featurePathUnit;
 	FeatureTemplateValue featureTemplateValue;
 	FeaturePathTemplateBody featurePathTemplateBody;
+	FeatureTemplateDisjunction featureTemplateDisjunction;
 	String featureTemplateAbbreviation;
 
 	/**
@@ -79,6 +80,20 @@ public class FeaturePathTemplateBody extends PcPatrBase {
 	 */
 	public void setFeaturePathTemplateBody(FeaturePathTemplateBody featurePathTemplateBody) {
 		this.featurePathTemplateBody = featurePathTemplateBody;
+	}
+
+	/**
+	 * @return the featureTemplateDisjunction
+	 */
+	public FeatureTemplateDisjunction getFeatureTemplateDisjunction() {
+		return featureTemplateDisjunction;
+	}
+
+	/**
+	 * @param featureTemplateDisjunction the featureTemplateDisjunction to set
+	 */
+	public void setFeatureTemplateDisjunction(FeatureTemplateDisjunction featureTemplateDisjunction) {
+		this.featureTemplateDisjunction = featureTemplateDisjunction;
 	}
 
 }

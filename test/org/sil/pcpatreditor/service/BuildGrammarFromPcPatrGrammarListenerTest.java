@@ -27,9 +27,13 @@ import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
+import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
 import org.sil.pcpatreditor.model.FeaturePath;
+import org.sil.pcpatreditor.model.FeaturePathOrStructure;
 import org.sil.pcpatreditor.model.FeaturePathTemplateBody;
 import org.sil.pcpatreditor.model.FeaturePathUnit;
+import org.sil.pcpatreditor.model.FeatureStructure;
+import org.sil.pcpatreditor.model.FeatureStructureValue;
 import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
 import org.sil.pcpatreditor.model.FeatureTemplateValue;
@@ -52,9 +56,15 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	List<PhraseStructureRuleRightHandSide> rhs = new ArrayList<>();
 	FeatureTemplate featureTemplate;
 	FeaturePath featurePath;
+	FeaturePathOrStructure featurePathOrStructure;
 	FeaturePathTemplateBody featurePathTemplateBody;
 	FeaturePathTemplateBody embeddedFeaturePathTemplateBody;
 	FeaturePathUnit featurePathUnit;
+	FeatureStructure featureStructure;
+	EmbeddedFeatureStructure embeddedFeatureStructure;
+	FeatureStructure nestedFeatureStructure;
+	FeatureStructureValue featureStructureValue;
+	FeatureTemplateDisjunction featureTemplateDisjunction;
 	FeatureTemplateValue featureTemplateValue;
 
 	/**
@@ -73,14 +83,6 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildFeatureTemplateTest() {
-		checkFeatureTemplate("Let causative_syntax be { [head:[infl:[valence:[causative:+]]\r\n"
-				+ "type:[causative_syntax:+]\r\n"
-				+ "embedded:[cat:IP]]]\r\n"
-				+ "[head:[type:[causative_syntax:+\r\n"
-				+ "transitive:+]\r\n"
-				+ "embedded:[cat:none]]] }"
-				, "causative_syntax");
-
 		checkFeatureTemplate("Let poss_first be [poss_exclusive]", "poss_first");
 		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
 		assertEquals("poss_exclusive", featurePathTemplateBody.getFeatureTemplateAbbreviation());
@@ -152,6 +154,72 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head case");
 		checkFeatureTemplateDisjunctiveValue("{ergative genitive dative}");
 
+		checkFeatureTemplate("Let causative_syntax be { [head:[infl:[valence:[causative:+]]\r\n"
+				+ "type:[causative_syntax:+]\r\n"
+				+ "embedded:[cat:IP]]]\r\n"
+				+ "[head:[type:[causative_syntax:+\r\n"
+				+ "transitive:+]\r\n"
+				+ "embedded:[cat:none]]] }"
+				, "causative_syntax");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		featureTemplateDisjunction = featurePathTemplateBody.getFeatureTemplateDisjunction();
+		assertEquals(2, featureTemplateDisjunction.getContents().size());
+		featurePathOrStructure = featureTemplateDisjunction.getContents().get(0);
+		assertNotNull(featurePathOrStructure);
+		featureStructure = featurePathOrStructure.getFeatureStructure();
+		assertEquals("head", featureStructure.getName());
+		nestedFeatureStructure = checkNestedFeatureStructure("infl", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("valence", featureStructureValue.getFeatureStructure());
+		nestedFeatureStructure = checkNestedFeatureStructure("causative", featureStructureValue.getFeatureStructure());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		nestedFeatureStructure = featureStructure.getValue().getFeatureStructure();
+		assertEquals(2, nestedFeatureStructure.getEmbeddedFeatureStructures().size());
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(0);
+		assertEquals("type", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		nestedFeatureStructure = featureStructureValue.getFeatureStructure();
+		assertEquals("causative_syntax", nestedFeatureStructure.getName());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		nestedFeatureStructure = featureStructure.getValue().getFeatureStructure();
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(1);
+		assertEquals("embedded", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		nestedFeatureStructure = featureStructureValue.getFeatureStructure();
+		assertEquals("cat", nestedFeatureStructure.getName());
+		assertEquals("IP", nestedFeatureStructure.getValue().getAtomicValue());
+
+		featurePathOrStructure = featureTemplateDisjunction.getContents().get(1);
+		assertNotNull(featurePathOrStructure);
+		featureStructure = featurePathOrStructure.getFeatureStructure();
+		assertEquals("head", featureStructure.getName());
+		nestedFeatureStructure = checkNestedFeatureStructure("type", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("causative_syntax", featureStructureValue.getFeatureStructure());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(0);
+		assertEquals("transitive", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+
+		nestedFeatureStructure = featureStructure.getValue().getFeatureStructure();
+		assertEquals(1, nestedFeatureStructure.getEmbeddedFeatureStructures().size());
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(0);
+		assertEquals("embedded", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		nestedFeatureStructure = featureStructureValue.getFeatureStructure();
+		assertEquals("cat", nestedFeatureStructure.getName());
+		assertEquals("none", nestedFeatureStructure.getValue().getAtomicValue());
+
+	}
+
+	protected FeatureStructure checkNestedFeatureStructure(String name, FeatureStructure fs) {
+		featureStructureValue = fs.getValue();
+		assertNull(featureStructureValue.getAtomicValue());
+		nestedFeatureStructure = featureStructureValue.getFeatureStructure();
+		assertNotNull(nestedFeatureStructure);
+		assertEquals(name, nestedFeatureStructure.getName());
+		return nestedFeatureStructure;
 	}
 
 	protected void checkFeatureTemplateDisjunctiveValue(String sDisjunction) {
