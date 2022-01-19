@@ -43,6 +43,7 @@ import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
+import org.sil.pcpatreditor.model.PriorityUnionConstraint;
 import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
@@ -74,6 +75,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	UnificationConstraint unificationConstraint;
 	ConstraintLeftHandSide constraintLhs;
 	ConstraintRightHandSide constraintRhs;
+	PriorityUnionConstraint priorityUnionConstraint;
 
 	/**
 	 * @throws java.lang.Exception
@@ -534,6 +536,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildConstraintsTest() {
+		// Unification
 		constraints = checkConstraints("<S head> = <IP head>\r\n"
 				+ "<IP head type root> = +\r\n"
 				+ "<IP head type conj_suffix> = -     | 16Jul03 CB\r\n"
@@ -572,6 +575,23 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constraintRhs = unificationConstraint.getRightHandSide();
 		checkConstituentSymbol(constraintRhs.getConstituent(), "DP");
 		assertNull(constraintRhs.getFeaturePath());
+		// Priority union
+		constraints = checkConstraints("<InitP head type comma> <= <Conj_2 head type comma>\r\n"
+				+ "<IP head type conjoined> <= +   | mark for checking compounding constraints (special case with relcl2+kh and 5c) 20Oct03 CB\r\n"
+				, 2);
+		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(0);
+		constraintLhs = priorityUnionConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "InitP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type comma");
+		constraintRhs = priorityUnionConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "Conj_2");
+		checkFeaturePath(constraintRhs.getFeaturePath(), "head type comma");
+		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(1);
+		constraintLhs = priorityUnionConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "IP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type conjoined");
+		constraintRhs = priorityUnionConstraint.getRightHandSide();
+		assertEquals("+", constraintRhs.getAtomicValue());
 	}
 
 	protected List<Constraint> checkConstraints(String sConstraint, int size) {

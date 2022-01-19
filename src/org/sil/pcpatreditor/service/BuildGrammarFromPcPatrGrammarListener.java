@@ -35,6 +35,7 @@ import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
 import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
+import org.sil.pcpatreditor.model.PriorityUnionConstraint;
 import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarBaseListener;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
@@ -68,6 +69,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	private HashMap<Integer, FeatureStructureValue> featureStructureValueMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateDisjunction> featureTemplateDisjunctionMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateValue> featureTemplateValueMap = new HashMap<>();
+	private HashMap<Integer, PriorityUnionConstraint> priorityUnionConstraintMap = new HashMap<>();
 	private HashMap<Integer, UnificationConstraint> unificationConstraintMap = new HashMap<>();
 
 	ConstituentContext constituentCtx = new ConstituentContext(null, 0);
@@ -162,7 +164,13 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		rule.setLineNumber(ctx.start.getLine());
 		rule.setCharacterIndex(ctx.start.getStartIndex());
 	}
-	
+
+	@Override
+	public void enterPriorityUnionConstraint(PcPatrGrammarParser.PriorityUnionConstraintContext ctx) {
+		PriorityUnionConstraint pc = new PriorityUnionConstraint(true, false, null, null);
+		priorityUnionConstraintMap.put(ctx.hashCode(), pc);
+	}
+
 	@Override
 	public void enterRightHandSide(PcPatrGrammarParser.RightHandSideContext ctx) {
 		disjunctionConstituentsMap.clear();
@@ -476,6 +484,37 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		constituentCtx = (ConstituentContext)ctx.getChild(0);
 		Constituent nt = constituentMap.get(constituentCtx.hashCode());
 		psr = new PhraseStructureRule(nt, rhs);
+	}
+
+	@Override
+	public void exitPriorityUnionConstraint(PcPatrGrammarParser.PriorityUnionConstraintContext ctx) {
+		rule.getConstraints().add(priorityUnionConstraintMap.get(ctx.hashCode()));
+	}
+	@Override
+	public void exitPriorityUnionLeftHandSide(PcPatrGrammarParser.PriorityUnionLeftHandSideContext ctx) {
+		ConstraintLeftHandSide lhs = new ConstraintLeftHandSide(null, null);
+		ParseTree childCtx = ctx.getChild(1);
+		lhs.setConstituent(constituentMap.get(childCtx.hashCode()));
+		childCtx = ctx.getChild(2);
+		lhs.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
+		PriorityUnionConstraint puc = priorityUnionConstraintMap.get(ctx.getParent().hashCode());
+		puc.setLeftHandSide(lhs);
+	}
+
+	@Override
+	public void exitPriorityUnionRightHandSide(PcPatrGrammarParser.PriorityUnionRightHandSideContext ctx) {
+		ConstraintRightHandSide rhs = new ConstraintRightHandSide(null, null);
+		ParseTree childCtx = ctx.getChild(0);
+		if (childCtx instanceof PcPatrGrammarParser.AtomicValueContext) {
+			rhs.setAtomicValue(childCtx.getText());
+		} else {
+			childCtx = ctx.getChild(1);
+			rhs.setConstituent(constituentMap.get(childCtx.hashCode()));
+			childCtx = ctx.getChild(2);
+			rhs.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
+		}
+		PriorityUnionConstraint puc = priorityUnionConstraintMap.get(ctx.getParent().hashCode());
+		puc.setRightHandSide(rhs);
 	}
 
 	@Override
