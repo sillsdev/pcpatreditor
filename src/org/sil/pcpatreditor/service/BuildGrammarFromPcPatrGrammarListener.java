@@ -13,6 +13,7 @@ import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
+import org.sil.pcpatreditor.model.DisjunctiveUnificationConstraints;
 import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
 import org.sil.pcpatreditor.model.FeaturePath;
 import org.sil.pcpatreditor.model.FeaturePathOrStructure;
@@ -30,6 +31,7 @@ import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
 import org.sil.pcpatreditor.model.ConstraintRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
+import org.sil.pcpatreditor.model.DisjunctionUnificationConstraints;
 import org.sil.pcpatreditor.model.OptionalConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.PatrRule;
@@ -41,6 +43,8 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarBaseListe
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.ConstituentContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionConstituentsContext;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionUnificationConstraintContext;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctiveUnificationConstraintContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathOrStructureContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathUnitContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateAbbreviationContext;
@@ -58,7 +62,8 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	
 	private HashMap<Integer, DisjunctionConstituents> disjunctionConstituentsMap = new HashMap<>();
 	private HashMap<Integer, DisjunctiveConstituents> disjunctiveConstituentsMap = new HashMap<>();
-	private HashMap<Integer, OptionalConstituents> optionalConstituentsMap = new HashMap<>();
+	private HashMap<Integer, DisjunctionUnificationConstraints> disjunctionUnificationConstraintsMap = new HashMap<>();
+	private HashMap<Integer, DisjunctiveUnificationConstraints> disjunctiveUnificationConstraintsMap = new HashMap<>();
 	private HashMap<Integer, Constituent> constituentMap = new HashMap<>();
 	private HashMap<Integer, EmbeddedFeatureStructure> embeddedFeatureStuctureMap = new HashMap<>();
 	private HashMap<Integer, FeaturePath> featurePathMap = new HashMap<>();
@@ -69,6 +74,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	private HashMap<Integer, FeatureStructureValue> featureStructureValueMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateDisjunction> featureTemplateDisjunctionMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateValue> featureTemplateValueMap = new HashMap<>();
+	private HashMap<Integer, OptionalConstituents> optionalConstituentsMap = new HashMap<>();
 	private HashMap<Integer, PriorityUnionConstraint> priorityUnionConstraintMap = new HashMap<>();
 	private HashMap<Integer, UnificationConstraint> unificationConstraintMap = new HashMap<>();
 
@@ -95,6 +101,18 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	 */
 	public void setGrammar(Grammar grammar) {
 		this.grammar = grammar;
+	}
+
+	@Override
+	public void enterDisjunctionUnificationConstraint(PcPatrGrammarParser.DisjunctionUnificationConstraintContext ctx) {
+		DisjunctionUnificationConstraints ducs = new DisjunctionUnificationConstraints(true, false);
+		disjunctionUnificationConstraintsMap.put(ctx.hashCode(), ducs);
+	}
+
+	@Override
+	public void enterDisjunctiveUnificationConstraint(PcPatrGrammarParser.DisjunctiveUnificationConstraintContext ctx) {
+		DisjunctiveUnificationConstraints ducs = new DisjunctiveUnificationConstraints(true, false);
+		disjunctiveUnificationConstraintsMap.put(ctx.hashCode(), ducs);
 	}
 
 	@Override
@@ -136,12 +154,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 
 	@Override
 	public void enterFeatureTemplate(PcPatrGrammarParser.FeatureTemplateContext ctx) {
+		featureTemplateDisjunctionMap.clear();
+		featureTemplateValueMap.clear();
+		clearFeatureOrientedMaps();
 		featureTemplate = new FeatureTemplate(true, false);
 	}
 
 	@Override
 	public void enterFeatureTemplateDisjunction(PcPatrGrammarParser.FeatureTemplateDisjunctionContext ctx) {
-		featurePathOrStructureMap.clear();
 		FeatureTemplateDisjunction ftdisj = new FeatureTemplateDisjunction();
 		featureTemplateDisjunctionMap.put(ctx.hashCode(), ftdisj);
 	}
@@ -160,6 +180,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	@Override
 	public void enterPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
 		constituentMap.clear();
+		disjunctionConstituentsMap.clear();
+		disjunctiveConstituentsMap.clear();
+		clearFeatureOrientedMaps();
 		rule = new PatrRule(true, false);
 		rule.setLineNumber(ctx.start.getLine());
 		rule.setCharacterIndex(ctx.start.getStartIndex());
@@ -250,6 +273,21 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	public void exitConstituent(PcPatrGrammarParser.ConstituentContext ctx) {
 		Constituent constituent = new Constituent(ctx.getText());
 		constituentMap.put(ctx.hashCode(), constituent);
+	}
+
+	@Override
+	public void exitDisjunctionUnificationConstraint(PcPatrGrammarParser.DisjunctionUnificationConstraintContext ctx) {
+		ParserRuleContext parentCtx = ctx.getParent();
+		DisjunctiveUnificationConstraints duc = disjunctiveUnificationConstraintsMap.get(parentCtx.hashCode());
+		duc.getDisjunctionUnificationConstraints().add(disjunctionUnificationConstraintsMap.get(ctx.hashCode()));
+	}
+
+	@Override
+	public void exitDisjunctiveUnificationConstraint(PcPatrGrammarParser.DisjunctiveUnificationConstraintContext ctx) {
+		ParserRuleContext parentCtx = ctx.getParent();
+		UnificationConstraint uc = unificationConstraintMap.get(parentCtx.hashCode());
+		DisjunctiveUnificationConstraints duc = disjunctiveUnificationConstraintsMap.get(ctx.hashCode());
+		uc.setDisjunctiveUnificationConstraint(duc);
 	}
 
 	@Override
@@ -479,6 +517,12 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		rule.setIdentifier(sb.toString());
 	}
 
+	@Override
+	public void exitPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
+		rule.setPhraseStructureRule(psr);
+		grammar.getRules().add(rule);
+	}
+
 	@Override 
 	public void exitPhraseStructureRule(PcPatrGrammarParser.PhraseStructureRuleContext ctx) {
 		constituentCtx = (ConstituentContext)ctx.getChild(0);
@@ -597,7 +641,17 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 
 	@Override
 	public void exitUnificationConstraint(PcPatrGrammarParser.UnificationConstraintContext ctx) {
-		rule.getConstraints().add(unificationConstraintMap.get(ctx.hashCode()));
+		UnificationConstraint uc = unificationConstraintMap.get(ctx.hashCode());
+		ParserRuleContext parentCtx = ctx.getParent();
+		if (parentCtx instanceof DisjunctionUnificationConstraintContext) {
+			DisjunctionUnificationConstraints duc = disjunctionUnificationConstraintsMap.get(parentCtx.hashCode());
+			duc.getUnificationConstraints().add(uc);
+		} else if (parentCtx instanceof DisjunctiveUnificationConstraintContext) {
+			DisjunctiveUnificationConstraints duc = disjunctiveUnificationConstraintsMap.get(parentCtx.hashCode());
+			duc.getUnificationConstraints().add(uc);
+		} else {
+			rule.getConstraints().add(uc);
+		}
 	}
 
 	protected List<Constituent> addConstituentsToList(List<ConstituentContext> constituentCtxs, int iStart, int iEnd) {
@@ -620,9 +674,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		return disjunctionConstituentList;
 	}
 
-	@Override
-	public void exitPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
-		rule.setPhraseStructureRule(psr);
-		grammar.getRules().add(rule);
+	protected void clearFeatureOrientedMaps() {
+		embeddedFeatureStuctureMap.clear();
+		featurePathMap.clear();
+		featurePathOrStructureMap.clear();
+		featurePathTemplateBodyMap.clear();
+		featurePathUnitMap.clear();
+		featureStructureMap.clear();
+		featureStructureValueMap.clear();
 	}
+
 }

@@ -29,7 +29,9 @@ import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
 import org.sil.pcpatreditor.model.ConstraintRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
+import org.sil.pcpatreditor.model.DisjunctionUnificationConstraints;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
+import org.sil.pcpatreditor.model.DisjunctiveUnificationConstraints;
 import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
 import org.sil.pcpatreditor.model.FeaturePath;
 import org.sil.pcpatreditor.model.FeaturePathOrStructure;
@@ -75,6 +77,8 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	UnificationConstraint unificationConstraint;
 	ConstraintLeftHandSide constraintLhs;
 	ConstraintRightHandSide constraintRhs;
+	DisjunctionUnificationConstraints disjunctionUnificationConstraints;
+	DisjunctiveUnificationConstraints disjunctiveUnificationConstraints;
 	PriorityUnionConstraint priorityUnionConstraint;
 
 	/**
@@ -575,6 +579,40 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		constraintRhs = unificationConstraint.getRightHandSide();
 		checkConstituentSymbol(constraintRhs.getConstituent(), "DP");
 		assertNull(constraintRhs.getFeaturePath());
+
+		// Disjunctive unification
+		constraints = checkConstraints("{<InitP head type relcl> = -  | 03Apr03 CB\r\n"
+				+ "/<InitP head type relcl> = +  |  relcl in InitP only with overt subject\r\n"
+				+ "<IP head type pro-drop> = -\r\n"
+				+ "}", 1);
+		unificationConstraint = (UnificationConstraint)constraints.get(0);
+		disjunctiveUnificationConstraints = unificationConstraint.getDisjunctiveUnificationConstraint();
+		assertEquals(1, disjunctiveUnificationConstraints.getUnificationConstraints().size());
+		unificationConstraint = disjunctiveUnificationConstraints.getUnificationConstraints().get(0);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "InitP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type relcl");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		assertEquals("-", constraintRhs.getAtomicValue());
+		assertNull(constraintRhs.getFeaturePath());
+		assertEquals(1, disjunctiveUnificationConstraints.getDisjunctionUnificationConstraints().size());
+		disjunctionUnificationConstraints = disjunctiveUnificationConstraints.getDisjunctionUnificationConstraints().get(0);
+		assertEquals(2, disjunctionUnificationConstraints.getUnificationConstraints().size());
+		unificationConstraint = disjunctionUnificationConstraints.getUnificationConstraints().get(0);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "InitP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type relcl");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		assertEquals("+", constraintRhs.getAtomicValue());
+		assertNull(constraintRhs.getFeaturePath());
+		unificationConstraint = disjunctionUnificationConstraints.getUnificationConstraints().get(1);
+		constraintLhs = unificationConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "IP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type pro-drop");
+		constraintRhs = unificationConstraint.getRightHandSide();
+		assertEquals("-", constraintRhs.getAtomicValue());
+		assertNull(constraintRhs.getFeaturePath());
+
 		// Priority union
 		constraints = checkConstraints("<InitP head type comma> <= <Conj_2 head type comma>\r\n"
 				+ "<IP head type conjoined> <= +   | mark for checking compounding constraints (special case with relcl2+kh and 5c) 20Oct03 CB\r\n"
@@ -605,24 +643,25 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildGrammarFailuresTest() {
-//		String sInput = "Let first_object be <head object head agr person first> = +\n"
-//				+ "<head object head agr person second> = -\n"
-//				+ "<head object head agr person third> = -\n"
-//				+ "<head type object_agr_suffix> = +\nrule S = V\n";
-//		CharStream input = CharStreams.fromString(sInput);
-//		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
-//		CommonTokenStream tokens = new CommonTokenStream(lexer);
-////		System.out.println(tokens.getTokenSource().getInputStream().toString());
-////		for (Token t : lexer.getAllTokens())
-////		{
-////			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
-////		}
-//		PcPatrGrammarParser parser = new PcPatrGrammarParser(tokens);
-//		ParseTree tree = parser.patrgrammar();
-//		System.out.println(tree.toStringTree(parser));
-
-
 		// TODO: when get there
+		// following is here for debugging other tests when needed
+		String sInput = "rule S = V\n"
+				+ "{<InitP head type relcl> = -  | 03Apr03 CB\r\n"
+				+ "/<InitP head type relcl> = +  |  relcl in InitP only with overt subject\r\n"
+				+ "<IP head type pro-drop> = -\r\n"
+				+ "}";
+		CharStream input = CharStreams.fromString(sInput);
+		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+//		System.out.println(tokens.getTokenSource().getInputStream().toString());
+//		for (Token t : lexer.getAllTokens())
+//		{
+//			System.out.println("type=" + t.getType() + "; content='" + t.getText() +"'");
+//		}
+		PcPatrGrammarParser parser = new PcPatrGrammarParser(tokens);
+		ParseTree tree = parser.patrgrammar();
+		System.out.println(tree.toStringTree(parser));
+
 	}
 
 }
