@@ -13,7 +13,7 @@ package org.sil.pcpatreditor.model;
 public class LogicalConstraint extends Constraint {
 
 	ConstraintLeftHandSide leftHandSide;
-	LogicalContraintExpression expression;
+	LogicalConstraintExpression expression;
 	/**
 	 * @param enabled
 	 * @param useWhenDebugging
@@ -21,7 +21,7 @@ public class LogicalConstraint extends Constraint {
 	 * @param expression
 	 */
 	public LogicalConstraint(boolean enabled, boolean useWhenDebugging, ConstraintLeftHandSide leftHandSide,
-			LogicalContraintExpression expression) {
+			LogicalConstraintExpression expression) {
 		super(enabled, useWhenDebugging);
 		this.leftHandSide = leftHandSide;
 		this.expression = expression;
@@ -41,13 +41,13 @@ public class LogicalConstraint extends Constraint {
 	/**
 	 * @return the expression
 	 */
-	public LogicalContraintExpression getExpression() {
+	public LogicalConstraintExpression getExpression() {
 		return expression;
 	}
 	/**
 	 * @param expression the expression to set
 	 */
-	public void setExpression(LogicalContraintExpression expression) {
+	public void setExpression(LogicalConstraintExpression expression) {
 		this.expression = expression;
 	}
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.sil.pcpatreditor.model.BinaryOperation;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.DisjunctiveUnificationConstraints;
 import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
@@ -25,6 +26,9 @@ import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
 import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.Grammar;
+import org.sil.pcpatreditor.model.LogicalConstraint;
+import org.sil.pcpatreditor.model.LogicalConstraintExpression;
+import org.sil.pcpatreditor.model.LogicalConstraintFactor;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
@@ -74,6 +78,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	private HashMap<Integer, FeatureStructureValue> featureStructureValueMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateDisjunction> featureTemplateDisjunctionMap = new HashMap<>();
 	private HashMap<Integer, FeatureTemplateValue> featureTemplateValueMap = new HashMap<>();
+	private HashMap<Integer, LogicalConstraint> logicalConstraintMap = new HashMap<>();
+	private HashMap<Integer, LogicalConstraintExpression> logicalConstraintEpressionMap = new HashMap<>();
+	private HashMap<Integer, LogicalConstraintFactor> logicalConstraintFactorMap = new HashMap<>();
 	private HashMap<Integer, OptionalConstituents> optionalConstituentsMap = new HashMap<>();
 	private HashMap<Integer, PriorityUnionConstraint> priorityUnionConstraintMap = new HashMap<>();
 	private HashMap<Integer, UnificationConstraint> unificationConstraintMap = new HashMap<>();
@@ -173,16 +180,33 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	}
 
 	@Override
+	public void enterLogConstraintExpression(PcPatrGrammarParser.LogConstraintExpressionContext ctx) {
+		LogicalConstraintExpression lce = new LogicalConstraintExpression(null, null, null);
+		logicalConstraintEpressionMap.put(ctx.hashCode(), lce);
+	}
+
+	@Override
+	public void enterLogConstraintFactor(PcPatrGrammarParser.LogConstraintFactorContext ctx) {
+		LogicalConstraintFactor factor = new LogicalConstraintFactor(false, null, null);
+		logicalConstraintFactorMap.put(ctx.hashCode(), factor);
+	}
+
+	@Override
+	public void enterLogicalConstraint(PcPatrGrammarParser.LogicalConstraintContext ctx) {
+		LogicalConstraint lc = new LogicalConstraint(true, false, null, null);
+		logicalConstraintMap.put(ctx.hashCode(), lc);
+	}
+
+	@Override
 	public void enterPatrgrammar(PcPatrGrammarParser.PatrgrammarContext ctx) {
 		grammar = new Grammar();
 	}
 	
 	@Override
 	public void enterPatrRule(PcPatrGrammarParser.PatrRuleContext ctx) {
-		constituentMap.clear();
-		disjunctionConstituentsMap.clear();
-		disjunctiveConstituentsMap.clear();
+		clearConstituentOrientedMaps();
 		clearFeatureOrientedMaps();
+		clearLogicalConstraintOrientedMaps();
 		rule = new PatrRule(true, false);
 		rule.setLineNumber(ctx.start.getLine());
 		rule.setCharacterIndex(ctx.start.getStartIndex());
@@ -465,6 +489,94 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	}
 
 	@Override
+	public void exitLogConstraintExpression(PcPatrGrammarParser.LogConstraintExpressionContext ctx) {
+		LogicalConstraintExpression lce = logicalConstraintEpressionMap.get(ctx.hashCode());
+		LogicalConstraintFactor lcf1;
+		LogicalConstraintFactor lcf2;
+		BinaryOperation bo;
+		int childCount = ctx.getChildCount();
+		switch (childCount) {
+		case 1:
+			lcf1 = processFactor(ctx.getChild(0), false);
+			lce.setFactor1(lcf1);
+			break;
+		case 2:
+			lcf1 = processFactor(ctx.getChild(1), true);
+			lce.setFactor1(lcf1);
+			break;
+		case 3:
+			lcf1 = processFactor(ctx.getChild(0), false);
+			lce.setFactor1(lcf1);
+			bo = processBinaryOperation(ctx.getChild(1));
+			lce.setBinop(bo);
+			lcf2 = processFactor(ctx.getChild(2), false);
+			lce.setFactor2(lcf2);
+			break;
+		case 4:
+			if (ctx.getChild(0).getText().equals("~")) {
+				lcf1 = processFactor(ctx.getChild(1), true);
+				lce.setFactor1(lcf1);
+				bo = processBinaryOperation(ctx.getChild(2));
+				lce.setBinop(bo);
+				lcf2 = processFactor(ctx.getChild(3), false);
+				lce.setFactor2(lcf2);
+			} else {
+				lcf1 = processFactor(ctx.getChild(0), false);
+				lce.setFactor1(lcf1);
+				bo = processBinaryOperation(ctx.getChild(1));
+				lce.setBinop(bo);
+				lcf2 = processFactor(ctx.getChild(3), true);
+				lce.setFactor2(lcf2);
+			}
+			break;
+		case 5:
+			lcf1 = processFactor(ctx.getChild(1), true);
+			lce.setFactor1(lcf1);
+			bo = processBinaryOperation(ctx.getChild(2));
+			lce.setBinop(bo);
+			lcf2 = processFactor(ctx.getChild(4), true);
+			lce.setFactor2(lcf2);
+			break;
+		default:
+			System.out.println("exitLogConstraintExpression: unknown child count=" + childCount);
+		}
+	}
+
+	@Override
+	public void exitLogConstraintFactor(PcPatrGrammarParser.LogConstraintFactorContext ctx) {
+		LogicalConstraintFactor lcf = logicalConstraintFactorMap.get(ctx.hashCode());
+		if (ctx.getChildCount() == 1) {
+			ParseTree childCtx = ctx.getChild(0);
+			FeatureStructure fs = featureStructureMap.get(childCtx.hashCode());
+			lcf.setFeatureStructure(fs);
+		} else {
+			LogicalConstraintExpression lce = logicalConstraintEpressionMap.get(ctx.getChild(1).hashCode());
+			lcf.setExpression(lce);
+		}
+	}
+
+	@Override
+	public void exitLogConstraintLeftHandSide(PcPatrGrammarParser.LogConstraintLeftHandSideContext ctx) {
+		ConstraintLeftHandSide lhs = new ConstraintLeftHandSide(null, null);
+		ParseTree childCtx = ctx.getChild(1);
+		lhs.setConstituent(constituentMap.get(childCtx.hashCode()));
+		if (ctx.getChildCount() > 1) {
+			childCtx = ctx.getChild(2);
+			lhs.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
+		}
+		LogicalConstraint lc = logicalConstraintMap.get(ctx.getParent().hashCode());
+		lc.setLeftHandSide(lhs);
+	}
+
+	@Override
+	public void exitLogicalConstraint(PcPatrGrammarParser.LogicalConstraintContext ctx) {
+		LogicalConstraintExpression lce = logicalConstraintEpressionMap.get(ctx.getChild(2).hashCode());
+		LogicalConstraint lc = logicalConstraintMap.get(ctx.hashCode());
+		lc.setExpression(lce);
+		rule.getConstraints().add(lc);
+	}
+
+	@Override
 	public void exitOptionalConstituents(PcPatrGrammarParser.OptionalConstituentsContext ctx) {
 		OptionalConstituents optionalConstituents = new OptionalConstituents();
 		int numChildren = ctx.getChildCount();
@@ -674,6 +786,26 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		return disjunctionConstituentList;
 	}
 
+	protected BinaryOperation processBinaryOperation(ParseTree child) {
+		switch (child.getText()) {
+		case "&":
+			return BinaryOperation.AND;
+		case "/":
+			return BinaryOperation.OR;
+		case "->":
+			return BinaryOperation.CONDITIONAL;
+		case "<->":
+			return BinaryOperation.BICONDITIONAL;
+		}
+		return BinaryOperation.AND;
+	}
+
+	protected void clearConstituentOrientedMaps() {
+		constituentMap.clear();
+		disjunctionConstituentsMap.clear();
+		disjunctiveConstituentsMap.clear();
+	}
+
 	protected void clearFeatureOrientedMaps() {
 		embeddedFeatureStuctureMap.clear();
 		featurePathMap.clear();
@@ -684,4 +816,15 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		featureStructureValueMap.clear();
 	}
 
+	protected void clearLogicalConstraintOrientedMaps() {
+		logicalConstraintMap.clear();
+		logicalConstraintEpressionMap.clear();
+		logicalConstraintFactorMap.clear();
+	}
+
+	protected LogicalConstraintFactor processFactor(ParseTree child, boolean negated) {
+		LogicalConstraintFactor lcf = logicalConstraintFactorMap.get(child.hashCode());
+		lcf.setNegated(negated);
+		return lcf;
+	}
 }

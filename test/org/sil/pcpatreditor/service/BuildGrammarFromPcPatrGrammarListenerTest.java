@@ -20,8 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.sil.pcpatreditor.model.Grammar;
+import org.sil.pcpatreditor.model.LogicalConstraint;
+import org.sil.pcpatreditor.model.LogicalConstraintFactor;
+import org.sil.pcpatreditor.model.LogicalConstraintExpression;
 import org.sil.pcpatreditor.model.OptionalConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
+import org.sil.pcpatreditor.model.BinaryOperation;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.Constraint;
@@ -80,7 +84,11 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	DisjunctionUnificationConstraints disjunctionUnificationConstraints;
 	DisjunctiveUnificationConstraints disjunctiveUnificationConstraints;
 	PriorityUnionConstraint priorityUnionConstraint;
-
+	LogicalConstraint logicalConstraint;
+	LogicalConstraintExpression lcExpression;
+	LogicalConstraintFactor factor1;
+	LogicalConstraintFactor factor2;
+	BinaryOperation binop;
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -540,6 +548,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 
 	@Test
 	public void buildConstraintsTest() {
+
 		// Unification
 		constraints = checkConstraints("<S head> = <IP head>\r\n"
 				+ "<IP head type root> = +\r\n"
@@ -630,6 +639,252 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		checkFeaturePath(constraintLhs.getFeaturePath(), "head type conjoined");
 		constraintRhs = priorityUnionConstraint.getRightHandSide();
 		assertEquals("+", constraintRhs.getAtomicValue());
+
+		// Logical Constraints
+		// negation, existence, conditional, biconditional, logical and, logical or; combinations of negation
+		constraints = checkConstraints("<DP> == ~[mother_node:-]     | if coordination, must be allowed initially\r\n"
+				+ "<D> == [mother_node:+]\r\n"
+				+ "<DP head type> == [mother_node:+] -> [head:[type:[coordination:+]]] |and be complete\r\n"
+				+ "<DP head type> == ~[mother_node:+] <-> [head:[type:[coordination:+]]]\r\n"
+				+ "<DP head type> == [mother_node:+] & ~[head:[type:[coordination:+]]]\r\n"
+				+ "<DP head type> == ~[mother_node:+] / ~[head:[type:[coordination:+]]]\r\n"
+				, 6);
+		logicalConstraint = (LogicalConstraint) constraints.get(0);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "DP");
+		assertNull(constraintLhs.getFeaturePath());
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(true, factor1.isNegated());
+		featureStructure = factor1.getFeatureStructure();
+		assertEquals("mother_node", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		assertEquals("-", featureStructureValue.getAtomicValue());
+		assertNull(lcExpression.getFactor2());
+
+		logicalConstraint = (LogicalConstraint) constraints.get(1);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "D");
+		assertNull(constraintLhs.getFeaturePath());
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(false, factor1.isNegated());
+		featureStructure = factor1.getFeatureStructure();
+		assertEquals("mother_node", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+		assertNull(lcExpression.getFactor2());
+
+		logicalConstraint = (LogicalConstraint) constraints.get(2);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "DP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type");
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(false, factor1.isNegated());
+		featureStructure = factor1.getFeatureStructure();
+		assertEquals("mother_node", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+		assertEquals(BinaryOperation.CONDITIONAL, lcExpression.getBinop());
+		factor2 = lcExpression.getFactor2();
+		assertEquals(false, factor2.isNegated());
+		featureStructure = factor2.getFeatureStructure();
+		assertEquals("head", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("type", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("coordination", featureStructureValue.getFeatureStructure());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		logicalConstraint = (LogicalConstraint) constraints.get(3);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "DP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type");
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(true, factor1.isNegated());
+		featureStructure = factor1.getFeatureStructure();
+		assertEquals("mother_node", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+		assertEquals(BinaryOperation.BICONDITIONAL, lcExpression.getBinop());
+		factor2 = lcExpression.getFactor2();
+		assertEquals(false, factor2.isNegated());
+		featureStructure = factor2.getFeatureStructure();
+		assertEquals("head", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("type", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("coordination", featureStructureValue.getFeatureStructure());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		logicalConstraint = (LogicalConstraint) constraints.get(4);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "DP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type");
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(false, factor1.isNegated());
+		featureStructure = factor1.getFeatureStructure();
+		assertEquals("mother_node", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+		assertEquals(BinaryOperation.AND, lcExpression.getBinop());
+		factor2 = lcExpression.getFactor2();
+		assertEquals(true, factor2.isNegated());
+		featureStructure = factor2.getFeatureStructure();
+		assertEquals("head", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("type", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("coordination", featureStructureValue.getFeatureStructure());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		logicalConstraint = (LogicalConstraint) constraints.get(5);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "DP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head type");
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(true, factor1.isNegated());
+		featureStructure = factor1.getFeatureStructure();
+		assertEquals("mother_node", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+		assertEquals(BinaryOperation.OR, lcExpression.getBinop());
+		factor2 = lcExpression.getFactor2();
+		assertEquals(true, factor2.isNegated());
+		featureStructure = factor2.getFeatureStructure();
+		assertEquals("head", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("type", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("coordination", featureStructureValue.getFeatureStructure());
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		// nesting
+		constraints = checkConstraints("<IP head> == ((([subject:[head:[participle:[cat:V]]]] / [subject:[head:[possessor:[head:[participle:[cat:V]]]]]]))\r\n"
+				+ "& ([type:[no_intervening:+]])) <-> \r\n"
+				+ "(([type:[auxiliary:-\r\n"
+				+ "copular:-\r\n"
+				+ "passive:-]] \r\n"
+				+ "/ [type:[auxiliary:+\r\n"
+				+ "participle:+]])        \r\n"
+				+ "/ [type:[participle_passive:+]])  | to force participle to be w/ V or Aux 12-APR-04"
+				, 1);
+		logicalConstraint = (LogicalConstraint) constraints.get(0);
+		constraintLhs = logicalConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "IP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head");
+
+		lcExpression = logicalConstraint.getExpression();
+		factor1 = lcExpression.getFactor1();
+		assertEquals(false, factor1.isNegated());
+		assertNull(factor1.getFeatureStructure());
+		LogicalConstraintExpression lce2 = factor1.getExpression();
+		assertNotNull(lce2);
+		LogicalConstraintFactor factor21 =lce2.getFactor1();
+		assertEquals(false, factor21.isNegated());
+		assertNull(factor21.getFeatureStructure());
+		LogicalConstraintExpression lce3 = factor21.getExpression();
+		assertNotNull(lce3);
+		assertNull(lce3.getBinop());
+		assertNull(lce3.getFactor2());
+		LogicalConstraintFactor factor31 =lce3.getFactor1();
+		assertEquals(false, factor31.isNegated());
+		assertNull(factor31.getFeatureStructure());
+		LogicalConstraintExpression lce4 = factor31.getExpression();
+		assertNotNull(lce4);
+		LogicalConstraintFactor factor41 =lce4.getFactor1();
+		assertEquals(false, factor41.isNegated());
+		assertNotNull(factor41.getFeatureStructure());
+		featureStructure = factor41.getFeatureStructure();
+		assertEquals("subject", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("head", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("participle", featureStructureValue.getFeatureStructure());
+		nestedFeatureStructure = checkNestedFeatureStructure("cat", featureStructureValue.getFeatureStructure());
+		assertEquals("V", nestedFeatureStructure.getValue().getAtomicValue());
+		assertEquals(BinaryOperation.OR, lce4.getBinop());
+		LogicalConstraintFactor factor42 =lce4.getFactor2();
+		assertEquals(false, factor42.isNegated());
+		assertNotNull(factor42.getFeatureStructure());
+		featureStructure = factor42.getFeatureStructure();
+		assertEquals("subject", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("head", featureStructure);
+		nestedFeatureStructure = checkNestedFeatureStructure("possessor", featureStructureValue.getFeatureStructure());
+		nestedFeatureStructure = checkNestedFeatureStructure("head", featureStructureValue.getFeatureStructure());
+		nestedFeatureStructure = checkNestedFeatureStructure("participle", featureStructureValue.getFeatureStructure());
+		nestedFeatureStructure = checkNestedFeatureStructure("cat", featureStructureValue.getFeatureStructure());
+		assertEquals("V", nestedFeatureStructure.getValue().getAtomicValue());
+
+		assertEquals(BinaryOperation.AND, lce2.getBinop());
+		LogicalConstraintFactor factor22 =lce2.getFactor2();
+		assertNotNull(factor22);
+		assertEquals(false, factor22.isNegated());
+		assertNull(factor22.getFeatureStructure());
+		assertNotNull(factor22.getExpression());
+		lce3 = factor22.getExpression();
+		factor31 = lce3.getFactor1();
+		assertNotNull(factor31);
+		assertEquals(false, factor31.isNegated());
+		assertNotNull(factor31.getFeatureStructure());
+		featureStructure = factor31.getFeatureStructure();
+		assertEquals("type", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("no_intervening", featureStructure);
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
+		assertEquals(BinaryOperation.BICONDITIONAL, lcExpression.getBinop());
+		factor2 =lcExpression.getFactor2();
+		assertNotNull(factor2);
+		assertEquals(false, factor2.isNegated());
+		assertNull(factor2.getFeatureStructure());
+		assertNotNull(factor2.getExpression());
+		lce2 = factor2.getExpression();
+		factor21 = lce2.getFactor1();
+		assertNotNull(factor21);
+		assertEquals(false, factor21.isNegated());
+		lce3 = factor21.getExpression();
+		assertNotNull(lce3);
+		factor31 = lce3.getFactor1();
+		assertNotNull(factor31.getFeatureStructure());
+		featureStructure = factor31.getFeatureStructure();
+		assertEquals("type", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("auxiliary", featureStructure);
+		assertEquals("-", nestedFeatureStructure.getValue().getAtomicValue());
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(0);
+		assertEquals("copular", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		assertEquals("-", featureStructureValue.getAtomicValue());
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(1);
+		assertEquals("passive", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		assertEquals("-", featureStructureValue.getAtomicValue());
+
+		assertEquals(BinaryOperation.OR, lce3.getBinop());
+		factor2 =lce3.getFactor2();
+		assertNotNull(factor2);
+		assertEquals(false, factor2.isNegated());
+		featureStructure = factor2.getFeatureStructure();
+		assertEquals("type", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("auxiliary", featureStructure);
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+		embeddedFeatureStructure = nestedFeatureStructure.getEmbeddedFeatureStructures().get(0);
+		assertEquals("participle", embeddedFeatureStructure.getName());
+		featureStructureValue = embeddedFeatureStructure.getValue();
+		assertEquals("+", featureStructureValue.getAtomicValue());
+
+		assertEquals(BinaryOperation.OR, lce2.getBinop());
+		factor2 =lce2.getFactor2();
+		assertNotNull(factor2);
+		assertEquals(false, factor2.isNegated());
+		featureStructure = factor2.getFeatureStructure();
+		assertEquals("type", featureStructure.getName());
+		featureStructureValue = featureStructure.getValue();
+		nestedFeatureStructure = checkNestedFeatureStructure("participle_passive", featureStructure);
+		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
+
 	}
 
 	protected List<Constraint> checkConstraints(String sConstraint, int size) {
@@ -646,10 +901,14 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		// TODO: when get there
 		// following is here for debugging other tests when needed
 		String sInput = "rule S = V\n"
-				+ "{<InitP head type relcl> = -  | 03Apr03 CB\r\n"
-				+ "/<InitP head type relcl> = +  |  relcl in InitP only with overt subject\r\n"
-				+ "<IP head type pro-drop> = -\r\n"
-				+ "}";
+				+ "<IP head> == ((([subject:[head:[participle:[cat:V]]]] / [subject:[head:[possessor:[head:[participle:[cat:V]]]]]]))\r\n"
+				+ "& ([type:[no_intervening:+]])) <-> \r\n"
+				+ "(([type:[auxiliary:-\r\n"
+				+ "copular:-\r\n"
+				+ "passive:-]] \r\n"
+				+ "/ [type:[auxiliary:+\r\n"
+				+ "participle:+]])        \r\n"
+				+ "/ [type:[participle_passive:+]])  | to force participle to be w/ V or Aux 12-APR-04";
 		CharStream input = CharStreams.fromString(sInput);
 		PcPatrGrammarLexer lexer = new PcPatrGrammarLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
