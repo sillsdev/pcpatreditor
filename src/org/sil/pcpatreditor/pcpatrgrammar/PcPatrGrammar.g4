@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2021 SIL International
+// Copyright (c) 2021-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -24,13 +24,13 @@ comment: LINECOMMENT;
 featureTemplates: featureTemplate+;
 
 featureTemplate: featureTemplateDefinition featurePathTemplateBody '.'? comment*
-               | featureTemplateDefinition featureTemplateValue '.'? comment*
                ;
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
                         ;
-featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody*
-                       | featureTemplateAbbreviation featurePathTemplateBody*
+featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody?
+                       | featureTemplateAbbreviation featurePathTemplateBody?
+                       | featureTemplateDisjunction featurePathTemplateBody?
                        ;
 
 featureTemplateName: atomicValue;
@@ -42,10 +42,7 @@ featureTemplateValue: featureTemplateDisjunction
                     | atomicValue '.'? comment*
                     ;
 
-featureTemplateDisjunction: openingBrace featurePath featurePathOrStructure+ closingBrace
-                          | openingBrace featureStructure featurePathOrStructure+ closingBrace
-                          | openingBrace atomicValue atomicValue+ closingBrace
-                          | openingBrace atomicValue featurePathOrStructure+ closingBrace
+featureTemplateDisjunction: openingBrace featurePathOrStructure featurePathOrStructure+ closingBrace
                           ;
 
 featurePathOrStructure: featurePath comment*
@@ -56,11 +53,13 @@ featurePathOrStructure: featurePath comment*
 featureStructure: openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
                 ;
 
-featureStructureName: atomicValue
+featureStructureName: ruleKW
+                    | atomicValue
                     ;
 
 featureStructureValue: featureStructure
                      | atomicValue
+                     | 'be'
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
                         ;
@@ -74,7 +73,7 @@ constraintTemplate: 'Constraint' '.'?
 
 patrRules: patrRule+;
 
-patrRule: comment* ruleKW ruleIdentifier? comment* phraseStructureRule comment* constraints* comment* '.'?;
+patrRule: comment* ruleKW ruleIdentifier? comment* phraseStructureRule comment* constraints? comment* '.'?;
 
 ruleKW: 'Rule'
       | 'rule'
@@ -98,19 +97,14 @@ rightHandSide: (constituent
               )+
              ;
 
-disjunctiveConstituents: '{' constituent+ disjunctionConstituents+ '}' comment?;
-disjunctionConstituents: '/' (constituent | disjunctiveConstituents)+ comment?;
+disjunctiveConstituents: '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ '}' comment?;
+disjunctionConstituents: '/' comment* (constituent | disjunctiveConstituents | optionalConstituents)+ comment?;
 optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ ')' comment?;
 disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
-disjunctionOptionalConstituents: '/' constituent+ comment?;
+disjunctionOptionalConstituents: '/' comment* constituent+ comment?;
 
-constraints: constraint+;
+constraints: (unificationConstraint | priorityUnionConstraint | logicalConstraint | comment)+;
 
-constraint: unificationConstraint
-		  | priorityUnionConstraint
-		  | logicalConstraint
-		  | comment
-		  ;
 unificationConstraint: uniConstraintLeftHandSide '=' uniConstraintRightHandSide comment?
                      | disjunctiveUnificationConstraint 
                      ;
@@ -119,7 +113,7 @@ uniConstraintRightHandSide: openingWedge constituent featurePath? closingWedge c
                           | atomicValue comment?
                           ;
 disjunctiveUnificationConstraint: '{' unificationConstraint+ disjunctionUnificationConstraint+ '}' comment?;
-disjunctionUnificationConstraint: '/' unificationConstraint+ comment?;
+disjunctionUnificationConstraint: '/' comment* unificationConstraint+ comment?;
 
 featurePath: ruleKW
            | atomicValue featurePath
@@ -130,7 +124,7 @@ atomicValue : TEXT;
 
 priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
 priorityUnionLeftHandSide: openingWedge constituent featurePath closingWedge;
-priorityUnionRightHandSide: openingWedge constituent featurePath closingWedge
+priorityUnionRightHandSide: openingWedge constituent featurePath? closingWedge
                           | atomicValue
                           ;
 
@@ -184,7 +178,7 @@ TEXT : (
 //     | '}'
 //     | '\\('
 //     | '\\)'
-     | '/'
+//     | '/'
      | '~'
      | '`'
      | '\\'
