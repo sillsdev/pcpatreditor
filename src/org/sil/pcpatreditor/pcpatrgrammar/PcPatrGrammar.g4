@@ -53,11 +53,13 @@ featurePathOrStructure: featurePath comment*
 featureStructure: openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
                 ;
 
-featureStructureName: atomicValue
+featureStructureName: ruleKW
+                    | atomicValue
                     ;
 
 featureStructureValue: featureStructure
                      | atomicValue
+                     | 'be'
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
                         ;
@@ -95,11 +97,11 @@ rightHandSide: (constituent
               )+
              ;
 
-disjunctiveConstituents: '{' constituent+ disjunctionConstituents+ '}' comment?;
-disjunctionConstituents: '/' (constituent | disjunctiveConstituents)+ comment?;
+disjunctiveConstituents: '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ '}' comment?;
+disjunctionConstituents: '/' comment* (constituent | disjunctiveConstituents | optionalConstituents)+ comment?;
 optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ ')' comment?;
 disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
-disjunctionOptionalConstituents: '/' constituent+ comment?;
+disjunctionOptionalConstituents: '/' comment* constituent+ comment?;
 
 constraints: (unificationConstraint | priorityUnionConstraint | logicalConstraint | comment)+;
 
@@ -111,7 +113,7 @@ uniConstraintRightHandSide: openingWedge constituent featurePath? closingWedge c
                           | atomicValue comment?
                           ;
 disjunctiveUnificationConstraint: '{' unificationConstraint+ disjunctionUnificationConstraint+ '}' comment?;
-disjunctionUnificationConstraint: '/' unificationConstraint+ comment?;
+disjunctionUnificationConstraint: '/' comment* unificationConstraint+ comment?;
 
 featurePath: ruleKW
            | atomicValue featurePath
@@ -122,7 +124,7 @@ atomicValue : TEXT;
 
 priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
 priorityUnionLeftHandSide: openingWedge constituent featurePath closingWedge;
-priorityUnionRightHandSide: openingWedge constituent featurePath closingWedge
+priorityUnionRightHandSide: openingWedge constituent featurePath? closingWedge
                           | atomicValue
                           ;
 
@@ -176,7 +178,7 @@ TEXT : (
 //     | '}'
 //     | '\\('
 //     | '\\)'
-     | '/'
+//     | '/'
      | '~'
      | '`'
      | '\\'

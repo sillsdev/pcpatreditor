@@ -52,5 +52,18 @@ public class ConstraintLeftHandSide {
 	public void setFeaturePath(FeaturePath featurePath) {
 		this.featurePath = featurePath;
 	}
-	
+
+	public String representation( ) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<");
+		if (constituent != null) {
+			sb.append(constituent.nodeRepresentation());
+			sb.append(" ");
+		}
+		if (featurePath != null) {
+			sb.append(featurePath.contentsRepresentation());
+		}
+		sb.append(">");
+		return sb.toString();
+	}
 }

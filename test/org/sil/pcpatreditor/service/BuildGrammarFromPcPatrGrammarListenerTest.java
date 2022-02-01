@@ -625,7 +625,11 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		// Priority union
 		constraints = checkConstraints("<InitP head type comma> <= <Conj_2 head type comma>\r\n"
 				+ "<IP head type conjoined> <= +   | mark for checking compounding constraints (special case with relcl2+kh and 5c) 20Oct03 CB\r\n"
-				, 2);
+				+ "<VP head rootgloss> <= <V rootgloss>\r\n"
+				+ "<VP head adjoined> <= <DP_1>\r\n"
+				+ "<VP head adjoinedPP> <= <PP>\r\n"
+				+ "<VP head adjoined> <= <AdvP>"
+				, 6);
 		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(0);
 		constraintLhs = priorityUnionConstraint.getLeftHandSide();
 		checkConstituentSymbol(constraintLhs.getConstituent(), "InitP");
@@ -639,6 +643,34 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		checkFeaturePath(constraintLhs.getFeaturePath(), "head type conjoined");
 		constraintRhs = priorityUnionConstraint.getRightHandSide();
 		assertEquals("+", constraintRhs.getAtomicValue());
+		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(2);
+		constraintLhs = priorityUnionConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "VP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head rootgloss");
+		constraintRhs = priorityUnionConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "V");
+		checkFeaturePath(constraintRhs.getFeaturePath(), "rootgloss");
+		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(3);
+		constraintLhs = priorityUnionConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "VP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head adjoined");
+		constraintRhs = priorityUnionConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "DP_1");
+		assertNull(constraintRhs.getFeaturePath());
+		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(4);
+		constraintLhs = priorityUnionConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "VP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head adjoinedPP");
+		constraintRhs = priorityUnionConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "PP");
+		assertNull(constraintRhs.getFeaturePath());
+		priorityUnionConstraint = (PriorityUnionConstraint) constraints.get(5);
+		constraintLhs = priorityUnionConstraint.getLeftHandSide();
+		checkConstituentSymbol(constraintLhs.getConstituent(), "VP");
+		checkFeaturePath(constraintLhs.getFeaturePath(), "head adjoined");
+		constraintRhs = priorityUnionConstraint.getRightHandSide();
+		checkConstituentSymbol(constraintRhs.getConstituent(), "AdvP");
+		assertNull(constraintRhs.getFeaturePath());
 
 		// Logical Constraints
 		// negation, existence, conditional, biconditional, logical and, logical or; combinations of negation
