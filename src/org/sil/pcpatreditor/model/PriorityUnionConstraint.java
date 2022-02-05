@@ -10,9 +10,8 @@ package org.sil.pcpatreditor.model;
  * @author Andy Black
  *
  */
-public class PriorityUnionConstraint extends Constraint {
-	ConstraintLeftHandSide leftHandSide;
-	ConstraintRightHandSide rightHandSide;
+public class PriorityUnionConstraint extends ConstraintWithLeftRightHandSide {
+
 	/**
 	 * @param enabled
 	 * @param useWhenDebugging
@@ -23,30 +22,6 @@ public class PriorityUnionConstraint extends Constraint {
 			ConstraintRightHandSide rightHandSide) {
 		super(enabled, useWhenDebugging);
 		this.leftHandSide = leftHandSide;
-		this.rightHandSide = rightHandSide;
-	}
-	/**
-	 * @return the leftHandSide
-	 */
-	public ConstraintLeftHandSide getLeftHandSide() {
-		return leftHandSide;
-	}
-	/**
-	 * @param leftHandSide the leftHandSide to set
-	 */
-	public void setLeftHandSide(ConstraintLeftHandSide leftHandSide) {
-		this.leftHandSide = leftHandSide;
-	}
-	/**
-	 * @return the rightHandSide
-	 */
-	public ConstraintRightHandSide getRightHandSide() {
-		return rightHandSide;
-	}
-	/**
-	 * @param rightHandSide the rightHandSide to set
-	 */
-	public void setRightHandSide(ConstraintRightHandSide rightHandSide) {
 		this.rightHandSide = rightHandSide;
 	}
 }

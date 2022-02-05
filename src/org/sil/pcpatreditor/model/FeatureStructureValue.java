@@ -6,6 +6,8 @@
 
 package org.sil.pcpatreditor.model;
 
+import java.util.List;
+
 /**
  * @author Andy Black
  *
@@ -52,4 +54,12 @@ public class FeatureStructureValue {
 		this.featureStructure = featureStructure;
 	}
 	
+	public List<String> pathRepresentations(String path, List<String> paths) {
+		if (featureStructure != null) {
+			return featureStructure.pathRepresentations(path, paths);
+		} else {
+			paths.add(path + atomicValue);
+		}
+		return paths;
+	}
 }

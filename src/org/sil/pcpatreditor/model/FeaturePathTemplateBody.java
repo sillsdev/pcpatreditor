@@ -13,6 +13,7 @@ package org.sil.pcpatreditor.model;
 public class FeaturePathTemplateBody extends PcPatrBase {
 
 	FeaturePathUnit featurePathUnit;
+	AtomicValueDisjunction atomicValueDisjunction;
 	FeatureTemplateValue featureTemplateValue;
 	FeaturePathTemplateBody featurePathTemplateBody;
 	FeatureTemplateDisjunction featureTemplateDisjunction;
@@ -24,6 +25,20 @@ public class FeaturePathTemplateBody extends PcPatrBase {
 	 */
 	public FeaturePathTemplateBody(boolean enabled, boolean useWhenDebugging) {
 		super(enabled, useWhenDebugging);
+	}
+
+	/**
+	 * @return the atomicValueDisjunction
+	 */
+	public AtomicValueDisjunction getAtomicValueDisjunction() {
+		return atomicValueDisjunction;
+	}
+
+	/**
+	 * @param atomicValueDisjunction the atomicValueDisjunction to set
+	 */
+	public void setAtomicValueDisjunction(AtomicValueDisjunction atomicValueDisjunction) {
+		this.atomicValueDisjunction = atomicValueDisjunction;
 	}
 
 	/**

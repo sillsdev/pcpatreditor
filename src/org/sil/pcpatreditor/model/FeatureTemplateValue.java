@@ -33,6 +33,14 @@ public class FeatureTemplateValue {
 	public void setAtomicValue(String atomicValue) {
 		this.atomicValue = atomicValue;
 	}
+
+	public String getNormalizedAtomicValue() {
+		int i = atomicValue.indexOf("!");
+		if (i == 0 && atomicValue.length() > 1) {
+			return atomicValue.substring(1);
+		}
+		return atomicValue;
+	}
 	/**
 	 * @return the featurePath
 	 */

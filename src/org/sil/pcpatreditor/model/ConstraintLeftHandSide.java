@@ -61,7 +61,7 @@ public class ConstraintLeftHandSide {
 			sb.append(" ");
 		}
 		if (featurePath != null) {
-			sb.append(featurePath.contentsRepresentation());
+			sb.append(featurePath.pathRepresentation());
 		}
 		sb.append(">");
 		return sb.toString();

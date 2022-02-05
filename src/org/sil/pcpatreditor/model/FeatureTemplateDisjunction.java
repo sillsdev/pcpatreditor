@@ -35,10 +35,10 @@ public class FeatureTemplateDisjunction {
 		this.contents = contents;
 	}
 
-	public String contentsRepresentation() {
+	public String pathRepresentation() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		String sContents = contents.stream().map(FeaturePathOrStructure::contentsRepresentation).collect(Collectors.joining(" "));
+		String sContents = contents.stream().map(FeaturePathOrStructure::pathRepresentation).collect(Collectors.joining(" "));
 		sb.append(sContents);
 		sb.append("}");
 		return sb.toString();

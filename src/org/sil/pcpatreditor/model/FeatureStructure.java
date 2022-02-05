@@ -71,4 +71,14 @@ public class FeatureStructure {
 		this.embeddedFeatureStructures = embeddedFeatureStructures;
 	}
 
+	public List<String> pathRepresentations(String path, List<String> paths) {
+		String thisPath = path + name + " ";
+		if (value != null) {
+			paths = value.pathRepresentations(thisPath, paths);
+		}
+		for (EmbeddedFeatureStructure efs : embeddedFeatureStructures) {
+			paths = efs.pathRepresentations(path, paths);
+		}
+		return paths;
+	}
 }

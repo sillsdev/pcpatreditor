@@ -31,9 +31,9 @@ public class FeaturePathUnit {
 		this.featurePath = featurePath;
 	}
 
-	public String contentsRepresentation() {
+	public String pathRepresentation() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(featurePath.contentsRepresentation());
+		sb.append(featurePath.pathRepresentation());
 		return sb.toString();
 	}
 }

@@ -49,7 +49,8 @@ public class ConstraintRightHandSide extends ConstraintLeftHandSide {
 			if (constituent != null) {
 				sb.append(constituent.nodeRepresentation());
 				if (featurePath != null) {
-					sb.append(featurePath.contentsRepresentation());
+					sb.append(" ");
+					sb.append(featurePath.pathRepresentation());
 				}
 			}
 			sb.append(">");

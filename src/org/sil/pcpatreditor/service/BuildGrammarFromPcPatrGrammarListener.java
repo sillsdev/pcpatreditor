@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.sil.pcpatreditor.model.AtomicValueDisjunction;
 import org.sil.pcpatreditor.model.BinaryOperation;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.DisjunctiveUnificationConstraints;
@@ -33,6 +34,7 @@ import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
 import org.sil.pcpatreditor.model.ConstraintRightHandSide;
+import org.sil.pcpatreditor.model.ConstraintWithLeftRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionUnificationConstraints;
@@ -45,11 +47,13 @@ import org.sil.pcpatreditor.model.PriorityUnionConstraint;
 import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarBaseListener;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.AtomicValueDisjunctionContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.ConstituentContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionConstituentsContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionUnificationConstraintContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctiveUnificationConstraintContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathOrStructureContext;
+import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathTemplateBodyContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathUnitContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateAbbreviationContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateDisjunctionContext;
@@ -64,6 +68,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	PcPatrGrammarParser parser;
 	Grammar grammar;
 	
+	private HashMap<Integer, AtomicValueDisjunction> atomicValueDisjunctionMap = new HashMap<>();
 	private HashMap<Integer, DisjunctionConstituents> disjunctionConstituentsMap = new HashMap<>();
 	private HashMap<Integer, DisjunctiveConstituents> disjunctiveConstituentsMap = new HashMap<>();
 	private HashMap<Integer, DisjunctionUnificationConstraints> disjunctionUnificationConstraintsMap = new HashMap<>();
@@ -108,6 +113,12 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	 */
 	public void setGrammar(Grammar grammar) {
 		this.grammar = grammar;
+	}
+
+	@Override
+	public void enterAtomicValueDisjunction(PcPatrGrammarParser.AtomicValueDisjunctionContext ctx) {
+		AtomicValueDisjunction avdisjunction = new AtomicValueDisjunction();
+		atomicValueDisjunctionMap.put(ctx.hashCode(), avdisjunction);
 	}
 
 	@Override
@@ -290,6 +301,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		if (parentCtx instanceof FeaturePathOrStructureContext fposCtx) {
 			FeaturePathOrStructure fpos = featurePathOrStructureMap.get(parentCtx.hashCode());
 			fpos.setAtomicValue(ctx.getText());
+		} else if (parentCtx instanceof AtomicValueDisjunctionContext) {
+			AtomicValueDisjunction avd = atomicValueDisjunctionMap.get(parentCtx.hashCode());
+			avd.getAtomicValues().add(ctx.getText());
 		}
 	}
 
@@ -425,6 +439,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			if (childCtx instanceof FeatureTemplateValueContext ftvCtx) {
 				FeatureTemplateValue ftv = featureTemplateValueMap.get(ftvCtx.hashCode());
 				fptb.setFeatureTemplateValue(ftv);
+			} else if (childCtx instanceof AtomicValueDisjunctionContext) {
+				AtomicValueDisjunction avd = atomicValueDisjunctionMap.get(childCtx.hashCode());
+				fptb.setAtomicValueDisjunction(avd);
 			}
 		} else if (childCtx instanceof FeatureTemplateAbbreviationContext abbrCtx) {
 			setParentOfFeaturePathTemplateBody(ctx, fptb);
@@ -476,6 +493,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			break;
 		case "FeatureTemplateDisjunctionContext":
 			ftv.setFeatureTemplateDisjunction(featureTemplateDisjunctionMap.get(childCtx.hashCode()));
+			System.out.println("exitFeatureTemplateValue: set value to disj:" + featureTemplateDisjunctionMap.get(childCtx.hashCode()));
 			break;
 		default:
 			System.out.println("exitFeatureTemplateValue: Unhandled child class: " + sClass);
@@ -727,7 +745,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		lhs.setConstituent(constituentMap.get(childCtx.hashCode()));
 		childCtx = ctx.getChild(2);
 		lhs.setFeaturePath(featurePathMap.get(childCtx.hashCode()));
-		UnificationConstraint uc = unificationConstraintMap.get(ctx.getParent().hashCode());
+		ConstraintWithLeftRightHandSide uc = unificationConstraintMap.get(ctx.getParent().hashCode());
 		uc.setLeftHandSide(lhs);
 	}
 
@@ -747,7 +765,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 				}
 			}
 		}
-		UnificationConstraint uc = unificationConstraintMap.get(ctx.getParent().hashCode());
+		ConstraintWithLeftRightHandSide uc = unificationConstraintMap.get(ctx.getParent().hashCode());
 		uc.setRightHandSide(rhs);
 	}
 

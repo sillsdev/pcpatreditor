@@ -58,13 +58,13 @@ public class FeaturePathOrStructure {
 		this.featureStructure = featureStructure;
 	}
 
-	public String contentsRepresentation() {
+	public String pathRepresentation() {
 		StringBuilder sb = new StringBuilder();
 		if (atomicValue != null) {
 			sb.append(atomicValue);
 		}
 		if (featurePath != null) {
-			sb.append(featurePath.contentsRepresentation());
+			sb.append(featurePath.pathRepresentation());
 		}
 		return sb.toString();
 	}

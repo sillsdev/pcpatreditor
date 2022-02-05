@@ -28,7 +28,8 @@ featureTemplate: featureTemplateDefinition featurePathTemplateBody '.'? comment*
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
                         ;
-featurePathTemplateBody: featurePathUnit '=' featureTemplateValue featurePathTemplateBody?
+featurePathTemplateBody: featurePathUnit '=' atomicValueDisjunction featurePathTemplateBody?
+                       | featurePathUnit '=' featureTemplateValue featurePathTemplateBody?
                        | featureTemplateAbbreviation featurePathTemplateBody?
                        | featureTemplateDisjunction featurePathTemplateBody?
                        ;
@@ -41,6 +42,8 @@ featureTemplateValue: featureTemplateDisjunction
                     | featurePathUnit '.'? comment*
                     | atomicValue '.'? comment*
                     ;
+
+atomicValueDisjunction: openingBrace atomicValue atomicValue+ closingBrace;
 
 featureTemplateDisjunction: openingBrace featurePathOrStructure featurePathOrStructure+ closingBrace
                           ;

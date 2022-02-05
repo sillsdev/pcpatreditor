@@ -10,16 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
+import org.sil.pcpatreditor.model.AtomicValueDisjunction;
 import org.sil.pcpatreditor.model.Constraint;
+import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
 import org.sil.pcpatreditor.model.ConstraintRightHandSide;
+import org.sil.pcpatreditor.model.ConstraintWithLeftRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionUnificationConstraints;
+import org.sil.pcpatreditor.model.FeaturePathOrStructure;
+import org.sil.pcpatreditor.model.FeaturePathTemplateBody;
+import org.sil.pcpatreditor.model.FeaturePathUnit;
+import org.sil.pcpatreditor.model.FeatureStructure;
+import org.sil.pcpatreditor.model.FeatureTemplate;
+import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
+import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.LogicalConstraint;
+import org.sil.pcpatreditor.model.LogicalConstraintExpression;
+import org.sil.pcpatreditor.model.LogicalConstraintFactor;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PriorityUnionConstraint;
 import org.sil.pcpatreditor.model.UnificationConstraint;
+import org.sil.utility.StringUtilities;
 
 /**
  * @author Andy Black
@@ -30,6 +42,7 @@ public class FeatureSystemCollector {
 	SortedSet<String> collectionFeatures = new TreeSet<>(); // collection features unify with (or priority unionize with) a constituent
 	SortedSet<String> featurePaths = new TreeSet<>();
 	SortedSet<String> featureSystem = new TreeSet<>();
+	List<FeaturePathTemplateBody> templateBodies = new ArrayList<>();
 	List<UnificationConstraint> unificationConstraints = new ArrayList<>();
 	List<PriorityUnionConstraint> priorityUnionConstraints = new ArrayList<>();
 	List<LogicalConstraint> logicalConstraints = new ArrayList<>();
@@ -93,6 +106,9 @@ public class FeatureSystemCollector {
 		return featureSystem;
 	}
 
+	public List<String> getFeatureSystemAsList() {
+		return featureSystem.stream().toList();
+	}
 	/**
 	 * @param featureSystem the terminals to set
 	 */
@@ -146,6 +162,24 @@ public class FeatureSystemCollector {
 		Grammar pcpatrGrammar = new Grammar();
 		pcpatrGrammar = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
 		rules = pcpatrGrammar.getRules();
+		collectTemplateBodies(pcpatrGrammar);
+	}
+
+	public void collectTemplateBodies(Grammar pcpatrGrammar) {
+		List<FeaturePathTemplateBody> featureTemplateTemplateBodies = new ArrayList<>();
+		featureTemplateTemplateBodies = pcpatrGrammar.getFeatureTemplates().stream().map(FeatureTemplate::getFeaturePathTemplateBody).toList();
+		for (FeaturePathTemplateBody fptb : featureTemplateTemplateBodies) {
+			templateBodies.add(fptb);
+			collectEmbeddedFeaturePathTemplateBodies(fptb);
+		}
+	}
+
+	public void collectEmbeddedFeaturePathTemplateBodies(FeaturePathTemplateBody fptb) {
+		FeaturePathTemplateBody embeddedFtpb = fptb.getFeaturePathTemplateBody();
+		if (embeddedFtpb != null) {
+			templateBodies.add(embeddedFtpb);
+			collectEmbeddedFeaturePathTemplateBodies(embeddedFtpb);
+		}
 	}
 
 	public void collect() {
@@ -154,25 +188,125 @@ public class FeatureSystemCollector {
 		for (UnificationConstraint uc : unificationConstraints) {
 			ConstraintRightHandSide rhs = uc.getRightHandSide();
 			if (rhs != null && rhs.getConstituent() != null && rhs.getFeaturePath() == null) {
-				String[] items = uc.getLeftHandSide().getFeaturePath().contentsRepresentation().split(" ");
+				String[] items = uc.getLeftHandSide().getFeaturePath().pathRepresentation().split(" ");
 				collectionFeatures.add(items[items.length-1]);
 			}
 		}
 		for (PriorityUnionConstraint puc : priorityUnionConstraints) {
 			ConstraintRightHandSide rhs = puc.getRightHandSide();
 			if (rhs != null && rhs.getConstituent() != null && rhs.getFeaturePath() == null) {
-				String[] items = puc.getLeftHandSide().getFeaturePath().contentsRepresentation().split(" ");
+				String[] items = puc.getLeftHandSide().getFeaturePath().pathRepresentation().split(" ");
 				collectionFeatures.add(items[items.length-1]);
 			}
 		}
 		featureSystem.clear();
-		rules.stream().forEach(r -> {
-			for (String node : r.getTerminalSymbols()) {
-				if (!collectionFeatures.contains(node)) {
-					featureSystem.add(node);
+		addTemplatesToFeatureSystem(templateBodies);
+		addConstraintsToFeatureSystem(unificationConstraints);
+		addConstraintsToFeatureSystem(priorityUnionConstraints);
+		addLogicalConstraintsToFeatureSystem();
+	}
+
+	public void addLogicalConstraintsToFeatureSystem() {
+		for (LogicalConstraint lc : logicalConstraints) {
+			String path = "";
+			ConstraintLeftHandSide lhs = lc.getLeftHandSide();
+			if (lhs != null && lhs.getFeaturePath() != null) {
+				path = lhs.getFeaturePath().pathRepresentation();
+				addPathToFeatureSystem(path);
+				path += " ";
+			}
+			List<FeatureStructure> featureStructures = new ArrayList<>();
+			featureStructures = collectFeatureStructuresFromExpression(lc.getExpression(), featureStructures);
+			for (FeatureStructure featureStructure : featureStructures) {
+				List<String> paths = new ArrayList<>();
+				paths = featureStructure.pathRepresentations(path, paths);
+				for (String fsPath : paths) {
+					addPathToFeatureSystem(fsPath);
 				}
 			}
-		});
+		}
+	}
+
+	protected List<FeatureStructure> collectFeatureStructuresFromExpression(LogicalConstraintExpression lce, List<FeatureStructure> featureStructures) {
+		if (lce != null) {
+			featureStructures = collectFeatureStructuresFromFactor(lce.getFactor1(), featureStructures);
+			featureStructures = collectFeatureStructuresFromFactor(lce.getFactor2(), featureStructures);
+		}
+		return featureStructures;
+	}
+
+	protected List<FeatureStructure> collectFeatureStructuresFromFactor(LogicalConstraintFactor factor, List<FeatureStructure> featureStructures) {
+		if (factor != null) {
+			if (factor.getFeatureStructure() != null) {
+				featureStructures.add(factor.getFeatureStructure());
+			} else {
+				featureStructures = collectFeatureStructuresFromExpression(factor.getExpression(), featureStructures);
+			}
+		}
+		return featureStructures;
+	}
+
+	protected void addTemplatesToFeatureSystem(List<FeaturePathTemplateBody> fptbs) {
+		for (FeaturePathTemplateBody fptb : fptbs) {
+			FeaturePathUnit fpu = fptb.getFeaturePathUnit();
+			if (fpu != null) {
+				FeatureTemplateValue ftv = fptb.getFeatureTemplateValue();
+				if (ftv != null) {
+					if (!StringUtilities.isNullOrEmpty(ftv.getAtomicValue())) {
+						addPathToFeatureSystem(fpu.pathRepresentation() + " " + ftv.getNormalizedAtomicValue());
+					} else {
+						addFeatureTemplateDisjunctionToFeatureSystem(ftv.getFeatureTemplateDisjunction());
+					}
+				} else {
+					AtomicValueDisjunction avd = fptb.getAtomicValueDisjunction();
+					if (avd != null) {
+						String fpuPath = fpu.pathRepresentation();
+						for (String av : avd.getAtomicValues()) {
+							addPathToFeatureSystem(fpuPath + " " + av);
+						}
+					}
+				}
+			}
+			addFeatureTemplateDisjunctionToFeatureSystem(fptb.getFeatureTemplateDisjunction());
+		}
+	}
+
+	public void addFeatureTemplateDisjunctionToFeatureSystem(FeatureTemplateDisjunction ftDisj) {
+		if (ftDisj != null) {
+			for (FeaturePathOrStructure fpos : ftDisj.getContents()) {
+				if (fpos.getFeatureStructure() != null) {
+					List<String> paths = new ArrayList<>();
+					paths = fpos.getFeatureStructure().pathRepresentations("", paths);
+					for (String path : paths) {
+						addPathToFeatureSystem(path);
+					}
+				} else {
+					addPathToFeatureSystem(fpos.pathRepresentation());
+				}
+			}
+		}
+	}
+
+	public void addPathToFeatureSystem(String path) {
+		if (!StringUtilities.isNullOrEmpty(path) && !collectionFeatures.contains(path)) {
+			featureSystem.add(path);
+		}
+	}
+
+	protected void addConstraintsToFeatureSystem(List<?extends ConstraintWithLeftRightHandSide> constraints) {
+		for (ConstraintWithLeftRightHandSide uc : constraints) {
+			ConstraintLeftHandSide lhs = uc.getLeftHandSide();
+			if (lhs != null && lhs.getFeaturePath() != null) {
+				addPathToFeatureSystem(lhs.getFeaturePath().pathRepresentation());
+			}
+			ConstraintRightHandSide rhs = uc.getRightHandSide();
+			if (rhs != null && rhs.getFeaturePath() != null) {
+				addPathToFeatureSystem(rhs.getFeaturePath().pathRepresentation());
+			}
+			if (!StringUtilities.isNullOrEmpty(rhs.getAtomicValue())) {
+				addPathToFeatureSystem(lhs.getFeaturePath().pathRepresentation() + " " + rhs.getAtomicValue());
+			}
+		}
 	}
 
 	public void collectConstraints() {

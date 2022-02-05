@@ -46,14 +46,14 @@ public class FeaturePath {
 		this.featurePath = featurePath;
 	}
 
-	public String contentsRepresentation() {
+	public String pathRepresentation() {
 		StringBuilder sb = new StringBuilder();
 		if (atomicValue != null) {
 			sb.append(atomicValue);
 		}
 		if (featurePath != null) {
 			sb.append(" ");
-			sb.append(featurePath.contentsRepresentation());
+			sb.append(featurePath.pathRepresentation());
 		}
 		return sb.toString();
 	}

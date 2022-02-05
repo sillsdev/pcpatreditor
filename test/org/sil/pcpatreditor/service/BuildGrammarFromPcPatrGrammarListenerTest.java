@@ -8,47 +8,34 @@ package org.sil.pcpatreditor.service;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.LogicalConstraint;
 import org.sil.pcpatreditor.model.LogicalConstraintFactor;
 import org.sil.pcpatreditor.model.LogicalConstraintExpression;
-import org.sil.pcpatreditor.model.OptionalConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.BinaryOperation;
 import org.sil.pcpatreditor.model.Constituent;
 import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.Constraint;
-import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
-import org.sil.pcpatreditor.model.ConstraintRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
 import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
-import org.sil.pcpatreditor.model.DisjunctionUnificationConstraints;
 import org.sil.pcpatreditor.model.DisjunctiveConstituents;
-import org.sil.pcpatreditor.model.DisjunctiveUnificationConstraints;
-import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
 import org.sil.pcpatreditor.model.FeaturePath;
-import org.sil.pcpatreditor.model.FeaturePathOrStructure;
 import org.sil.pcpatreditor.model.FeaturePathTemplateBody;
 import org.sil.pcpatreditor.model.FeaturePathUnit;
 import org.sil.pcpatreditor.model.FeatureStructure;
-import org.sil.pcpatreditor.model.FeatureStructureValue;
-import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.FeatureTemplateDisjunction;
 import org.sil.pcpatreditor.model.FeatureTemplateValue;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
-import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
 import org.sil.pcpatreditor.model.PriorityUnionConstraint;
 import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
@@ -57,51 +44,7 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
  * @author Andy Black
  *
  */
-public class BuildGrammarFromPcPatrGrammarListenerTest {
-
-	Constituent constituent;
-	ConstituentsRightHandSide constituentRhs;
-	DisjunctiveConstituents disjunctiveConstituents;
-	OptionalConstituents optionalConstituents;
-	PhraseStructureRule psr;
-	List<PhraseStructureRuleRightHandSide> rhs = new ArrayList<>();
-	List<Constraint> constraints = new ArrayList<>();
-	FeatureTemplate featureTemplate;
-	FeaturePath featurePath;
-	FeaturePathOrStructure featurePathOrStructure;
-	FeaturePathTemplateBody featurePathTemplateBody;
-	FeaturePathTemplateBody embeddedFeaturePathTemplateBody;
-	FeaturePathUnit featurePathUnit;
-	FeatureStructure featureStructure;
-	EmbeddedFeatureStructure embeddedFeatureStructure;
-	FeatureStructure nestedFeatureStructure;
-	FeatureStructureValue featureStructureValue;
-	FeatureTemplateDisjunction featureTemplateDisjunction;
-	FeatureTemplateValue featureTemplateValue;
-	UnificationConstraint unificationConstraint;
-	ConstraintLeftHandSide constraintLhs;
-	ConstraintRightHandSide constraintRhs;
-	DisjunctionUnificationConstraints disjunctionUnificationConstraints;
-	DisjunctiveUnificationConstraints disjunctiveUnificationConstraints;
-	PriorityUnionConstraint priorityUnionConstraint;
-	LogicalConstraint logicalConstraint;
-	LogicalConstraintExpression lcExpression;
-	LogicalConstraintFactor factor1;
-	LogicalConstraintFactor factor2;
-	BinaryOperation binop;
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
+public class BuildGrammarFromPcPatrGrammarListenerTest extends BuildGrammarTestBase {
 
 	@Test
 	public void buildFeatureTemplateTest() {
@@ -172,9 +115,14 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		checkFeaturePathUnit(embeddedFeaturePathTemplateBody.getFeaturePathUnit(), "head type compound");
 		checkFeatureTemplateAtomicValue(embeddedFeaturePathTemplateBody, "+");
 
-		checkFeatureTemplate("Let -absolutive be <head case> = {ergative genitive dative}", "-absolutive");
-		checkFeaturePathUnit(featureTemplate.getFeaturePathTemplateBody().getFeaturePathUnit(), "head case");
-		checkFeatureTemplateDisjunctiveValue("{ergative genitive dative}");
+		checkFeatureTemplate("Let -accusative be <head case> = {nominative genitive dative}", "-accusative");
+		featurePathTemplateBody = featureTemplate.getFeaturePathTemplateBody();
+		checkFeaturePathUnit(featurePathTemplateBody.getFeaturePathUnit(), "head case");
+		atomicValueDisjunction = featurePathTemplateBody.getAtomicValueDisjunction();
+		assertEquals(3, atomicValueDisjunction.getAtomicValues().size());
+		assertEquals("nominative", atomicValueDisjunction.getAtomicValues().get(0));
+		assertEquals("genitive", atomicValueDisjunction.getAtomicValues().get(1));
+		assertEquals("dative", atomicValueDisjunction.getAtomicValues().get(2));
 
 		checkFeatureTemplate("Let causative_syntax be { [head:[infl:[valence:[causative:+]]\r\n"
 				+ "type:[causative_syntax:+]\r\n"
@@ -248,7 +196,7 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 		featureTemplateValue = featureTemplate.getFeaturePathTemplateBody().getFeatureTemplateValue();
 		FeatureTemplateDisjunction ftdisj = featureTemplateValue.getFeatureTemplateDisjunction();
 		assertNotNull(ftdisj);
-		assertEquals(sDisjunction, ftdisj.contentsRepresentation());
+		assertEquals(sDisjunction, ftdisj.pathRepresentation());
 		assertEquals(null, featureTemplateValue.getAtomicValue());
 		assertEquals(null, featureTemplateValue.getFeaturePath());
 	}
@@ -261,20 +209,11 @@ public class BuildGrammarFromPcPatrGrammarListenerTest {
 	}
 
 	protected void checkFeaturePath(FeaturePath fp, String sPath) {
-		assertEquals(sPath, fp.contentsRepresentation());
+		assertEquals(sPath, fp.pathRepresentation());
 	}
 
 	protected void checkFeaturePathUnit(FeaturePathUnit featurePathUnit, String sPath) {
-		assertEquals(sPath, featurePathUnit.contentsRepresentation());
-	}
-
-	protected void checkFeatureTemplate(String sTemplate, String sName) {
-		Grammar grammar = new Grammar();
-		grammar = GrammarBuilder.parseAString(sTemplate + "\nrule S = V\n", grammar);
-		List<FeatureTemplate> featureTemplates = grammar.getFeatureTemplates();
-		assertEquals(1, featureTemplates.size());
-		featureTemplate = featureTemplates.get(0);
-		assertEquals(sName, featureTemplate.getName());
+		assertEquals(sPath, featurePathUnit.pathRepresentation());
 	}
 
 	@Test

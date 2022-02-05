@@ -71,7 +71,6 @@ public class FeatureSystemCollectorTest {
 		collector.collect();
 		collectionFeatures = collector.getCollectionFeatures();
 		assertNotNull(collectionFeatures);
-		collectionFeatures.stream().forEach(c -> System.out.println("uc=" + c));
 		assertEquals(8, collectionFeatures.size());
 		List<String> cfList = collectionFeatures.stream().collect(Collectors.toList());
 		assertEquals("adjoined", cfList.get(0));
@@ -85,23 +84,20 @@ public class FeatureSystemCollectorTest {
 		
 		featureSystem = collector.getFeatureSystem();
 		assertNotNull(featureSystem);
-		assertEquals(15, featureSystem.size());
-		List<String> fsList = featureSystem.stream().collect(Collectors.toList());
-		assertEquals("Adj", fsList.get(0));
-		assertEquals("Adv", fsList.get(1));
-		assertEquals("Aux", fsList.get(2));
-		assertEquals("C", fsList.get(3));
-		assertEquals("Case", fsList.get(4));
-		assertEquals("Conj", fsList.get(5));
-		assertEquals("Deg", fsList.get(6));
-		assertEquals("Dem", fsList.get(7));
-		assertEquals("Excl", fsList.get(8));
-		assertEquals("N", fsList.get(9));
-		assertEquals("Num", fsList.get(10));
-		assertEquals("NumCl", fsList.get(11));
-		assertEquals("P", fsList.get(12));
-		assertEquals("Pron", fsList.get(13));
-		assertEquals("Q", fsList.get(14));
+//		featureSystem.stream().forEach(c -> System.out.println(c));
+		assertEquals(778, featureSystem.size());
+		List<String> fsList = collector.getFeatureSystemAsList();
+		assertEquals("cat Adj", fsList.get(0));
+		assertEquals("cat VP", fsList.get(18));
+		assertEquals("gloss whether", fsList.get(40));
+		assertEquals("head auxiliary rootgloss be.able", fsList.get(72));
+		assertEquals("head object head case", fsList.get(175));
+		assertEquals("head subject head agr number singular -", fsList.get(250));
+		assertEquals("head type compounds_with2 bring.pst", fsList.get(380));
+		assertEquals("head type initialP +", fsList.get(470));
+		assertEquals("head type partitive +", fsList.get(540));
+		assertEquals("rule 1creason", fsList.get(640));
+		assertEquals("rule tempPP", fsList.get(777));
 	}
 
 }

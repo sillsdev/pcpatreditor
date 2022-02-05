@@ -6,6 +6,8 @@
 
 package org.sil.pcpatreditor.model;
 
+import java.util.List;
+
 /**
  * @author Andy Black
  *
@@ -48,4 +50,11 @@ public class EmbeddedFeatureStructure {
 		this.value = value;
 	}
 	
+	public List<String> pathRepresentations(String path, List<String> paths) {
+		path += name + " ";
+		if (value != null) {
+			return value.pathRepresentations(path, paths);
+		}
+		return paths;
+	}
 }
