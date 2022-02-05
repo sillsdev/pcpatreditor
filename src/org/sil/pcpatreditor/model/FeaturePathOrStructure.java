@@ -1,33 +1,25 @@
 /**
- * Copyright (c) 2021-2022 SIL International
+ * Copyright (c) 2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
 
 package org.sil.pcpatreditor.model;
 
-import java.util.List;
-
 /**
  * @author Andy Black
  *
  */
-public class FeatureStructureValue {
+public class FeaturePathOrStructure {
 
 	String atomicValue;
+	FeaturePath featurePath;
 	FeatureStructure featureStructure;
-
-	public FeatureStructureValue() {
-	}
-
 	/**
-	 * @param atomicValue
-	 * @param featureStructure
+	 * 
 	 */
-	public FeatureStructureValue(String atomicValue, FeatureStructure featureStructure) {
+	public FeaturePathOrStructure() {
 		super();
-		this.atomicValue = atomicValue;
-		this.featureStructure = featureStructure;
 	}
 	/**
 	 * @return the atomicValue
@@ -42,6 +34,18 @@ public class FeatureStructureValue {
 		this.atomicValue = atomicValue;
 	}
 	/**
+	 * @return the featurePath
+	 */
+	public FeaturePath getFeaturePath() {
+		return featurePath;
+	}
+	/**
+	 * @param featurePath the featurePath to set
+	 */
+	public void setFeaturePath(FeaturePath featurePath) {
+		this.featurePath = featurePath;
+	}
+	/**
 	 * @return the featureStructure
 	 */
 	public FeatureStructure getFeatureStructure() {
@@ -53,13 +57,15 @@ public class FeatureStructureValue {
 	public void setFeatureStructure(FeatureStructure featureStructure) {
 		this.featureStructure = featureStructure;
 	}
-	
-	public List<String> pathRepresentations(String path, List<String> paths) {
-		if (featureStructure != null) {
-			return featureStructure.pathRepresentations(path, paths);
-		} else {
-			paths.add(path + atomicValue);
+
+	public String pathRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		if (atomicValue != null) {
+			sb.append(atomicValue);
 		}
-		return paths;
+		if (featurePath != null) {
+			sb.append(featurePath.pathRepresentation());
+		}
+		return sb.toString();
 	}
 }

@@ -14,8 +14,6 @@ public class ConstraintRightHandSide extends ConstraintLeftHandSide {
 
 	String atomicValue = "";
 	/**
-	 * @param constituent
-	 * @param featurePath
 	 * @param atomicValue
 	 */
 	public ConstraintRightHandSide(String atomicValue) {
@@ -40,6 +38,24 @@ public class ConstraintRightHandSide extends ConstraintLeftHandSide {
 	 */
 	public void setAtomicValue(String atomicValue) {
 		this.atomicValue = atomicValue;
+	}
+
+	public String representation() {
+		StringBuilder sb = new StringBuilder();
+		if (atomicValue.length() > 0) {
+			sb.append(atomicValue);
+		} else {
+			sb.append("<");
+			if (constituent != null) {
+				sb.append(constituent.nodeRepresentation());
+				if (featurePath != null) {
+					sb.append(" ");
+					sb.append(featurePath.pathRepresentation());
+				}
+			}
+			sb.append(">");
+		}
+		return sb.toString();
 	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -16,20 +16,14 @@ import java.util.List;
 public class DisjunctiveUnificationConstraints extends Constraint {
 
 	List<UnificationConstraint> unificationConstraints = new ArrayList<>();
-	List<DisjunctiveUnificationConstraints> disjunctiveUnificationConstraints = new ArrayList<>();
+	List<DisjunctionUnificationConstraints> disjunctionUnificationConstraints = new ArrayList<>();
 	
 	/**
 	 * @param enabled
 	 * @param useWhenDebugging
-	 * @param unificationConstraints
-	 * @param disjunctiveUnificationConstraints
 	 */
-	public DisjunctiveUnificationConstraints(boolean enabled, boolean useWhenDebugging,
-			List<UnificationConstraint> unificationConstraints,
-			List<DisjunctiveUnificationConstraints> disjunctiveUnificationConstraints) {
+	public DisjunctiveUnificationConstraints(boolean enabled, boolean useWhenDebugging) {
 		super(enabled, useWhenDebugging);
-		this.unificationConstraints = unificationConstraints;
-		this.disjunctiveUnificationConstraints = disjunctiveUnificationConstraints;
 	}
 
 	/**
@@ -47,18 +41,18 @@ public class DisjunctiveUnificationConstraints extends Constraint {
 	}
 
 	/**
-	 * @return the disjunctiveUnificationConstraints
+	 * @return the disjunctionUnificationConstraints
 	 */
-	public List<DisjunctiveUnificationConstraints> getDisjunctiveUnificationConstraints() {
-		return disjunctiveUnificationConstraints;
+	public List<DisjunctionUnificationConstraints> getDisjunctionUnificationConstraints() {
+		return disjunctionUnificationConstraints;
 	}
 
 	/**
-	 * @param disjunctiveUnificationConstraints the disjunctiveUnificationConstraints to set
+	 * @param disjunctionUnificationConstraints the disjunctionUnificationConstraints to set
 	 */
-	public void setDisjunctiveUnificationConstraints(
-			List<DisjunctiveUnificationConstraints> disjunctiveUnificationConstraints) {
-		this.disjunctiveUnificationConstraints = disjunctiveUnificationConstraints;
+	public void setDisjunctionUnificationConstraints(
+			List<DisjunctionUnificationConstraints> disjunctionUnificationConstraints) {
+		this.disjunctionUnificationConstraints = disjunctionUnificationConstraints;
 	}
 
 }

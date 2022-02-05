@@ -10,7 +10,7 @@ package org.sil.pcpatreditor.model;
  * @author Andy Black
  *
  */
-public class LogicalContraintExpression {
+public class LogicalConstraintExpression {
 
 	LogicalConstraintFactor factor1;
 	LogicalConstraintFactor factor2;
@@ -20,7 +20,7 @@ public class LogicalContraintExpression {
 	 * @param factor2
 	 * @param binop
 	 */
-	public LogicalContraintExpression(LogicalConstraintFactor factor1, LogicalConstraintFactor factor2,
+	public LogicalConstraintExpression(LogicalConstraintFactor factor1, LogicalConstraintFactor factor2,
 			BinaryOperation binop) {
 		super();
 		this.factor1 = factor1;

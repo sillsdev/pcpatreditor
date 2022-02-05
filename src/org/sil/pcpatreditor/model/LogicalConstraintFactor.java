@@ -14,14 +14,14 @@ public class LogicalConstraintFactor {
 
 	boolean negated = false;
 	FeatureStructure featureStructure;
-	LogicalContraintExpression expression;
+	LogicalConstraintExpression expression;
 	/**
 	 * @param negated
 	 * @param featureStructure
 	 * @param expression
 	 */
 	public LogicalConstraintFactor(boolean negated, FeatureStructure featureStructure,
-			LogicalContraintExpression expression) {
+			LogicalConstraintExpression expression) {
 		super();
 		this.negated = negated;
 		this.featureStructure = featureStructure;
@@ -54,13 +54,13 @@ public class LogicalConstraintFactor {
 	/**
 	 * @return the expression
 	 */
-	public LogicalContraintExpression getExpression() {
+	public LogicalConstraintExpression getExpression() {
 		return expression;
 	}
 	/**
 	 * @param expression the expression to set
 	 */
-	public void setExpression(LogicalContraintExpression expression) {
+	public void setExpression(LogicalConstraintExpression expression) {
 		this.expression = expression;
 	}
 	

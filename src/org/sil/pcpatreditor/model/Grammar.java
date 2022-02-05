@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class Grammar {
 
-	List<PatrRule> rules = new ArrayList<PatrRule>();
+	List<PatrRule> rules = new ArrayList<>();
+	List<FeatureTemplate> featureTemplates = new ArrayList<>();
 
 	public Grammar() {
 	}
@@ -41,4 +42,19 @@ public class Grammar {
 	public void setRules(List<PatrRule> rules) {
 		this.rules = rules;
 	}
+
+	/**
+	 * @return the featureTemplates
+	 */
+	public List<FeatureTemplate> getFeatureTemplates() {
+		return featureTemplates;
+	}
+
+	/**
+	 * @param featureTemplates the featureTemplates to set
+	 */
+	public void setFeatureTemplates(List<FeatureTemplate> featureTemplates) {
+		this.featureTemplates = featureTemplates;
+	}
+
 }
