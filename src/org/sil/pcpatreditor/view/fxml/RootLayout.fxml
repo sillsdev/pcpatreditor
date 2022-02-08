@@ -79,6 +79,8 @@
                 <Menu fx:id="menuReports" mnemonicParsing="true" text="%menu.reports">
                   <items>
 					<MenuItem fx:id="menuItemShowConstituents" mnemonicParsing="true" onAction="#handleShowConstituents" text="%menu.reportshowconstituents" />
+					<SeparatorMenuItem />
+					<MenuItem fx:id="menuItemShowFeatureSystem" mnemonicParsing="true" onAction="#handleShowFeatureSystem" text="%menu.reportshowfeaturesystem" />
                   </items>
                 </Menu>
 				<Menu fx:id="menuSettings" mnemonicParsing="true" text="%menu.settings">

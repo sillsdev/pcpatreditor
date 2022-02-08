@@ -60,6 +60,8 @@ import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
 import org.sil.pcpatreditor.service.ConstituentsCollector;
 import org.sil.pcpatreditor.service.ExtractorAction;
+import org.sil.pcpatreditor.service.FeatureSystemCollector;
+import org.sil.pcpatreditor.service.FeatureSystemHTMLFormatter;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
 import org.sil.pcpatreditor.service.GrammarBuilder;
 import org.sil.pcpatreditor.service.RuleExtractor;
@@ -220,6 +222,8 @@ public class RootLayoutController implements Initializable {
 	private Menu menuReports;
 	@FXML
 	private MenuItem menuItemShowConstituents;
+	@FXML
+	private MenuItem menuItemShowFeatureSystem;
 	@FXML
 	private Menu menuSettings;
 	@FXML
@@ -941,6 +945,43 @@ public class RootLayoutController implements Initializable {
 			controller.setDialogStage(dialogStage);
 			controller.setMainApp(mainApp);
 			controller.setData(collector.getNonTerminals(), collector.getTerminals());
+			controller.initialize(location, bundle);
+
+			dialogStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
+	}
+
+	@FXML
+	private void handleShowFeatureSystem() {
+		mainPane.getScene().setCursor(Cursor.WAIT);
+		FeatureSystemCollector collector = new FeatureSystemCollector(grammar.getText());
+		collector.parseGrammar();
+		collector.collect();
+		FeatureSystemHTMLFormatter formatter = new FeatureSystemHTMLFormatter();
+		String html = formatter.format(collector.getFeatureSystemAsList(), bundle.getString("label.featuresystem"));
+		mainPane.getScene().setCursor(Cursor.DEFAULT);
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(FeatureSystemDialogController.class.getResource("fxml/FeatureSystemDialog.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.NONE);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			FeatureSystemDialogController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setHtmlContent(html);
 			controller.initialize(location, bundle);
 
 			dialogStage.show();

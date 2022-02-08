@@ -1,0 +1,778 @@
+cat Adj
+cat Adv
+cat Art
+cat Aux
+cat C
+cat Case
+cat Conj
+cat Deg
+cat Dem
+cat Excl
+cat N
+cat Num
+cat P
+cat Poss
+cat Pron
+cat Q
+cat Quote
+cat V
+cat VP
+conjoined
+conjoined +
+conjoined -
+conjunction gloss
+conjunction gloss and
+conjunction gloss ending
+conjunction gloss namely
+conjunction gloss or
+embedded
+embedded infl mood realis -
+embedded infl mood subjunctive +
+final_conjunction gloss
+final_conjunction gloss and
+final_conjunction gloss or
+gloss
+gloss also
+gloss and
+gloss for
+gloss namely
+gloss or
+gloss to
+gloss whether
+head
+head VP_2 head infl tense past -
+head adjoined
+head adjoined head type locative +
+head adjoinedPP
+head agr
+head agr gender feminine +
+head agr gender masculine +
+head agr gender neuter +
+head agr number
+head agr number dual +
+head agr number plural
+head agr number plural +
+head agr number plural -
+head agr number singular
+head agr number singular +
+head agr number singular -
+head agr person
+head agr person first
+head agr person first +
+head agr person first -
+head agr person second
+head agr person second +
+head agr person second -
+head agr person third
+head agr person third +
+head agr person third -
+head apposed
+head auxiliary infl tense past
+head auxiliary infl tense past +
+head auxiliary rootgloss
+head auxiliary rootgloss be.able
+head auxiliaryH
+head auxiliaryH infl tense past
+head auxiliaryH infl tense past +
+head auxiliaryH infl tense present
+head auxiliaryH infl tense present -
+head auxiliaryH rootgloss
+head auxiliaryH rootgloss be.able
+head auxliairy infl tense past
+head auxliairy infl tense past +
+head case
+head case absolutive
+head case accusative
+head case benefactor
+head case dative
+head case direct
+head case ergative
+head case genitive
+head case nominative
+head case objective
+head case oblique
+head case-marked
+head case-marked -
+head case_for_position
+head case_for_position direct
+head case_for_position genitive
+head case_for_position objective
+head case_for_position oblique
+head embedded
+head embedded cat IP
+head embedded cat none
+head embedded infl
+head gloss
+head indirectobject
+head indirectobject head agr person first +
+head indirectobject head agr person second +
+head infl
+head infl aspect completive +
+head infl aspect completive -
+head infl aspect continuative +
+head infl aspect habitual +
+head infl aspect perfective
+head infl aspect perfective +
+head infl aspect perfective -
+head infl aspect potential +
+head infl aspect progressive +
+head infl aspect stative +
+head infl finite
+head infl finite +
+head infl finite -
+head infl finite short
+head infl mood declarative +
+head infl mood imperative
+head infl mood imperative +
+head infl mood imperative -
+head infl mood interrogative +
+head infl mood interrogative -
+head infl mood realis
+head infl mood realis +
+head infl mood realis -
+head infl mood subjunctive
+head infl mood subjunctive +
+head infl mood subjunctive -
+head infl polarity
+head infl polarity +
+head infl polarity -
+head infl tense future
+head infl tense future +
+head infl tense future -
+head infl tense past
+head infl tense past +
+head infl tense past -
+head infl tense present
+head infl tense present +
+head infl tense present -
+head infl valence causative
+head infl valence causative +
+head location
+head modifier head
+head modifier head type modifies_Adv locative +
+head modifier head type modifies_Adv manner +
+head modifier head type modifies_Adv temporal +
+head obj head agr number plural +
+head obj head agr number singular +
+head obj head agr person third +
+head object
+head object head agr gender feminine +
+head object head agr gender masculine +
+head object head agr gender neuter +
+head object head agr number dual +
+head object head agr number plural +
+head object head agr number plural -
+head object head agr number singular +
+head object head agr number singular -
+head object head agr person first
+head object head agr person first +
+head object head agr person first -
+head object head agr person second
+head object head agr person second +
+head object head agr person second -
+head object head agr person third
+head object head agr person third +
+head object head agr person third -
+head object head case
+head object head case objective
+head object head case oblique
+head object head case_for_position
+head object head case_for_position objective
+head object head case_for_position oblique
+head object head infl polarity -
+head object head participle
+head object head participle none
+head object head possessor head participle
+head object head possessor head participle none
+head object head relativity compounds_with1 ^1
+head object head relativity compounds_with2 ^1
+head object head relativity compounds_with3 ^1
+head object head relativity compounds_with4 ^1
+head object head relativity conjoined +
+head object head rootgloss ^1
+head object head type
+head object head type animate +
+head object head type animate -
+head object head type case-marked -
+head object head type compound +
+head object head type compounds_with1 ^1
+head object head type compounds_with2 ^1
+head object head type compounds_with3 ^1
+head object head type compounds_with4 ^1
+head object head type conjunction_gloss initial_ya
+head object head type coordination +
+head object head type modifier-final +
+head object head type modifier-final -
+head object head type pronoun
+head object head type pronoun +
+head object head type pronoun -
+head object head type reciprocal +
+head participle
+head participle none
+head possessor
+head possessor head agr gender feminine +
+head possessor head agr gender masculine +
+head possessor head agr number dual +
+head possessor head agr number plural +
+head possessor head agr number plural -
+head possessor head agr number singular +
+head possessor head agr number singular -
+head possessor head agr person first +
+head possessor head agr person first -
+head possessor head agr person second +
+head possessor head agr person second -
+head possessor head agr person third +
+head possessor head agr person third -
+head possessor head participle
+head possessor head participle none
+head reflexive
+head reflexive head agr
+head relativity conjoined
+head rootgloss
+head rootgloss ^1
+head rootgloss become
+head rootgloss to
+head rootgloss to.IO
+head rootgloss_V_2
+head rootgloss_V_2 become
+head rootgloss_V_2 none
+head subject
+head subject head agr
+head subject head agr gender feminine +
+head subject head agr gender masculine +
+head subject head agr gender neuter +
+head subject head agr none
+head subject head agr number dual +
+head subject head agr number plural
+head subject head agr number plural +
+head subject head agr number plural -
+head subject head agr number singular
+head subject head agr number singular +
+head subject head agr number singular -
+head subject head agr person first +
+head subject head agr person first -
+head subject head agr person second
+head subject head agr person second +
+head subject head agr person second -
+head subject head agr person third +
+head subject head agr person third -
+head subject head infl polarity -
+head subject head participle cat V
+head subject head possessor
+head subject head possessor head participle cat V
+head subject head possessor head type compounds_with1 ^1
+head subject head possessor head type compounds_with2 ^1
+head subject head possessor head type compounds_with3 ^1
+head subject head possessor head type compounds_with4 ^1
+head subject head type
+head subject head type animate +
+head subject head type animate -
+head subject head type compounds_with1 ^1
+head subject head type compounds_with2 ^1
+head subject head type compounds_with3 ^1
+head subject head type compounds_with4 ^1
+head subject head type coordination +
+head type
+head type AdjP-final +
+head type AdjP-final -
+head type AdjP-initial +
+head type AdjP-initial -
+head type AdvP-final +
+head type AdvP-final -
+head type AdvP-initial +
+head type AdvP-initial -
+head type CP-final
+head type CP-final +
+head type CP-final -
+head type CP-initial
+head type CP-initial +
+head type CP-initial -
+head type CP-specifier-initial +
+head type DO_contraction
+head type DO_contraction +
+head type DO_contraction -
+head type DP
+head type DP +
+head type DP -
+head type DP-final
+head type DP-final +
+head type DP-final -
+head type DP-initial
+head type DP-initial +
+head type DP-initial -
+head type NPrep
+head type NPrep +
+head type NPrep -
+head type PP
+head type PP +
+head type PP -
+head type PP-initial
+head type PP-initial +
+head type QP-final +
+head type QP-final -
+head type QP-initial +
+head type QP-initial -
+head type animate
+head type animate +
+head type animate -
+head type apposition
+head type apposition +
+head type apposition -
+head type apposition namely
+head type atributive
+head type atributive -
+head type attributive
+head type attributive +
+head type attributive -
+head type auxiliary
+head type auxiliary +
+head type auxiliary -
+head type case-marked
+head type case-marked +
+head type case-marked -
+head type causative_syntax +
+head type comma
+head type comma +
+head type comma -
+head type comp_suffix
+head type comp_suffix +
+head type comp_suffix -
+head type compound
+head type compound +
+head type compound -
+head type compound unspecified
+head type compounded
+head type compounded +
+head type compounded -
+head type compounds_with1
+head type compounds_with1 amass.pst
+head type compounds_with1 bring
+head type compounds_with1 bring.pst
+head type compounds_with1 come
+head type compounds_with1 come.pst
+head type compounds_with1 do
+head type compounds_with1 do.pst
+head type compounds_with1 fall
+head type compounds_with1 give
+head type compounds_with1 have
+head type compounds_with1 hit
+head type compounds_with1 pull
+head type compounds_with1 sew
+head type compounds_with1 supply
+head type compounds_with1 ?????
+head type compounds_with1 ??????
+head type compounds_with1 ?????????
+head type compounds_with1 ??????
+head type compounds_with1 ?????
+head type compounds_with1 ????
+head type compounds_with1 ?????
+head type compounds_with1 ????
+head type compounds_with1 ?????
+head type compounds_with1 ?????
+head type compounds_with1 ???
+head type compounds_with1 ?????
+head type compounds_with1 ??????
+head type compounds_with1 ????
+head type compounds_with1 ?????
+head type compounds_with1 ????
+head type compounds_with1 ?????
+head type compounds_with2
+head type compounds_with2 bring
+head type compounds_with2 bring.pst
+head type compounds_with2 come
+head type compounds_with2 do
+head type compounds_with2 find.pst
+head type compounds_with2 give.pst
+head type compounds_with2 hit
+head type compounds_with2 none
+head type compounds_with2 pull
+head type compounds_with2 ?????
+head type compounds_with2 ????
+head type compounds_with2 ?????
+head type compounds_with2 ?????
+head type compounds_with2 ???
+head type compounds_with2 ???
+head type compounds_with2 ?????????
+head type compounds_with2 ??????
+head type compounds_with2 ?????
+head type compounds_with2 ????
+head type compounds_with2 ?????
+head type compounds_with2 ????
+head type compounds_with2 ?????
+head type compounds_with3
+head type compounds_with3 become.pst
+head type compounds_with3 carry.pst
+head type compounds_with3 do
+head type compounds_with3 go.pst
+head type compounds_with3 hit
+head type compounds_with3 none
+head type compounds_with3 turn.pst
+head type compounds_with3 ????
+head type compounds_with3 ?????
+head type compounds_with3 ?????
+head type compounds_with3 ????
+head type compounds_with3 ?????
+head type compounds_with4
+head type compounds_with4 do
+head type compounds_with4 do.pst
+head type compounds_with4 none
+head type compounds_with4 send.pst
+head type compounds_with4 ?????
+head type compounds_with4 ????
+head type compounds_with4 ?????
+head type compounds_with4 ????
+head type conj_suffix
+head type conj_suffix +
+head type conj_suffix -
+head type conjoined
+head type conjoined +
+head type conjoins_DP
+head type conjoins_DP +
+head type conjoins_DP -
+head type conjoins_IP
+head type conjoins_IP +
+head type conjoins_IP -
+head type conjunction_gloss
+head type conjunction_gloss initial_ya
+head type coordination
+head type coordination +
+head type coordination -
+head type coordination initial
+head type coordination medial
+head type copular
+head type copular +
+head type copular -
+head type copular_suffix
+head type copular_suffix +
+head type copular_suffix -
+head type demonstrative +
+head type ditransitive
+head type ditransitive +
+head type ditransitive -
+head type gen_initial
+head type gen_initial +
+head type gen_initial -
+head type generic
+head type generic +
+head type generic -
+head type genitive_suffix
+head type genitive_suffix +
+head type genitive_suffix -
+head type human
+head type human +
+head type human -
+head type impersonal
+head type impersonal +
+head type impersonal -
+head type indefinite
+head type indefinite +
+head type indefinite -
+head type initialP
+head type initialP +
+head type initialP -
+head type location_PP
+head type location_PP +
+head type location_PP -
+head type locative
+head type locative +
+head type locative -
+head type manner
+head type manner +
+head type manner -
+head type modifier-final
+head type modifier-final +
+head type modifier-final -
+head type modifier-initial
+head type modifier-initial +
+head type modifier-initial -
+head type modifier_required
+head type modifier_required +
+head type modifier_required -
+head type modifies_Adj
+head type modifies_Adj +
+head type modifies_Adj -
+head type modifies_Adv locative +
+head type modifies_Adv locative -
+head type modifies_Adv manner +
+head type modifies_Adv manner -
+head type modifies_Adv reason +
+head type modifies_Adv reason -
+head type modifies_Adv temporal +
+head type modifies_Adv temporal -
+head type modifies_NP
+head type modifies_NP +
+head type modifies_NP -
+head type modifies_NPrep +
+head type modifies_NPrep -
+head type modifies_PP
+head type modifies_PP +
+head type modifies_PP -
+head type modifies_Q +
+head type modifies_Q -
+head type motion
+head type motion +
+head type motion -
+head type negative_prefix +
+head type negative_prefix -
+head type negative_suffix +
+head type negative_suffix -
+head type no_head_N
+head type no_head_N +
+head type no_head_N -
+head type no_intervening
+head type no_intervening +
+head type no_intervening -
+head type nonfinalcoordination
+head type nonfinalcoordination +
+head type nonfinalcoordination -
+head type object_agr_suffix
+head type object_agr_suffix +
+head type object_agr_suffix -
+head type ordinal
+head type ordinal +
+head type ordinal -
+head type participle
+head type participle +
+head type participle -
+head type participle_passive
+head type participle_passive +
+head type participle_passive -
+head type partitive
+head type partitive +
+head type partitive -
+head type passive
+head type passive +
+head type passive -
+head type personal +
+head type possessed +
+head type prefix_Prep
+head type prefix_Prep +
+head type prefix_Prep -
+head type pro-drop
+head type pro-drop +
+head type pro-drop -
+head type pronoun
+head type pronoun +
+head type pronoun -
+head type proper
+head type proper +
+head type proper -
+head type quantifier +
+head type quantifier -
+head type question
+head type question +
+head type question -
+head type reason
+head type reason +
+head type reciprocal +
+head type reciprocal -
+head type reflexivity
+head type reflexivity +
+head type reflexivity -
+head type relative
+head type relative +
+head type relative -
+head type relcl
+head type relcl +
+head type relcl -
+head type root
+head type root +
+head type root -
+head type sentential
+head type sentential +
+head type sentential -
+head type speech_PP
+head type speech_PP -
+head type stand-alone +
+head type stand-alone -
+head type stranded
+head type stranded -
+head type suffix_Pn
+head type suffix_Pn +
+head type suffix_Pn -
+head type temporal
+head type temporal +
+head type temporal -
+head type transitive
+head type transitive +
+head type transitive -
+head type transitive_motion
+head type transitive_motion +
+head type transitive_motion -
+head type translates2Prep
+head type translates2Prep +
+head type translates2Prep -
+head type wh
+head type wh +
+head type wh -
+mother_node
+mother_node +
+mother_node -
+relativeCl
+relativeCl +
+relativeCl -
+rootgloss
+rootgloss be.able
+rootgloss become
+rootgloss for
+rootgloss to
+rule
+rule 0
+rule 0a-AdjP
+rule 0a-DP
+rule 0adj
+rule 0b
+rule 0conj
+rule 1
+rule 1Sdn
+rule 1a
+rule 1aIO
+rule 1aLocTo
+rule 1adj
+rule 1adv
+rule 1b
+rule 1bcoord
+rule 1bposs
+rule 1c
+rule 1conjF
+rule 1conjI
+rule 1conjIF
+rule 1contr
+rule 1creason
+rule 1dblN
+rule 2
+rule 2a
+rule 2aconjF
+rule 2aconjI
+rule 2aconjIF
+rule 2b
+rule 2bconjF
+rule 2bconjFpl
+rule 2bconjI
+rule 2bconjIF
+rule 2bconjIFpl
+rule 2bconjIpl
+rule 2bcoord
+rule 2c
+rule 2cII
+rule 2cIInonroot
+rule 2cINon-ImpersonalVNonPast
+rule 2cImpersonalV
+rule 2cImpersonalVnonroot
+rule 2cNon-ImpersonalV-PastIntransitive
+rule 2cNon-ImpersonalV-PastIntransitivenonroot
+rule 2cNon-ImpersonalV-PastTransitive
+rule 2cNon-ImpersonalVNonPastnonroot
+rule 2cNon-ImpersonalVPastTransitivenonroot
+rule 2dblAdj
+rule 2j
+rule 2z
+rule 2zconjF
+rule 2zconjI
+rule 2zconjIF
+rule 3
+rule 3b
+rule 3bPP
+rule 3cTRNonPastGeneric
+rule 3cTRNonPastNonGenericDefinite
+rule 3cTRNonPastNonGenericIndefinite
+rule 3cTRpast
+rule 4a
+rule 4bPcop_sfx
+rule 4badj
+rule 4badjPP
+rule 4bnom
+rule 4prs
+rule 4pst
+rule 5cNonPastGeneric
+rule 5cNonPastNonGenericDefinite
+rule 5cNonPastNonGenericIndefinite
+rule 5cPast
+rule 6aempreflex
+rule 6apn
+rule 6apnreflex
+rule 6cIDPnonPastGeneric
+rule 6cIDPnonPastNonGenericDefinite
+rule 6cIDPnonPastNonGenericIndefinite
+rule 6cIDPpast
+rule 6cIIDPnonPastGeneric
+rule 6cIIDPnonPastNonGenericDefinite
+rule 6cIIDPnonPastNonGenericIndefinite
+rule 6cIIDPpast
+rule 6cIPP_1nonPastGeneric
+rule 6cIPP_1nonPastNonGenericDefinite
+rule 6cIPP_1nonPastNonGenericIndefinite
+rule 6cIPP_1past
+rule 6cIPP_2nonPastGeneric
+rule 6cIPP_2nonPastNonGenericDefinite
+rule 6cIPP_2nonPastNonGenericIndefinite
+rule 6cIPP_2past
+rule 6cIPPnonPastGeneric
+rule 6cIPPnonPastNonGenericDefinite
+rule 6cIPPnonPastNonGenericIndefinite
+rule 6cIPPpast
+rule 8a
+rule 8aQ
+rule 8adj
+rule 9f
+rule 9passI
+rule Appos
+rule CP
+rule F
+rule Fand
+rule Fandalso
+rule Fandor
+rule Fandwhether
+rule For
+rule I2or
+rule Iand
+rule Icomma-and
+rule Icomma-or
+rule Ior
+rule Iwhether
+rule Mand
+rule Mcomma
+rule Mor
+rule Mwhether
+rule Oa-ygny
+rule Oa-ygnyPP
+rule PPAppos
+rule Prt
+rule PrtTrPrs
+rule PrtTrPst
+rule Q
+rule Sand
+rule Sor
+rule Swhether
+rule address
+rule address2
+rule address_conjoined
+rule adv
+rule bh-I
+rule bh-II
+rule case1and2pronouns
+rule caseAppos
+rule caseNonPstDef
+rule caseNonPstExceptDef
+rule casePst
+rule compound
+rule compoundAdj
+rule conj
+rule conjoined
+rule excl
+rule locPP
+rule mannerPP
+rule namely
+rule number
+rule numberCl
+rule passivePP
+rule pn-sf
+rule relative_clause
+rule relcl2
+rule relcl2+kh
+rule start
+rule startCPInitDP
+rule startInit
+rule startInitDP
+rule startInitPP
+rule tempPP
