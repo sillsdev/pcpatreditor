@@ -50,19 +50,39 @@ public class FeatureSystemHTMLFormatterTest {
 	public void featureSystemHTMLFormatterTest() {
 		// empty feature system
 		featureSystem.clear();
-		html = formatter.format(featureSystem, title);
+		formatter.setDateTime("testing date and time");
+		formatter.setReportPerformedOn("Performed on ");
+		formatter.setTitle(title);
+		formatter.setGrammarFile("nothing in feature system");
+		html = formatter.format(featureSystem);
 		assertEquals(
 				"<html>\n" + "<head>\n" + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n"
-						+ "<title>Feature System</title>\n" + "</head>\n" + "<body>\n" + "<table border=\"1\">\n" + "</table>\n" + "</body>\n" + "</html>\n" + "",
+						+ "<title>Feature System</title>\n" + "</head>\n" + "<body>\n"
+						+ "<h2>Feature System</h2>\n"
+						+ "<div>nothing in feature system</div>\n"
+						+ "<p>Performed on testing date and time</p>\n"
+						+ "<table border=\"1\">\n" + "</table>\n" + "</body>\n" + "</html>\n" + "",
 				html);
 		// full feature system
 		try {
 			File fileInput = new File("test/org/sil/pcpatreditor/testdata/FeatureSystemInputStringList.txt");
 			featureSystem = Files.readAllLines(fileInput.toPath());
-			html = formatter.format(featureSystem, title);
+			formatter.setGrammarFile("test file 1");
+			html = formatter.format(featureSystem);
 			File file = new File("test/org/sil/pcpatreditor/testdata/FeatureSystemHTMLResult.html");
 			Stream<String> contents = Files.lines(file.toPath());
 			String scontents = contents.collect(Collectors.joining("\n"));
+			contents.close();
+			assertEquals(scontents, html);
+
+			fileInput = new File("test/org/sil/pcpatreditor/testdata/FeatureSystemInputStringList2.txt");
+			featureSystem.clear();
+			featureSystem = Files.readAllLines(fileInput.toPath());
+			formatter.setGrammarFile("test file 2");
+			html = formatter.format(featureSystem);
+			file = new File("test/org/sil/pcpatreditor/testdata/FeatureSystemHTMLResult2.html");
+			contents = Files.lines(file.toPath());
+			scontents = contents.collect(Collectors.joining("\n"));
 			contents.close();
 			assertEquals(scontents, html);
 		} catch (IOException e) {

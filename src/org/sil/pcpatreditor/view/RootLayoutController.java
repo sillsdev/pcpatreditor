@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.sil.utility.view.ObservableResourceFactory;
 import org.sil.utility.ClipboardUtilities;
+import org.sil.utility.DateTimeNormalizer;
 import org.sil.utility.StringUtilities;
 import org.sil.utility.view.ControllerUtilities;
 import org.sil.utility.view.FilteringEventDispatcher;
@@ -961,7 +963,16 @@ public class RootLayoutController implements Initializable {
 		collector.parseGrammar();
 		collector.collect();
 		FeatureSystemHTMLFormatter formatter = new FeatureSystemHTMLFormatter();
-		String html = formatter.format(collector.getFeatureSystemAsList(), bundle.getString("label.featuresystem"));
+		String grammarFile = "xyz";
+		File file = mainApp.getDocumentFile();
+		if (file != null) {
+			grammarFile = file.getAbsolutePath();
+		}
+		formatter.setGrammarFile(grammarFile);
+		formatter.setDateTime(DateTimeNormalizer.normalizeDateTimeWithWords(LocalDateTime.now(), bundle.getLocale()));
+		formatter.setReportPerformedOn(bundle.getString("report.performedon"));
+		formatter.setTitle(bundle.getString("label.featuresystem"));
+		String html = formatter.format(collector.getFeatureSystemAsList());
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		try {
 			FXMLLoader loader = new FXMLLoader();

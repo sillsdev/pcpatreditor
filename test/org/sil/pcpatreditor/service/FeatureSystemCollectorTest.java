@@ -43,7 +43,15 @@ public class FeatureSystemCollectorTest {
 	public void setUp() throws Exception {
 		File largeGrammarFile = new File(Constants.UNIT_TEST_DATA_FILE_EXTRAS);
 		try {
-			String largeFileContent = new String(Files.readAllBytes(largeGrammarFile.toPath()), StandardCharsets.UTF_8);
+			List<String> list = Files.readAllLines(largeGrammarFile.toPath(), StandardCharsets.UTF_8);
+			for (String line : list) {
+				if (line.contains("compounds_with")) {
+					System.out.println(line);
+				}
+			}
+			String largeFileContent = Files.readString(largeGrammarFile.toPath(), StandardCharsets.UTF_8);
+//			String largeFileContent = new String(Files.readAllBytes(largeGrammarFile.toPath()), StandardCharsets.UTF_8);
+//			System.out.print(largeFileContent.substring(3000, 67777));
 			collector = new FeatureSystemCollector(largeFileContent);
 			collector.parseGrammar();
 		} catch (IOException e) {
@@ -87,6 +95,9 @@ public class FeatureSystemCollectorTest {
 //		featureSystem.stream().forEach(c -> System.out.println(c));
 		assertEquals(778, featureSystem.size());
 		List<String> fsList = collector.getFeatureSystemAsList();
+//		System.out.println("\n\nlist is below\n\n");
+//		fsList.stream().forEach(c -> System.out.println(c));
+		assertEquals(778, fsList.size());
 		assertEquals("cat Adj", fsList.get(0));
 		assertEquals("cat VP", fsList.get(18));
 		assertEquals("gloss whether", fsList.get(40));

@@ -6,6 +6,7 @@
 
 package org.sil.pcpatreditor.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -490,10 +491,10 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		switch (sClass) {
 		case "AtomicValueContext":
 			ftv.setAtomicValue(childCtx.getText());
+//			System.out.println("exitFeatureTemplateValue: text=" + childCtx.getText());
 			break;
 		case "FeatureTemplateDisjunctionContext":
 			ftv.setFeatureTemplateDisjunction(featureTemplateDisjunctionMap.get(childCtx.hashCode()));
-			System.out.println("exitFeatureTemplateValue: set value to disj:" + featureTemplateDisjunctionMap.get(childCtx.hashCode()));
 			break;
 		default:
 			System.out.println("exitFeatureTemplateValue: Unhandled child class: " + sClass);
