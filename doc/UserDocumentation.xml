@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->7 January, 2022</date
+>18 February, 2022</date
 ><version
->Version 0.7.0 Alpha</version
+>Version 0.8.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -306,7 +306,7 @@ id="sReports"
 ><object
 type="tPcPatrEditor"
 ></object
-> currently has one report option.</p
+> currently has two report options.</p
 ><section2
 id="sConstituents"
 ><secTitle
@@ -338,7 +338,40 @@ width="500"
 ></chart
 ></example
 ><p
->Unlike most dialog boxes, you can still edit the grammar, etc., in the main program.  Note, however, that it shows the set of constituents at the time the report was generated.  If you make changes after that, you will need to invoke the report again.  We suggest you close the older dialog first.</p
+>Unlike most dialog boxes, you can still edit the grammar, etc., in the main program. Note, however, that it shows the set of constituents at the time the report was generated. If you make changes after that, you will need to invoke the report again. We suggest you close the older dialog first.</p
+></section2
+><section2
+id="sFeatureSystem"
+><secTitle
+>Show feature system</secTitle
+><p
+>This report option is available under the <object
+type="tMenuItem"
+>Reports</object
+> menu item as <object
+type="tMenuItem"
+>Show feature system</object
+>. This is useful when you want to see what feature paths are used throughout the grammar, arranged as a system.  Sometimes it will show typos you had not noticed before.</p
+><p
+>When you invoke this option, it may take a while but <object
+type="tPcPatrEditor"
+></object
+> will eventually bring up a dialog box showing the feature system. In one grammar file, it looked like what is in example <exampleRef
+letter="xFeatureSystemDialog"
+num="xFeatureSystemDialog"
+></exampleRef
+>.</p
+><example
+num="xFeatureSystemDialog"
+><chart
+><img
+src="resources/FeatureSystemDialog.png"
+width="500"
+></img
+></chart
+></example
+><p
+>Unlike most dialog boxes, you can still edit the grammar, etc., in the main program. Note, however, that it shows the feature system at the time the report was generated. If you make changes after that, you will need to invoke the report again. We suggest you close the older dialog first.</p
 ></section2
 ></section1
 ><section1
