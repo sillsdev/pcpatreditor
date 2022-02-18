@@ -185,20 +185,20 @@ public class FeatureSystemCollector {
 	public void collect() {
 		collectConstraints();
 		collectionFeatures.clear();
-		for (UnificationConstraint uc : unificationConstraints) {
-			ConstraintRightHandSide rhs = uc.getRightHandSide();
-			if (rhs != null && rhs.getConstituent() != null && rhs.getFeaturePath() == null) {
-				String[] items = uc.getLeftHandSide().getFeaturePath().pathRepresentation().split(" ");
-				collectionFeatures.add(items[items.length-1]);
-			}
-		}
-		for (PriorityUnionConstraint puc : priorityUnionConstraints) {
-			ConstraintRightHandSide rhs = puc.getRightHandSide();
-			if (rhs != null && rhs.getConstituent() != null && rhs.getFeaturePath() == null) {
-				String[] items = puc.getLeftHandSide().getFeaturePath().pathRepresentation().split(" ");
-				collectionFeatures.add(items[items.length-1]);
-			}
-		}
+//		for (UnificationConstraint uc : unificationConstraints) {
+//			ConstraintRightHandSide rhs = uc.getRightHandSide();
+//			if (rhs != null && rhs.getConstituent() != null && rhs.getFeaturePath() == null) {
+//				String[] items = uc.getLeftHandSide().getFeaturePath().pathRepresentation().split(" ");
+//				collectionFeatures.add(items[items.length-1]);
+//			}
+//		}
+//		for (PriorityUnionConstraint puc : priorityUnionConstraints) {
+//			ConstraintRightHandSide rhs = puc.getRightHandSide();
+//			if (rhs != null && rhs.getConstituent() != null && rhs.getFeaturePath() == null) {
+//				String[] items = puc.getLeftHandSide().getFeaturePath().pathRepresentation().split(" ");
+//				collectionFeatures.add(items[items.length-1]);
+//			}
+//		}
 		featureSystem.clear();
 		addTemplatesToFeatureSystem(templateBodies);
 		addConstraintsToFeatureSystem(unificationConstraints);

@@ -130,11 +130,6 @@ public class FeatureSystemHTMLFormatter {
 	}
 
 	protected void formatRow(StringBuilder sb, String[] items, int maxColumns, int startColumn, int rowSpan, boolean nextContinuesAndHasMoreColumns, List<String[]> pathItems, int row) {
-//		String sItems = "";
-//		for (int i = 0; i < items.length; i++) {
-//			sItems += items[i] + " ";
-//		}
-//		System.out.println("formatRow: rowSpan=" + rowSpan + "; startColumn=" + startColumn + "; next=" + nextContinuesAndHasMoreColumns + "; items=" + sItems);
 		int numItems = items.length;
 		sb.append("<tr>\n");
 		for (int col = startColumn; col < maxColumns && col < numItems; col++) {
