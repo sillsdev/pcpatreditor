@@ -10,5 +10,5 @@ Currently under development.  The roadmap is as follows:
 1. Turn off rules and/or constraints (for debugging).  *Can export selected rules to a new copy of a grammar.*
 1. Have a way to quickly find a set of rules for a given non-terminal.
 2. Create an ANTLR grammar to check validity of the PC-PATR grammar.  Show any errors in the grammar.
-3. Create ability to produce a report showing the feature system implied in the grammar.
+3. Create ability to produce a report showing the feature system implied in the grammar. *This is done.*
 1. Create ability to show a context menu showing current features available at this point in editing based on the generated feature system.
