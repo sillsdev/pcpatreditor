@@ -54,6 +54,7 @@ import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.model.BookmarkDocument;
 import org.sil.pcpatreditor.model.BookmarksInDocuments;
+import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
@@ -134,8 +135,10 @@ public class RootLayoutController implements Initializable {
 	boolean fOpenWedgeJustTyped = false;
 	boolean fCloseWedgeJustTyped = false;
 	protected Clipboard systemClipboard = Clipboard.getSystemClipboard();
-    private ExecutorService executor;
-    private Subscription cleanupWhenDone;
+    private ExecutorService executorHighlighting;
+    private Subscription cleanupHighlightingWhenDone;
+    private ExecutorService executorParsing;
+    private Subscription cleanupParsingWhenDone;
 	private final String kPressedStyle = "buttonpressed";
 	private final String kUnPressedStyle = "buttonunpressed";
 	private final String kFindReplaceDialog = "Find/Replace Dialog";
@@ -294,7 +297,8 @@ public class RootLayoutController implements Initializable {
 		createToolbarButtons(bundle);
 		initMenuItemsForLocalization();
 		statusBar.setText(bundle.getString("label.key"));
-        executor = Executors.newSingleThreadExecutor();
+        executorHighlighting = Executors.newSingleThreadExecutor();
+        executorParsing = Executors.newSingleThreadExecutor();
         grammar = new CodeArea();
         grammar.setPrefHeight(1200.0);
         grammar.setPrefWidth(1000.0);
@@ -302,7 +306,7 @@ public class RootLayoutController implements Initializable {
         centerVBox.getChildren().add(0, vsPane);
         grammar.setParagraphGraphicFactory(LineNumberFactory.get(grammar));
 		grammar.setWrapText(false);
-        cleanupWhenDone = grammar.multiPlainChanges()
+        cleanupHighlightingWhenDone = grammar.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
                 .supplyTask(this::computeHighlightingAsync)
                 .awaitLatest(grammar.multiPlainChanges())
@@ -315,6 +319,19 @@ public class RootLayoutController implements Initializable {
                     }
                 })
                 .subscribe(this::applyHighlighting);
+        cleanupParsingWhenDone = grammar.multiPlainChanges()
+                .successionEnds(Duration.ofMillis(500))
+                .supplyTask(this::parseGrammarAsync)
+                .awaitLatest(grammar.multiPlainChanges())
+                .filterMap(t -> {
+                    if(t.isSuccess()) {
+                        return Optional.of(t.get());
+                    } else {
+                        t.getFailure().printStackTrace();
+                        return Optional.empty();
+                    }
+                })
+                .subscribe(this::applyParsedGrammar);
 
 		grammar.multiPlainChanges().subscribe(event -> {
 			// is invoked by find/replace changes, too
@@ -661,7 +678,7 @@ public class RootLayoutController implements Initializable {
                 return computeHighlighting(text);
             }
         };
-        executor.execute(task);
+        executorHighlighting.execute(task);
         return task;
     }
     private static final String[] KEYWORDS = new String[] {
@@ -733,6 +750,31 @@ public class RootLayoutController implements Initializable {
 
 	private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
 		grammar.setStyleSpans(0, highlighting);
+	}
+
+    private Task<Grammar> parseGrammarAsync() {
+        String text = grammar.getText();
+		Grammar pcpatrGrammar = new Grammar();
+        Task<Grammar> task = new Task<Grammar>() {
+            @Override
+            protected Grammar call() throws Exception {
+                return computeParsedGrammar(text, pcpatrGrammar);
+            }
+        };
+        executorParsing.execute(task);
+        return task;
+    }
+
+	private static Grammar computeParsedGrammar(String text, Grammar pcpatrGrammar) {
+		return GrammarBuilder.parseAString(text, pcpatrGrammar);
+	}
+
+    private void applyParsedGrammar(Grammar pcpatrGrammar) {
+		System.out.println("parseGrammar: pcparGrammar=" + pcpatrGrammar);
+		System.out.println("\terrors=" + GrammarBuilder.getNumberOfErrors());
+		List<PatrRule> rules = pcpatrGrammar.getRules();
+		List<FeatureTemplate> templates = pcpatrGrammar.getFeatureTemplates();
+		System.out.println("\trules=" + rules.size() + "; templates=" + templates.size());
 	}
 
 	private void initMenuItemsForLocalization() {
@@ -1022,8 +1064,10 @@ public class RootLayoutController implements Initializable {
 		if (fIsDirty) {
 			askAboutSaving();
 		}
-		cleanupWhenDone.unsubscribe();
-		executor.shutdown();
+		cleanupHighlightingWhenDone.unsubscribe();
+		executorHighlighting.shutdown();
+		cleanupParsingWhenDone.unsubscribe();
+		executorParsing.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
 		rememberExtractorAction();
 		saveAnyBookmarks(mainApp.getDocumentFile().getPath());
