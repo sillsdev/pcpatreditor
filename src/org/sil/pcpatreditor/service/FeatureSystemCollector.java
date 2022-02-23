@@ -161,6 +161,10 @@ public class FeatureSystemCollector {
 	public void parseGrammar() {
 		Grammar pcpatrGrammar = new Grammar();
 		pcpatrGrammar = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
+		prepareCollect(pcpatrGrammar);
+	}
+
+	public void prepareCollect(Grammar pcpatrGrammar) {
 		rules = pcpatrGrammar.getRules();
 		collectTemplateBodies(pcpatrGrammar);
 	}

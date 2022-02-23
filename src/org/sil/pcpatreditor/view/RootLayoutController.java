@@ -775,12 +775,10 @@ public class RootLayoutController implements Initializable {
 		if (GrammarBuilder.getNumberOfErrors() == 0) {
 			List<PatrRule> rules = pcpatrGrammar.getRules();
 			constituentsCollector.collectFromRules(rules);
-
+			fsCollector.prepareCollect(pcpatrGrammar);
+			fsCollector.collect();
 		}
-//		System.out.println("parseGrammar: pcparGrammar=" + pcpatrGrammar);
-//		System.out.println("\terrors=" + GrammarBuilder.getNumberOfErrors());
 		List<FeatureTemplate> templates = pcpatrGrammar.getFeatureTemplates();
-//		System.out.println("\trules=" + rules.size() + "; templates=" + templates.size());
 	}
 
 	private void initMenuItemsForLocalization() {
@@ -1010,9 +1008,11 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private void handleShowFeatureSystem() {
 		mainPane.getScene().setCursor(Cursor.WAIT);
-		FeatureSystemCollector collector = new FeatureSystemCollector(grammar.getText());
-		collector.parseGrammar();
-		collector.collect();
+		if (fsCollector == null) {
+			fsCollector = new FeatureSystemCollector(grammar.getText());
+			fsCollector.parseGrammar();
+		}
+		fsCollector.collect();
 		FeatureSystemHTMLFormatter formatter = new FeatureSystemHTMLFormatter();
 		String grammarFile = "xyz";
 		File file = mainApp.getDocumentFile();
@@ -1023,7 +1023,7 @@ public class RootLayoutController implements Initializable {
 		formatter.setDateTime(DateTimeNormalizer.normalizeDateTimeWithWords(LocalDateTime.now(), bundle.getLocale()));
 		formatter.setReportPerformedOn(bundle.getString("report.performedon"));
 		formatter.setTitle(bundle.getString("label.featuresystem"));
-		String html = formatter.format(collector.getFeatureSystemAsList());
+		String html = formatter.format(fsCollector.getFeatureSystemAsList());
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		try {
 			FXMLLoader loader = new FXMLLoader();
