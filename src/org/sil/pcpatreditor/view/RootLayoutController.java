@@ -147,6 +147,8 @@ public class RootLayoutController implements Initializable {
 	private BookmarkDocument bookmarkDoc;
 	private FindReplaceDialogController findReplaceController;
 	protected ExtractorAction extractorAction = ExtractorAction.NO_ACTION;
+	protected ConstituentsCollector constituentsCollector = new ConstituentsCollector("");
+	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
 
 	@FXML
 	BorderPane mainPane;
@@ -769,12 +771,16 @@ public class RootLayoutController implements Initializable {
 		return GrammarBuilder.parseAString(text, pcpatrGrammar);
 	}
 
-    private void applyParsedGrammar(Grammar pcpatrGrammar) {
-		System.out.println("parseGrammar: pcparGrammar=" + pcpatrGrammar);
-		System.out.println("\terrors=" + GrammarBuilder.getNumberOfErrors());
-		List<PatrRule> rules = pcpatrGrammar.getRules();
+	private void applyParsedGrammar(Grammar pcpatrGrammar) {
+		if (GrammarBuilder.getNumberOfErrors() == 0) {
+			List<PatrRule> rules = pcpatrGrammar.getRules();
+			constituentsCollector.collectFromRules(rules);
+
+		}
+//		System.out.println("parseGrammar: pcparGrammar=" + pcpatrGrammar);
+//		System.out.println("\terrors=" + GrammarBuilder.getNumberOfErrors());
 		List<FeatureTemplate> templates = pcpatrGrammar.getFeatureTemplates();
-		System.out.println("\trules=" + rules.size() + "; templates=" + templates.size());
+//		System.out.println("\trules=" + rules.size() + "; templates=" + templates.size());
 	}
 
 	private void initMenuItemsForLocalization() {
@@ -967,8 +973,11 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private void handleShowConstituents() {
 		mainPane.getScene().setCursor(Cursor.WAIT);
-		ConstituentsCollector collector = new ConstituentsCollector(grammar.getText());
-		collector.collect();
+		if (constituentsCollector == null) {
+			ConstituentsCollector collector = new ConstituentsCollector(grammar.getText());
+			collector.collect();
+			constituentsCollector = collector;
+		}
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		try {
 			FXMLLoader loader = new FXMLLoader();
@@ -988,7 +997,7 @@ public class RootLayoutController implements Initializable {
 			ConstituentsDialogController controller = loader.getController();
 			controller.setDialogStage(dialogStage);
 			controller.setMainApp(mainApp);
-			controller.setData(collector.getNonTerminals(), collector.getTerminals());
+			controller.setData(constituentsCollector.getNonTerminals(), constituentsCollector.getTerminals());
 			controller.initialize(location, bundle);
 
 			dialogStage.show();

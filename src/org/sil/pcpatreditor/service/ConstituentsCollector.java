@@ -33,6 +33,20 @@ public class ConstituentsCollector {
 	}
 
 	/**
+	 * @return the grammar
+	 */
+	public String getGrammar() {
+		return grammar;
+	}
+
+	/**
+	 * @param grammar the grammar to set
+	 */
+	public void setGrammar(String grammar) {
+		this.grammar = grammar;
+	}
+
+	/**
 	 * @return the nonTerminals
 	 */
 	public SortedSet<String> getNonTerminals() {
@@ -64,6 +78,10 @@ public class ConstituentsCollector {
 		Grammar pcpatrGrammar = new Grammar();
 		pcpatrGrammar = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
 		List<PatrRule> rules = pcpatrGrammar.getRules();
+		collectFromRules(rules);
+	}
+
+	public void collectFromRules(List<PatrRule> rules) {
 		nonTerminals.clear();
 		rules.stream().forEach(r -> nonTerminals.add(r.getNonTerminalSymbol()));
 		terminals.clear();
