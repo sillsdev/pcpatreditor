@@ -149,6 +149,7 @@ public class RootLayoutController implements Initializable {
 	protected ExtractorAction extractorAction = ExtractorAction.NO_ACTION;
 	protected ConstituentsCollector constituentsCollector = new ConstituentsCollector("");
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
+	protected Grammar pcpatrGrammar = new Grammar();
 
 	@FXML
 	BorderPane mainPane;
@@ -756,7 +757,6 @@ public class RootLayoutController implements Initializable {
 
     private Task<Grammar> parseGrammarAsync() {
         String text = grammar.getText();
-		Grammar pcpatrGrammar = new Grammar();
         Task<Grammar> task = new Task<Grammar>() {
             @Override
             protected Grammar call() throws Exception {
@@ -773,12 +773,8 @@ public class RootLayoutController implements Initializable {
 
 	private void applyParsedGrammar(Grammar pcpatrGrammar) {
 		if (GrammarBuilder.getNumberOfErrors() == 0) {
-			List<PatrRule> rules = pcpatrGrammar.getRules();
-			constituentsCollector.collectFromRules(rules);
-			fsCollector.prepareCollect(pcpatrGrammar);
-			fsCollector.collect();
+			this.pcpatrGrammar = pcpatrGrammar;
 		}
-		List<FeatureTemplate> templates = pcpatrGrammar.getFeatureTemplates();
 	}
 
 	private void initMenuItemsForLocalization() {
@@ -976,6 +972,8 @@ public class RootLayoutController implements Initializable {
 			collector.collect();
 			constituentsCollector = collector;
 		}
+		List<PatrRule> rules = pcpatrGrammar.getRules();
+		constituentsCollector.collectFromRules(rules);
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		try {
 			FXMLLoader loader = new FXMLLoader();
@@ -1012,6 +1010,7 @@ public class RootLayoutController implements Initializable {
 			fsCollector = new FeatureSystemCollector(grammar.getText());
 			fsCollector.parseGrammar();
 		}
+		fsCollector.prepareCollect(pcpatrGrammar);
 		fsCollector.collect();
 		FeatureSystemHTMLFormatter formatter = new FeatureSystemHTMLFormatter();
 		String grammarFile = "xyz";
