@@ -686,7 +686,7 @@ public class RootLayoutController implements Initializable {
     }
     private static final String[] KEYWORDS = new String[] {
 			"BE", "Be", "be", "CONSTRAINT", "Constraint", "constraint", "DEFINE", "Define", "define", "LET", "Let",
-			"let", "LEXICON", "Lexicon", "lexicon", "PARAMETER", "Parameter", "parameter", "RULE", "Rule", "rule"
+			"let", "LEXICON", "Lexicon", "lexicon", "PARAMETER", "Parameter", "parameter"//, "RULE", "Rule", "rule"
 			};
 
     private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
@@ -703,9 +703,11 @@ public class RootLayoutController implements Initializable {
     private static final String CONDITIONAL_PATTERN = "-\\>";
     private static final String WEDGE_PATTERN = "\\<|\\>";
     private static final String COMMENT_PATTERN = "\\|[^\n]*";// + "|" + "/\\*(.|\\R)*?\\*/";
+    private static final String RULE_KEYWORD_PATTERN = "[^ a-z0-9]rule\\b|[^ a-z0-9]Rule\\b|[^ a-z0-9]RULE\\b";
 
     private static final Pattern PATTERN = Pattern.compile(
             "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
+            + "|(?<RULE>" + RULE_KEYWORD_PATTERN + ")"
             + "|(?<PAREN>" + PAREN_PATTERN + ")"
             + "|(?<BRACE>" + BRACE_PATTERN + ")"
             + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
@@ -729,6 +731,7 @@ public class RootLayoutController implements Initializable {
         while(matcher.find()) {
             String styleClass =
                     matcher.group("KEYWORD") != null ? "keyword" :
+                    matcher.group("RULE") != null ? "keyword" :
                     matcher.group("PAREN") != null ? "paren" :
                     matcher.group("BRACE") != null ? "brace" :
                     matcher.group("BRACKET") != null ? "bracket" :
