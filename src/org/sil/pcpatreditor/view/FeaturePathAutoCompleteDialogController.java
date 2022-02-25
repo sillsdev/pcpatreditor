@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.sil.pcpatreditor.MainApp;
+import org.sil.pcpatreditor.service.FeaturePathSearchAction;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -28,8 +29,23 @@ public class FeaturePathAutoCompleteDialogController  {
 	@FXML
 	private ComboBox<String> comboBox;
 
+	FeaturePathSearchAction featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
 	Stage dialogStage;
 	String featurePathResult = "";
+
+	/**
+	 * @return the featurePathSearchAction
+	 */
+	public FeaturePathSearchAction getFeaturePathSearchAction() {
+		return featurePathSearchAction;
+	}
+
+	/**
+	 * @param featurePathSearchAction the featurePathSearchAction to set
+	 */
+	public void setFeaturePathSearchAction(FeaturePathSearchAction featurePathSearchAction) {
+		this.featurePathSearchAction = featurePathSearchAction;
+	}
 
 	/**
 	 * @return the featurePathResult
@@ -56,8 +72,11 @@ public class FeaturePathAutoCompleteDialogController  {
 		comboBox.getEditor().setText(featurePathResult);
 		comboBox.requestFocus();
 		
-		AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.startsWith(typedText));
-//		FxUtilTest.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.contains(typedText));
+		if (featurePathSearchAction == FeaturePathSearchAction.ANYWHERE) {
+			AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.contains(typedText));
+		} else {
+			AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.startsWith(typedText));
+		}
 		comboBox.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {

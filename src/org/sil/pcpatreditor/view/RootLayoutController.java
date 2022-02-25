@@ -63,6 +63,7 @@ import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
 import org.sil.pcpatreditor.service.ConstituentsCollector;
 import org.sil.pcpatreditor.service.ExtractorAction;
+import org.sil.pcpatreditor.service.FeaturePathSearchAction;
 import org.sil.pcpatreditor.service.FeatureSystemCollector;
 import org.sil.pcpatreditor.service.FeatureSystemHTMLFormatter;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
@@ -150,6 +151,7 @@ public class RootLayoutController implements Initializable {
 	private BookmarkDocument bookmarkDoc;
 	private FindReplaceDialogController findReplaceController;
 	protected ExtractorAction extractorAction = ExtractorAction.NO_ACTION;
+	protected FeaturePathSearchAction featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
 	protected ConstituentsCollector constituentsCollector = new ConstituentsCollector("");
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
 	protected Grammar pcpatrGrammar = new Grammar();
@@ -253,6 +255,14 @@ public class RootLayoutController implements Initializable {
 	private RadioMenuItem menuItemOpenExtracted;
 	@FXML
 	private RadioMenuItem menuItemOpenExtractedInNewInstance;
+	@FXML
+	private Menu menuFeaturePathSearch;
+	@FXML
+	private ToggleGroup featurePathSearchOptionsGroup;
+	@FXML
+	private RadioMenuItem menuItemFeaturePathSearchFromStart;
+	@FXML
+	private RadioMenuItem menuItemFeaturePathSearchAnywhere;
 	@FXML
 	private Menu menuHelp;
 	@FXML
@@ -687,12 +697,13 @@ public class RootLayoutController implements Initializable {
 			controller.setDialogStage(dialogStage);
 			controller.setMainApp(mainApp);
 			controller.setData(FXCollections.observableArrayList(fsList));
+			controller.setFeaturePathSearchAction(featurePathSearchAction);
 			controller.initialize(location, bundle);
 
 			Optional<Bounds> caret = grammar.getCaretBounds();
 			if (caret.isPresent()) {
 				dialogStage.setX(caret.get().getCenterX());
-				dialogStage.setY(caret.get().getCenterY() - dialogStage.getHeight());
+				dialogStage.setY(caret.get().getCenterY() - 30);
 			}
 			dialogStage.showAndWait();
 			String result = controller.getFeaturePathResult();
@@ -724,6 +735,20 @@ public class RootLayoutController implements Initializable {
 		case "OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE":
 			menuItemOpenExtractedInNewInstance.setSelected(true);
 			extractorAction = ExtractorAction.OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE;
+			break;
+		}
+	}
+
+	private void initializeFeaturePathSearchAction() {
+		String lastAction = applicationPreferences.getLastFeaturePathSearchAction();
+		switch (lastAction) {
+		case "ANYWHERE":
+			menuItemFeaturePathSearchAnywhere.setSelected(true);
+			featurePathSearchAction = FeaturePathSearchAction.ANYWHERE;
+			break;
+		case "FROM_THE_START":
+			menuItemFeaturePathSearchFromStart.setSelected(true);
+			featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
 			break;
 		}
 	}
@@ -1140,6 +1165,7 @@ public class RootLayoutController implements Initializable {
 		executorParsing.shutdown();
 		applicationPreferences.setLastCaretPosition(grammar.getCaretPosition());
 		rememberExtractorAction();
+		rememberFeaturePathSearchAction();
 		saveAnyBookmarks(mainApp.getDocumentFile().getPath());
 		System.exit(0);
 	}
@@ -1152,6 +1178,14 @@ public class RootLayoutController implements Initializable {
 			action = ExtractorAction.OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE.name();
 		}
 		applicationPreferences.setLastExtractorAction(action);
+	}
+
+	private void rememberFeaturePathSearchAction() {
+		String action = FeaturePathSearchAction.FROM_THE_START.name();
+		if (menuItemFeaturePathSearchAnywhere.isSelected()) {
+			action = FeaturePathSearchAction.ANYWHERE.name();
+		}
+		applicationPreferences.setLastFeaturePathSearchAction(action);
 	}
 
 	@FXML
@@ -1682,6 +1716,16 @@ public class RootLayoutController implements Initializable {
 		initializeGrammarFontSize();
 	}
 
+	@FXML
+	protected void handleFeaturePathSearchFromStart() {
+		featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
+	}
+
+	@FXML
+	protected void handleFeaturePathSearchAnywhere() {
+		featurePathSearchAction = FeaturePathSearchAction.ANYWHERE;
+	}
+
 	public MenuBar getMenuBar() {
 		return menuBar;
 	}
@@ -1706,6 +1750,7 @@ public class RootLayoutController implements Initializable {
 				menuItemShowMatchingItemWithArrowKeys, toggleButtonShowMatchingItemWithArrowKeys);
 		initializeGrammarFontSize();
 		initializeExtractorAction();
+		initializeFeaturePathSearchAction();
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
 		initAnyBookmarks(mainApp.getDocumentFile().getPath());

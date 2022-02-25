@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.prefs.Preferences;
 
 import org.sil.pcpatreditor.service.ExtractorAction;
+import org.sil.pcpatreditor.service.FeaturePathSearchAction;
 import org.sil.utility.*;
 
 import javafx.stage.Stage;
@@ -22,6 +23,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	static final String GRAMMAR_FONT_SIZE = "grammarfontsize";
 	static final String LAST_CARET_POSITION = "lastCaretPosition";
 	static final String LAST_EXTRACTOR_ACTION = "lastExtractorAction";
+	static final String LAST_FEATURE_PATH_SEARCH_ACTION = "lastFeaturePathSearchAction";
 	// Not trying to be anglo-centric, but we have to start with something...
 	static final String DEFAULT_LOCALE_LANGUAGE = "en";
 
@@ -81,6 +83,14 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 
 	public void setLastExtractorAction(String lastExtractorAction) {
 		prefs.put(LAST_EXTRACTOR_ACTION, lastExtractorAction);
+	}
+
+	public String getLastFeaturePathSearchAction() {
+		return prefs.get(LAST_FEATURE_PATH_SEARCH_ACTION, FeaturePathSearchAction.FROM_THE_START.name());
+	}
+
+	public void setLastFeaturePathSearchAction(String lastFeaturePathSearchAction) {
+		prefs.put(LAST_FEATURE_PATH_SEARCH_ACTION, lastFeaturePathSearchAction);
 	}
 
 	public int getLastCaretPosition() {

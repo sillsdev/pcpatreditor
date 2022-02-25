@@ -104,6 +104,16 @@
                           <RadioMenuItem fx:id="menuItemOpenExtractedInNewInstance" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractOpenExtractedInNewInstance" text="%menu.extractedopeninnewinstance" />
                        </items>
 				   </Menu>
+					<SeparatorMenuItem />
+					<fx:define>
+					   <ToggleGroup fx:id="featurePathSearchOptionsGroup" />
+                    </fx:define>
+					<Menu fx:id="menuFeaturePathSearch" mnemonicParsing="true" text="%menu.featurepathsearch">
+					   <items>
+                          <RadioMenuItem fx:id="menuItemFeaturePathSearchFromStart" toggleGroup="$featurePathSearchOptionsGroup" mnemonicParsing="false" onAction="#handleFeaturePathSearchFromStart" text="%menu.featurepathsearchfromstart" />
+                          <RadioMenuItem fx:id="menuItemFeaturePathSearchAnywhere" toggleGroup="$featurePathSearchOptionsGroup" mnemonicParsing="false" onAction="#handleFeaturePathSearchAnywhere" text="%menu.featurepathsearchanywhere" />
+                       </items>
+				   </Menu>
 				</items>
 				</Menu>
                 <Menu fx:id="menuHelp" mnemonicParsing="true" text="%menu.help">
