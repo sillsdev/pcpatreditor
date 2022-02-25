@@ -31,7 +31,6 @@ import java.util.concurrent.Executors;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -44,6 +43,7 @@ import org.fxmisc.richtext.model.Paragraph;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.sil.utility.view.ObservableResourceFactory;
+
 import org.sil.utility.ClipboardUtilities;
 import org.sil.utility.DateTimeNormalizer;
 import org.sil.utility.StringUtilities;
@@ -75,12 +75,14 @@ import org.reactfx.Subscription;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -103,6 +105,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -497,7 +500,7 @@ public class RootLayoutController implements Initializable {
 							'{', '}', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				}
 				switch (event.getCode()) {
-				// ignore these for redisplaying the tree
+				// ignore these
 				case ALT:
 				case ALT_GRAPH:
 				case CAPS:
@@ -527,6 +530,11 @@ public class RootLayoutController implements Initializable {
 				case PRINTSCREEN:
 				case SHIFT:
 				case UP:
+					break;
+				case SPACE:
+					if (event.isControlDown()) {
+						showFeatureSystemContextMenu();
+					}
 					break;
 				case LEFT:
 				case KP_LEFT:
@@ -640,6 +648,13 @@ public class RootLayoutController implements Initializable {
 		grammar.setEventDispatcher(
 		        new FilteringEventDispatcher(grammar.getEventDispatcher(), menuItemEditPaste.getAccelerator()));
 
+		grammar.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+			@Override
+			public void handle(ContextMenuEvent event) {
+				showFeatureSystemContextMenu();
+				event.consume();
+			}
+		});
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -648,6 +663,46 @@ public class RootLayoutController implements Initializable {
 		});
 
 		enableDisableRedoUndoButtons();
+	}
+
+	private void showFeatureSystemContextMenu() {
+		collectFeatureSystem();
+		List<String> fsList = fsCollector.getFeatureSystemAsList();
+
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(FeatureSystemDialogController.class.getResource("fxml/FeaturePathAutoCompleteDialog.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			FeaturePathAutoCompleteDialogController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setData(FXCollections.observableArrayList(fsList));
+			controller.initialize(location, bundle);
+
+			Optional<Bounds> caret = grammar.getCaretBounds();
+			if (caret.isPresent()) {
+				dialogStage.setX(caret.get().getCenterX());
+				dialogStage.setY(caret.get().getCenterY() - dialogStage.getHeight());
+			}
+			dialogStage.showAndWait();
+			String result = controller.getFeaturePathResult();
+			if (!StringUtilities.isNullOrEmpty(result)) {
+				grammar.insertText(grammar.getCaretPosition(), result);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
 	}
 
 	private void initializeGrammarFontSize() {
@@ -1009,12 +1064,7 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private void handleShowFeatureSystem() {
 		mainPane.getScene().setCursor(Cursor.WAIT);
-		if (fsCollector == null) {
-			fsCollector = new FeatureSystemCollector(grammar.getText());
-			fsCollector.parseGrammar();
-		}
-		fsCollector.prepareCollect(pcpatrGrammar);
-		fsCollector.collect();
+		collectFeatureSystem();
 		FeatureSystemHTMLFormatter formatter = new FeatureSystemHTMLFormatter();
 		String grammarFile = "xyz";
 		File file = mainApp.getDocumentFile();
@@ -1053,6 +1103,15 @@ public class RootLayoutController implements Initializable {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
 		}
+	}
+
+	public void collectFeatureSystem() {
+		if (fsCollector == null) {
+			fsCollector = new FeatureSystemCollector(grammar.getText());
+			fsCollector.parseGrammar();
+		}
+		fsCollector.prepareCollect(pcpatrGrammar);
+		fsCollector.collect();
 	}
 
 	@FXML
