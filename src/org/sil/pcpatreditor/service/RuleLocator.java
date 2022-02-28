@@ -41,7 +41,6 @@ public class RuleLocator {
 	}
 
 	public void findRuleLocationsFromRules(List<PatrRule> rules) {
-		PatrRule pr = rules.get(0);
 		ruleLocations.clear();
 		rules.stream().forEach(r -> {
 			RuleLocationInfo info = new RuleLocationInfo(r.getLineNumber(), r.getCharacterIndex(), r.getIdentifier(),
