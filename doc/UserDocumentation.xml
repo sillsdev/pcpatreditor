@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->18 February, 2022</date
+>28 February, 2022</date
 ><version
->Version 0.8.0 Alpha</version
+>Version 0.9.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -267,10 +267,10 @@ type="tPcPatr"
 ></object
 > grammar file and want to create a separate grammar file that contains only selected rules.</p
 ><p
->When you invoke this option, it may take a while but <object
+>When you invoke this option, <object
 type="tPcPatrEditor"
 ></object
-> will eventually bring up a dialog box containing a list of the rules. In one grammar file, it looked like what is in example <exampleRef
+> will bring up a dialog box containing a list of the rules. In one grammar file, it looked like what is in example <exampleRef
 letter="xRuleSelector"
 num="xRuleSelector"
 ></exampleRef
@@ -301,7 +301,7 @@ sec="sAfterExport"
 ><section1
 id="sReports"
 ><secTitle
->Reports menu item</secTitle
+>Reports menu items</secTitle
 ><p
 ><object
 type="tPcPatrEditor"
@@ -320,10 +320,10 @@ type="tMenuItem"
 >Show phrase structure constituents</object
 >. This is useful when you want to see what the current set of non-terminal and terminal constituents are.</p
 ><p
->When you invoke this option, it may take a while but <object
+>When you invoke this option, <object
 type="tPcPatrEditor"
 ></object
-> will eventually bring up a dialog box showing the non-terminals and terminals. In one grammar file, it looked like what is in example <exampleRef
+> will bring up a dialog box showing the non-terminals and terminals. In one grammar file, it looked like what is in example <exampleRef
 letter="xConstituentsDialog"
 num="xConstituentsDialog"
 ></exampleRef
@@ -351,12 +351,12 @@ type="tMenuItem"
 > menu item as <object
 type="tMenuItem"
 >Show feature system</object
->. This is useful when you want to see what feature paths are used throughout the grammar, arranged as a system.  Sometimes it will show typos you had not noticed before.</p
+>. This is useful when you want to see what feature paths are used throughout the grammar, arranged as a system. Sometimes it will show typos you had not noticed before.</p
 ><p
->When you invoke this option, it may take a while but <object
+>When you invoke this option, <object
 type="tPcPatrEditor"
 ></object
-> will eventually bring up a dialog box showing the feature system. In one grammar file, it looked like what is in example <exampleRef
+> will bring up a dialog box showing the feature system. In one grammar file, it looked like what is in example <exampleRef
 letter="xFeatureSystemDialog"
 num="xFeatureSystemDialog"
 ></exampleRef
@@ -377,7 +377,7 @@ width="500"
 ><section1
 id="sSettings"
 ><secTitle
->User convenience options</secTitle
+>Settings menu items</secTitle
 ><p
 >The <object
 type="tMenuItem"
@@ -494,7 +494,7 @@ id="sAfterExport"
 ><secTitle
 >Action to take after exporting selected rules</secTitle
 ><p
->The last item under the main <object
+>The fourth item under the main <object
 type="tMenuItem"
 >Settings</object
 > menu item is <object
@@ -539,6 +539,75 @@ type="tPcPatrEditor"
 type="tPcPatrEditor"
 ></object
 >) as well as the exported file.</p
+><p
+>To select one of the options, merely click on it.</p
+></section2
+><section2
+id="sFeaturePathSearching"
+><secTitle
+>Feature path searching</secTitle
+><p
+>At any point while editing, you can type <object
+type="tKey"
+>Ctrl-space</object
+> or right-click the mouse and <object
+type="tPcPatrEditor"
+></object
+> will show you a dialog box like the one in example <exampleRef
+letter="xFeaturePathSearch"
+num="xFeaturePathSearch"
+></exampleRef
+>.</p
+><example
+num="xFeaturePathSearch"
+><chart
+><img
+src="resources/FeaturePathSearch1.png"
+></img
+></chart
+></example
+><p
+>As you type, it will show all feature paths that match what you type.  When you click on “OK” or hit the <object
+type="tKey"
+>Enter</object
+> key, <object
+type="tPcPatrEditor"
+></object
+> will insert the text of the full path you have chosen into the grammar at the point of the text cursor.</p
+><p
+>There are two possible ways to search the list of feature paths.  The default is to search from the beginning of the path.  The other is to search for any part of a path that matches part of what is typed in the box.</p
+><p
+>The fifth item under the main <object
+type="tMenuItem"
+>Settings</object
+> menu item is <object
+type="tMenuItem"
+>Feature path searching</object
+>. This lets you choose which option you want <object
+type="tPcPatrEditor"
+></object
+> to use when typing in the box.</p
+><p
+>When you hover over <object
+type="tMenuItem"
+>Feature path searching, </object
+> the two possible actions are shown:</p
+><ol
+><li
+><object
+type="tMenuItem"
+>From the beginning</object
+></li
+><li
+><object
+type="tMenuItem"
+>Anywhere</object
+></li
+></ol
+><p
+>The one with a check mark by it is the currently selected one.</p
+><p
+>The first one is the default option.</p
 ><p
 >To select one of the options, merely click on it.</p
 ></section2

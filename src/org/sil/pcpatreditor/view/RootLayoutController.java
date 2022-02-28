@@ -154,6 +154,7 @@ public class RootLayoutController implements Initializable {
 	protected FeaturePathSearchAction featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
 	protected ConstituentsCollector constituentsCollector = new ConstituentsCollector("");
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
+	protected RuleLocator psrCollector = RuleLocator.getInstance();
 	protected Grammar pcpatrGrammar = new Grammar();
 
 	@FXML
@@ -1510,8 +1511,7 @@ public class RootLayoutController implements Initializable {
 	protected void handleExportSelectedRules() {
 		// I've tried many things including run later, but the cursor never changes.  Sigh.
 		mainPane.getScene().setCursor(Cursor.WAIT);
-		RuleLocator psrCollector = RuleLocator.getInstance();
-		psrCollector.findRuleLocations(grammar.getText());
+		psrCollector.findRuleLocationsFromRules(pcpatrGrammar.getRules());
 		List<RuleLocationInfo> rulesInfo = psrCollector.getRuleLocations();
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		List<Integer> rulesToExtract = showRuleExtractorChooser(rulesInfo);

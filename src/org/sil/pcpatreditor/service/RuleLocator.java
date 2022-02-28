@@ -37,6 +37,10 @@ public class RuleLocator {
 		Grammar pcpatrGrammar = new Grammar();
 		pcpatrGrammar = GrammarBuilder.parseAString(grammarText, pcpatrGrammar);
 		List<PatrRule> rules = pcpatrGrammar.getRules();
+		findRuleLocationsFromRules(rules);
+	}
+
+	public void findRuleLocationsFromRules(List<PatrRule> rules) {
 		PatrRule pr = rules.get(0);
 		ruleLocations.clear();
 		rules.stream().forEach(r -> {
