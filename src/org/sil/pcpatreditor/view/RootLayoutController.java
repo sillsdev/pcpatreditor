@@ -63,6 +63,7 @@ import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
 import org.sil.pcpatreditor.service.ConstituentsCollector;
 import org.sil.pcpatreditor.service.ExtractorAction;
+import org.sil.pcpatreditor.service.FeaturePathPreviousContentFinder;
 import org.sil.pcpatreditor.service.FeaturePathSearchAction;
 import org.sil.pcpatreditor.service.FeatureSystemCollector;
 import org.sil.pcpatreditor.service.FeatureSystemHTMLFormatter;
@@ -679,7 +680,6 @@ public class RootLayoutController implements Initializable {
 	private void showFeatureSystemContextMenu() {
 		collectFeatureSystem();
 		List<String> fsList = fsCollector.getFeatureSystemAsList();
-
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(FeatureSystemDialogController.class.getResource("fxml/FeaturePathAutoCompleteDialog.fxml"));
@@ -699,8 +699,9 @@ public class RootLayoutController implements Initializable {
 			controller.setMainApp(mainApp);
 			controller.setData(FXCollections.observableArrayList(fsList));
 			controller.setFeaturePathSearchAction(featurePathSearchAction);
+			String initialPathToUse = getInitialPathToUse();
+			controller.setFeaturePathResult(initialPathToUse);
 			controller.initialize(location, bundle);
-
 			Optional<Bounds> caret = grammar.getCaretBounds();
 			if (caret.isPresent()) {
 				dialogStage.setX(caret.get().getCenterX());
@@ -715,6 +716,21 @@ public class RootLayoutController implements Initializable {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
 		}
+	}
+
+	public String getInitialPathToUse() {
+		int iParagraphLineNumber = grammar.getCurrentParagraph();
+		int iCaretColumn = grammar.getCaretColumn();
+		String textUpToCaret = grammar.getText(iParagraphLineNumber, 0, iParagraphLineNumber, iCaretColumn);
+		int initialRuleLineNumber = pcpatrGrammar.getRules().get(0).getLineNumber();
+		FeaturePathPreviousContentFinder finder = FeaturePathPreviousContentFinder.getInstance();
+		if (iParagraphLineNumber > initialRuleLineNumber) {
+			finder.setSkipConstituent(true);
+		} else {
+			finder.setSkipConstituent(false);
+		}
+		String initialPathToUse = finder.findPreviousPath(textUpToCaret);
+		return initialPathToUse;
 	}
 
 	private void initializeGrammarFontSize() {

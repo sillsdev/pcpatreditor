@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.service.FeaturePathSearchAction;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -69,20 +70,29 @@ public class FeaturePathAutoCompleteDialogController  {
 		comboBox.setEditable(true);
 		comboBox.setPrefWidth(300.0);
 		comboBox.setVisibleRowCount(20);
-		comboBox.getEditor().setText(featurePathResult);
-		comboBox.requestFocus();
+
+		Platform.runLater(new Runnable() {
+		    @Override
+		    public void run() {
+				comboBox.getEditor().setText(featurePathResult);
+				comboBox.requestFocus();
+				comboBox.getEditor().positionCaret(featurePathResult.length());
+				if (featurePathSearchAction == FeaturePathSearchAction.ANYWHERE) {
+					AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.contains(typedText));
+				} else {
+					AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.startsWith(typedText));
+				}
+		    }
+		});
 		
-		if (featurePathSearchAction == FeaturePathSearchAction.ANYWHERE) {
-			AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.contains(typedText));
-		} else {
-			AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.startsWith(typedText));
-		}
 		comboBox.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
 				if (event.getCode() == KeyCode.ENTER) {
 					handleOK();
 					return;
+				} else if (event.getCode() == KeyCode.ESCAPE) {
+					handleCancel();
 				}
 			}
 		});
@@ -106,6 +116,7 @@ public class FeaturePathAutoCompleteDialogController  {
 
 	@FXML
 	private void handleCancel() {
+		featurePathResult = "";
 		dialogStage.close();
 	}
 	
