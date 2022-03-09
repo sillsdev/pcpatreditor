@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->28 February, 2022</date
+>9 March, 2022</date
 ><version
->Version 0.9.0 Alpha</version
+>Version 0.10.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -567,7 +567,7 @@ src="resources/FeaturePathSearch1.png"
 ></chart
 ></example
 ><p
->As you type, it will show all feature paths that match what you type.  When you click on “OK” or hit the <object
+>As you type, it will show all feature paths that match what you type. When you click on “OK” or hit the <object
 type="tKey"
 >Enter</object
 > key, <object
@@ -575,7 +575,25 @@ type="tPcPatrEditor"
 ></object
 > will insert the text of the full path you have chosen into the grammar at the point of the text cursor.</p
 ><p
->There are two possible ways to search the list of feature paths.  The default is to search from the beginning of the path.  The other is to search for any part of a path that matches part of what is typed in the box.</p
+>If the cursor is within a feature path, then this dialog will start with whatever preceding text is in the path.  In one case it looked like what is in example <exampleRef
+letter="xFeaturePathSearchContext"
+num="xFeaturePathSearchContext"
+></exampleRef
+>.</p
+><example
+num="xFeaturePathSearchContext"
+><chart
+><img
+XeLaTeXSpecial="scaled='600' "
+src="resources/FeaturePathSearch2.png"
+width="300"
+></img
+></chart
+></example
+><pc
+>Whatever you select will replace the selected text in the grammar.</pc
+><p
+>There are two possible ways to search the list of feature paths. The default is to search from the beginning of the path. The other is to search for any part of a path that matches part of what is typed in the box.</p
 ><p
 >The fifth item under the main <object
 type="tMenuItem"
