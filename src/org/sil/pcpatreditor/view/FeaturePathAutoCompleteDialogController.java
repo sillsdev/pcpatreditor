@@ -33,6 +33,7 @@ public class FeaturePathAutoCompleteDialogController  {
 	FeaturePathSearchAction featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
 	Stage dialogStage;
 	String featurePathResult = "";
+	int caretPosition = 0;
 
 	/**
 	 * @return the featurePathSearchAction
@@ -76,7 +77,8 @@ public class FeaturePathAutoCompleteDialogController  {
 		    public void run() {
 				comboBox.getEditor().setText(featurePathResult);
 				comboBox.requestFocus();
-				comboBox.getEditor().positionCaret(featurePathResult.length());
+				caretPosition = featurePathResult.length();
+				comboBox.getEditor().positionCaret(caretPosition);
 				if (featurePathSearchAction == FeaturePathSearchAction.ANYWHERE) {
 					AutoCompleteUtility.autoCompleteComboBoxPlus(comboBox, (typedText, itemToCompare) -> itemToCompare.contains(typedText));
 				} else {
@@ -94,7 +96,22 @@ public class FeaturePathAutoCompleteDialogController  {
 				} else if (event.getCode() == KeyCode.ESCAPE) {
 					handleCancel();
 				}
+				caretPosition = comboBox.getEditor().getCaretPosition();
 			}
+		});
+
+		comboBox.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					if (newValue) {
+						comboBox.getEditor().setText(featurePathResult);
+						comboBox.getEditor().positionCaret(caretPosition);
+					} else {
+						featurePathResult = comboBox.getEditor().getText();
+					}
+				}
+			});
 		});
 	}
 
