@@ -107,6 +107,8 @@ public class FeaturePathAutoCompleteDialogController  {
 					if (newValue) {
 						comboBox.getEditor().setText(featurePathResult);
 						comboBox.getEditor().positionCaret(caretPosition);
+						// following is a trick that forces the context menu to appear
+						comboBox.getEditor().fireEvent(new KeyEvent(KeyEvent.KEY_RELEASED, "", "", KeyCode.DELETE, false, false, false, false));
 					} else {
 						featurePathResult = comboBox.getEditor().getText();
 					}
