@@ -710,7 +710,9 @@ public class RootLayoutController implements Initializable {
 			dialogStage.showAndWait();
 			String result = controller.getFeaturePathResult();
 			if (!StringUtilities.isNullOrEmpty(result)) {
-				grammar.insertText(grammar.getCaretPosition(), result);
+				grammar.replaceSelection(result);
+			} else {
+				grammar.deselect();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -730,6 +732,10 @@ public class RootLayoutController implements Initializable {
 			finder.setSkipConstituent(false);
 		}
 		String initialPathToUse = finder.findPreviousPath(textUpToCaret);
+		if (initialPathToUse.length() > 0) {
+			int iStart = textUpToCaret.lastIndexOf(initialPathToUse);
+			grammar.selectRange(iParagraphLineNumber, iStart, iParagraphLineNumber, iCaretColumn);
+		}
 		return initialPathToUse;
 	}
 
