@@ -145,6 +145,8 @@
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
 					<Button fx:id="buttonToolbarEditRuleNavigator" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleNavigateToRule" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+					<Button fx:id="buttonToolbarToolRuleExtractor" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleExportSelectedRules" prefHeight="23.0" prefWidth="17.0" text="" />
+					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
 <!-- 					<Button fx:id="buttonToolbarDrawTree" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleDrawTree" prefHeight="23.0" prefWidth="17.0" text="" /> -->
 <!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
 <!-- 	                <ToggleButton fx:id="toggleButtonUseFlatTree" onAction="#handleUseFlatTree" text="%label.useflattree" /> -->

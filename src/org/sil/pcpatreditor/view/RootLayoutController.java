@@ -184,6 +184,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private Button buttonToolbarEditRedo;
 	@FXML
+	private Button buttonToolbarToolRuleExtractor;
+	@FXML
 	private ToggleButton toggleButtonShowMatchingItemWithArrowKeys;
 
 	@FXML
@@ -297,6 +299,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditFindReplace;
 	@FXML
 	private Tooltip tooltipToolbarEditRuleNavigator;
+	@FXML
+	private Tooltip tooltipToolbarToolRuleExtractor;
 	@FXML
 	private Tooltip tooltipToolbarShowMatchingItemWithArrowKeys;
 
@@ -1020,6 +1024,10 @@ public class RootLayoutController implements Initializable {
 		tooltipToolbarEditRedo.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.redo"));
 
+		tooltipToolbarToolRuleExtractor = ControllerUtilities.createToolbarButtonWithImage("ruleExtractor.png",
+				buttonToolbarToolRuleExtractor, tooltipToolbarToolRuleExtractor, bundle.getString("tooltip.ruleextractor"),
+				Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarToolRuleExtractor.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.ruleextractor"));
 		toggleButtonShowMatchingItemWithArrowKeys.getStyleClass().add(kUnPressedStyle);
 		tooltipToolbarShowMatchingItemWithArrowKeys = new Tooltip(RESOURCE_FACTORY
 				.getStringBinding("tooltip.showmatchingitemwitharrowkeys").get());
