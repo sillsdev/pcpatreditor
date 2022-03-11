@@ -57,6 +57,7 @@ import org.sil.pcpatreditor.model.BookmarksInDocuments;
 import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.PatrRule;
+import org.sil.pcpatreditor.model.RuleChooserRule;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
@@ -177,6 +178,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private Button buttonToolbarEditFindReplace;
 	@FXML
+	private Button buttonToolbarEditRuleNavigator;
+	@FXML
 	private Button buttonToolbarEditUndo;
 	@FXML
 	private Button buttonToolbarEditRedo;
@@ -234,6 +237,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemExportSelectedRules;
 	@FXML
+	private MenuItem menuItemNavigateToRule;
+	@FXML
 	private Menu menuReports;
 	@FXML
 	private MenuItem menuItemShowConstituents;
@@ -290,6 +295,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditRedo;
 	@FXML
 	private Tooltip tooltipToolbarEditFindReplace;
+	@FXML
+	private Tooltip tooltipToolbarEditRuleNavigator;
 	@FXML
 	private Tooltip tooltipToolbarShowMatchingItemWithArrowKeys;
 
@@ -998,6 +1005,10 @@ public class RootLayoutController implements Initializable {
 				buttonToolbarEditFindReplace, tooltipToolbarEditFindReplace, bundle.getString("tooltip.findreplace"),
 				Constants.RESOURCE_SOURCE_LOCATION);
 		tooltipToolbarEditFindReplace.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.findreplace"));
+		tooltipToolbarEditRuleNavigator = ControllerUtilities.createToolbarButtonWithImage("ruleNavigator.png",
+				buttonToolbarEditRuleNavigator, tooltipToolbarEditRuleNavigator, bundle.getString("tooltip.rulenavigator"),
+				Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarEditRuleNavigator.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.rulenavigator"));
 		tooltipToolbarEditUndo = ControllerUtilities.createToolbarButtonWithImage(
 				"undoAction.png", buttonToolbarEditUndo, tooltipToolbarEditUndo,
 				bundle.getString("tooltip.undo"), Constants.RESOURCE_SOURCE_LOCATION);
@@ -1527,6 +1538,85 @@ public class RootLayoutController implements Initializable {
 			e.printStackTrace();
 			MainApp.reportException(e, null);
 		}
+	}
+
+	@FXML
+	protected void handleNavigateToRule() {
+		List<RuleLocationInfo> rulesInfo = calculateCurrentRuleLocationInfo();
+
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(RootLayoutController.class.getResource("fxml/RuleNavigatorChooser.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.NONE);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			RuleNavigatorChooserController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setRootLayoutController(this);
+			controller.setData(rulesInfo);
+			controller.initialize(location, bundle);
+			controller.initializeTableColumnWidths(mainApp.getApplicationPreferences());
+
+			dialogStage.showAndWait();
+			if (controller.isOkClicked()) {
+				RuleChooserRule rule = controller.getRuleChosen();
+				grammar.moveTo(rule.getRuleLocationInfo().lineNumber(), 0);
+				grammar.requestFollowCaret();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
+	}
+
+	public List<RuleLocationInfo> calculateCurrentRuleLocationInfo() {
+		psrCollector.findRuleLocationsFromRules(pcpatrGrammar.getRules());
+		List<RuleLocationInfo> rulesInfo = psrCollector.getRuleLocations();
+		return rulesInfo;
+	}
+
+	public List<Integer> showRuleNavigatorChooser(List<RuleLocationInfo> rulesInfo) {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(RootLayoutController.class.getResource("fxml/RuleExtractorChooser.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			RuleExtractorChooserController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setData(rulesInfo);
+			controller.initialize(location, bundle);
+			controller.initializeTableColumnWidths(mainApp.getApplicationPreferences());
+
+			dialogStage.showAndWait();
+			return controller.getRulesToExtract();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
+		return null;
 	}
 
 	@FXML

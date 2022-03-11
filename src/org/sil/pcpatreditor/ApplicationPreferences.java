@@ -39,6 +39,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 
 	// Controller table column widths and splitter position
 	public static final String RULE_EXTRACTOR_CHOOSER = "RULE_EXTRACTOR_CHOOSER_";
+	public static final String RULE_NAVIGATOR_CHOOSER = "RULE_NAVIGATOR_CHOOSER_";
 
 	// Window parameters to remember
 	static final String POSITION_X = "PositionX";
@@ -51,6 +52,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public static final String LAST_SPLIT_PANE_POSITION = "lastSplitPanePosition";
 	public static final String LAST_FIND_REPLACE_DIALOG = "lastFindReplaceDialog";
 	public static final String LAST_RULE_EXTRACTOR_DIALOG = "lastRuleExtractorDialog";
+	public static final String LAST_RULE_NAVIGATOR_DIALOG = "lastRuleNavigatorDialog";
 	public static final String LAST_CONSTITUENTS_DIALOG = "lastConstituentsDialog";
 	public static final String LAST_CONSTITUENTS_DIALOG_SPLITTER_POSITION = "lastConstituentsDialogSplitterPosition";
 	public static final String LAST_FEATURE_SYSTEM_DIALOG="lastFeatureSystemDialog";

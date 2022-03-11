@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -22,14 +22,13 @@ import javafx.scene.control.TableView;
  * @author Andy Black
  *
  */
-public class TableViewWithCheckBoxColumnController extends CheckBoxColumnController {
+public class TableViewController extends TableViewBaseController {
 
 	ObservableList<? extends RuleChooserRule> list;
 	TableView<? extends RuleChooserRule> tableView;
 	protected String sChooser = "";
 	protected  ApplicationPreferences prefs;
 	
-	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		for (TableColumn<? extends RuleChooserRule, ?> column: tableView.getColumns()) {
 			  column.widthProperty().addListener(new ChangeListener<Number>() {
@@ -50,31 +49,13 @@ public class TableViewWithCheckBoxColumnController extends CheckBoxColumnControl
 	}
 
 	protected void initializeTableColumnWidths(ApplicationPreferences prefs) {
-		this.prefs = prefs;
-		if (tableView != null) {
-			for (TableColumn<? extends RuleChooserRule, ?> column : tableView.getColumns()) {
-				Double d = prefs.getDoubleValue(sChooser + column.getId(), column.getPrefWidth());
-				column.setPrefWidth(d);
-			}
-		}
-	}
-
-	@Override
-	protected void handleCheckBoxSelectAll() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void handleCheckBoxClearAll() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void handleCheckBoxToggle() {
-		// TODO Auto-generated method stub
-		
+        this.prefs = prefs;
+        if (tableView != null) {
+    		for (TableColumn<? extends RuleChooserRule, ?> column : tableView.getColumns()) {
+    			Double d = prefs.getDoubleValue(sChooser + column.getId(), column.getPrefWidth());
+    			column.setPrefWidth(d);
+    		}
+        }
 	}
 
 }

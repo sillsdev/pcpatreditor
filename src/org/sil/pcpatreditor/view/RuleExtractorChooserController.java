@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2022 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -52,11 +52,9 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 	private TableColumn<RuleExtractorRule, String> ruleIdColumn;
 	Stage dialogStage;
 	private boolean okClicked = false;
-	private MainApp mainApp;
 	private ApplicationPreferences preferences;
 
 	private ObservableList<RuleExtractorRule> rules = FXCollections.observableArrayList();
-//	List<RuleLocationInfo> rulesToExtract = new ArrayList<>();
 	List<Integer> rulesToExtract = new ArrayList<>();
 
 	/**
@@ -109,6 +107,8 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 				}
 				break;
 			}
+			default:
+				break;
 			}
 		});
 
@@ -127,7 +127,7 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 	}
 
 	public void setData(List<RuleLocationInfo> ruleLocations) {
-		generateSegments(ruleLocations);
+		generateRulesToShow(ruleLocations);
 		// Add observable list data to the table
 		ruleExtractorTable.setItems(rules);
 		if (ruleExtractorTable.getItems().size() > 0) {
@@ -138,17 +138,14 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 		}
 	}
 
-	public void generateSegments(List<RuleLocationInfo> ruleLocations) {
+	public void generateRulesToShow(List<RuleLocationInfo> ruleLocations) {
 		rules.clear();
 		for (RuleLocationInfo ruleInfo : ruleLocations) {
-//			if (segment.isActive()) {
 			RuleExtractorRule ruleInfoWithCheckBox = new RuleExtractorRule(ruleInfo);
 			// TODO: should we remember which rules have been selected previously?
 			// Yes - how do we do it?
 			ruleInfoWithCheckBox.setChecked(false);
-//			ruleInfoWithCheckBox.setRuleDescription(ruleInfo.psrRepresentation());
 			rules.add(ruleInfoWithCheckBox);
-//			}
 		}
 	}
 
@@ -170,7 +167,6 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 		int i = 0;
 		for (RuleExtractorRule ruleLocation : rules) {
 			if (ruleLocation.isChecked()) {
-//				rulesToExtract.add(ruleLocation.getRuleLocationInfo());
 				rulesToExtract.add(i);
 			}
 			i++;
@@ -190,7 +186,6 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 	}
 
 	public void setMainApp(MainApp mainApp) {
-		this.mainApp = mainApp;
 		preferences = mainApp.getApplicationPreferences();
 		dialogStage = preferences.getLastWindowParameters(ApplicationPreferences.LAST_RULE_EXTRACTOR_DIALOG, dialogStage, 400.,
 				400.);

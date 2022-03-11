@@ -13,11 +13,7 @@ import java.util.SortedSet;
 import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.MainApp;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;

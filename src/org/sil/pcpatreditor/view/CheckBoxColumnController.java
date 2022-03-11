@@ -11,23 +11,18 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.sil.pcpatreditor.MainApp;
-import org.sil.pcpatreditor.model.ChooserBase;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 /**
  * @author Andy Black
  *
  */
-public abstract class CheckBoxColumnController {
+public abstract class CheckBoxColumnController extends TableViewBaseController {
 
 	protected MainApp mainApp;
 	protected ResourceBundle bundle;
@@ -117,37 +112,6 @@ public abstract class CheckBoxColumnController {
 		// show the check box context menu
 		checkBoxColumnHead.contextMenuProperty().get()
 				.show(checkBoxColumnHead, Side.BOTTOM, 0.0, 0.0);
-	}
-	protected void processTableCell(TableCell<? extends ChooserBase, String> cell, Text text, String item, boolean empty) {
-		processCell(cell, item, empty, null, null);
-	}
-
-	protected void processCell(TableCell<? extends ChooserBase, String> cell, String item,
-			boolean empty, Color textColor, Font fontToUse) {
-		Text text;
-		if (item == null || empty) {
-			cell.setText(null);
-			cell.setStyle("");
-		} else {
-			cell.setStyle("");
-			text = new Text(item.toString());
-			// Get it to wrap.
-			text.wrappingWidthProperty().bind(cell.getTableColumn().widthProperty());
-			ChooserBase obj = (ChooserBase) cell.getTableRow().getItem();
-//			if (obj != null && obj.isActive()) {
-//				if (textColor != null) {
-//					text.setFill(textColor);
-//				} else {
-//					text.setFill(Constants.ACTIVE);
-//				}
-//			} else {
-//				text.setFill(Constants.INACTIVE);
-//			}
-			if (fontToUse != null) {
-				text.setFont(fontToUse);
-			}
-			cell.setGraphic(text);
-		}
 	}
 
 

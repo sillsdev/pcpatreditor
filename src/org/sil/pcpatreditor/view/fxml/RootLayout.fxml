@@ -59,6 +59,8 @@
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemEditInsertComment" mnemonicParsing="true" onAction="#handleInsertComment" text="%menu.insertcomment" accelerator="ctrl+shift+c" />
 					<MenuItem fx:id="menuItemEditRemoveComment" mnemonicParsing="true" onAction="#handleRemoveComment" text="%menu.removecomment" accelerator="ctrl+shift+r" />
+					<SeparatorMenuItem />
+					<MenuItem fx:id="menuItemNavigateToRule" mnemonicParsing="true" onAction="#handleNavigateToRule" text="%menu.toolsnavigatetorule" />
                   </items>
                 </Menu>
                 <Menu fx:id="menuBookmarks" mnemonicParsing="true" text="%menu.bookmarks">
@@ -140,6 +142,8 @@
 					<Button fx:id="buttonToolbarEditPaste" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handlePaste" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
 					<Button fx:id="buttonToolbarEditFindReplace" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleFindReplace" prefHeight="23.0" prefWidth="17.0" text="" />
+					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+					<Button fx:id="buttonToolbarEditRuleNavigator" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleNavigateToRule" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
 <!-- 					<Button fx:id="buttonToolbarDrawTree" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleDrawTree" prefHeight="23.0" prefWidth="17.0" text="" /> -->
 <!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
