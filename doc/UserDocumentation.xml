@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->9 March, 2022</date
+>15 March, 2022</date
 ><version
->Version 0.10.0 Alpha</version
+>Version 0.11.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -178,6 +178,40 @@ type="tKey"
 >Ctrl-Shift-R</object
 >.</p
 ></section2
+><section2
+id="sNavigateToRule"
+><secTitle
+>Navigate to rule</secTitle
+><p
+>Using the <object
+type="tMenuItem"
+>Navigate to rule</object
+> item (or clicking on the <img
+XeLaTeXSpecial="scaled='250'"
+src="../src/org/sil/pcpatreditor/resources/images/ruleNavigator.png"
+></img
+> icon in the toolbar) brings up a dialog that looked like what is in example <exampleRef
+letter="xNavigateToRule"
+num="xNavigateToRule"
+></exampleRef
+> for one grammar file.</p
+><example
+num="xNavigateToRule"
+><chart
+><img
+XeLaTeXSpecial="scaled='650'"
+src="resources/NavigateToRule.png"
+></img
+></chart
+></example
+><p
+>Click on the rule you want to show in the editor or use the up and down arrow keys to select the rule you want.  Then click the “OK” button.  Alternatively, you can double-click on the rule you want. That rule will be shown in the editor and the editor will have the focus so you can start typing or using the arrow keys to move around.</p
+><p
+>Note that this dialog does not automatically close when you click on the “OK” button or double-click on a rule.  This allows you to keep it open for when you next want to go to a rule.  When you do close it, <object
+type="tPcPatrEditor"
+></object
+> will remember its size and position on the screen for the next time you invoke it.</p
+></section2
 ></section1
 ><section1
 id="sBookmarksMenu"
@@ -262,7 +296,11 @@ type="tMenuItem"
 > menu item as <object
 type="tMenuItem"
 >Export selected rules for debugging</object
->. This is useful when you are trying to debug a <object
+>. You can also invoke it by clicking on the <img
+XeLaTeXSpecial="scaled='250'"
+src="../src/org/sil/pcpatreditor/resources/images/ruleExtractor.png"
+></img
+> icon in the toolbar. This is useful when you are trying to debug a <object
 type="tPcPatr"
 ></object
 > grammar file and want to create a separate grammar file that contains only selected rules.</p
@@ -575,7 +613,7 @@ type="tPcPatrEditor"
 ></object
 > will insert the text of the full path you have chosen into the grammar at the point of the text cursor.</p
 ><p
->If the cursor is within a feature path, then this dialog will start with whatever preceding text is in the path.  In one case it looked like what is in example <exampleRef
+>If the cursor is within a feature path, then this dialog will start with whatever preceding text is in the path. In one case it looked like what is in example <exampleRef
 letter="xFeaturePathSearchContext"
 num="xFeaturePathSearchContext"
 ></exampleRef

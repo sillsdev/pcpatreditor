@@ -23,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -99,7 +100,12 @@ public class RuleNavigatorChooserController extends TableViewController {
 
 		ruleNavigatorTable.setEditable(false);
 		ruleNavigatorTable.setOnMouseClicked(mouseEvent -> {
-			rememberSelection();
+			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+				rememberSelection();
+				if (mouseEvent.getClickCount() == 2) {
+					handleOk();
+				}
+			}
 		});
 		ruleNavigatorTable.setOnKeyPressed(keyEvent -> {
 			switch (keyEvent.getCode()) {
@@ -197,7 +203,7 @@ public class RuleNavigatorChooserController extends TableViewController {
 		CodeArea grammar = rootLayoutController.getGrammar();
 		grammar.moveTo(ruleChosen.getRuleLocationInfo().lineNumber(), 0);
 		grammar.requestFollowCaret();
-
+		rootLayoutController.tryToShowLineInMiddleOfWindow();
 	}
 
 	/**
