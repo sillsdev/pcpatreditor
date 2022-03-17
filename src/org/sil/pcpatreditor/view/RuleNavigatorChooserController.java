@@ -7,6 +7,7 @@
 package org.sil.pcpatreditor.view;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -20,9 +21,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -49,12 +52,19 @@ public class RuleNavigatorChooserController extends TableViewController {
 	private TableColumn<RuleChooserRule, String> rulePSRColumn;
 	@FXML
 	private TableColumn<RuleChooserRule, String> ruleIdColumn;
+	@FXML
+	private Label filterLabel;
+	@FXML
+	private TextField filterText;
+
 	Stage dialogStage;
 	private boolean okClicked = false;
 	private ApplicationPreferences preferences;
 	private MainApp mainApp;
 	private RootLayoutController rootLayoutController;
 
+	private List<RuleLocationInfo> ruleLocations = new ArrayList<RuleLocationInfo>();
+	private List<RuleLocationInfo> filteredRuleLocations = new ArrayList<RuleLocationInfo>();
 	private ObservableList<RuleChooserRule> rules = FXCollections.observableArrayList();
 	RuleChooserRule ruleChosen;
 	int currentSelectedIndex = 0;
@@ -109,7 +119,12 @@ public class RuleNavigatorChooserController extends TableViewController {
 		});
 		ruleNavigatorTable.setOnKeyPressed(keyEvent -> {
 			switch (keyEvent.getCode()) {
-			case SPACE: {
+			case DOWN: {
+				keyEvent.consume();
+				rememberSelection();
+				break;
+			}
+			case UP: {
 				keyEvent.consume();
 				rememberSelection();
 				break;
@@ -124,18 +139,35 @@ public class RuleNavigatorChooserController extends TableViewController {
 				@Override
 				public void run() {
 					if (newValue) {
-						setData(rootLayoutController.calculateCurrentRuleLocationInfo());
-						int max = ruleNavigatorTable.getItems().size();
-						currentSelectedIndex = adjustIndexValue(currentSelectedIndex, max);
-						ruleNavigatorTable.requestFocus();
-						ruleNavigatorTable.getSelectionModel().select(currentSelectedIndex);
-						ruleNavigatorTable.getFocusModel().focus(currentSelectedIndex);
-						ruleNavigatorTable.scrollTo(currentSelectedIndex);
+						if (filteredRuleLocations.size() == 0) {
+							setData(rootLayoutController.calculateCurrentRuleLocationInfo());
+							int max = ruleNavigatorTable.getItems().size();
+							currentSelectedIndex = adjustIndexValue(currentSelectedIndex, max);
+							ruleNavigatorTable.requestFocus();
+							ruleNavigatorTable.getSelectionModel().select(currentSelectedIndex);
+							ruleNavigatorTable.getFocusModel().focus(currentSelectedIndex);
+							ruleNavigatorTable.scrollTo(currentSelectedIndex);
+						}
 					}
 				}
 			});
 		});
 
+		filterLabel.setText(resources.getString("label.filterrulesbylefthandside"));
+		filterText.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue.length() > 0) {
+				filteredRuleLocations = ruleLocations.stream()
+						.filter(rl -> (rl.psrRepresentation().startsWith(newValue + " ")
+								|| rl.psrRepresentation().startsWith(newValue + "_")))
+						.toList();
+				generateRulesToShow(filteredRuleLocations);
+				// Add observable list data to the table
+				ruleNavigatorTable.setItems(rules);
+				ruleNavigatorTable.refresh();
+			} else {
+				setData(ruleLocations);
+			}
+		});
 	}
 
 	protected int adjustIndexValue(int value, int max) {
@@ -165,6 +197,7 @@ public class RuleNavigatorChooserController extends TableViewController {
 	}
 
 	public void setData(List<RuleLocationInfo> ruleLocations) {
+		this.ruleLocations = ruleLocations;
 		generateRulesToShow(ruleLocations);
 		// Add observable list data to the table
 		ruleNavigatorTable.setItems(rules);
@@ -201,9 +234,11 @@ public class RuleNavigatorChooserController extends TableViewController {
 		okClicked = true;
 		mainApp.getPrimaryStage().requestFocus();
 		CodeArea grammar = rootLayoutController.getGrammar();
-		grammar.moveTo(ruleChosen.getRuleLocationInfo().lineNumber(), 0);
-		grammar.requestFollowCaret();
-		rootLayoutController.tryToShowLineInMiddleOfWindow();
+		if (ruleChosen != null) {
+			grammar.moveTo(ruleChosen.getRuleLocationInfo().lineNumber(), 0);
+			grammar.requestFollowCaret();
+			rootLayoutController.tryToShowLineInMiddleOfWindow();
+		}
 	}
 
 	/**

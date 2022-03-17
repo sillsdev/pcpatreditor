@@ -1574,14 +1574,9 @@ public class RootLayoutController implements Initializable {
 			controller.setData(rulesInfo);
 			controller.initialize(location, bundle);
 			controller.initializeTableColumnWidths(mainApp.getApplicationPreferences());
+			grammar.requestFocus();
 
-			dialogStage.showAndWait();
-			if (controller.isOkClicked()) {
-				RuleChooserRule rule = controller.getRuleChosen();
-				grammar.moveTo(rule.getRuleLocationInfo().lineNumber(), 0);
-				grammar.requestFollowCaret();
-			}
-
+			dialogStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);

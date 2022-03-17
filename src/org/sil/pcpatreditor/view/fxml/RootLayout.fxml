@@ -60,7 +60,7 @@
 					<MenuItem fx:id="menuItemEditInsertComment" mnemonicParsing="true" onAction="#handleInsertComment" text="%menu.insertcomment" accelerator="ctrl+shift+c" />
 					<MenuItem fx:id="menuItemEditRemoveComment" mnemonicParsing="true" onAction="#handleRemoveComment" text="%menu.removecomment" accelerator="ctrl+shift+r" />
 					<SeparatorMenuItem />
-					<MenuItem fx:id="menuItemNavigateToRule" mnemonicParsing="true" onAction="#handleNavigateToRule" text="%menu.toolsnavigatetorule" />
+					<MenuItem fx:id="menuItemNavigateToRule" accelerator="Ctrl+r" mnemonicParsing="true" onAction="#handleNavigateToRule" text="%menu.toolsnavigatetorule" />
                   </items>
                 </Menu>
                 <Menu fx:id="menuBookmarks" mnemonicParsing="true" text="%menu.bookmarks">
