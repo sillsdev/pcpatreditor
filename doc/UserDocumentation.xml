@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->15 March, 2022</date
+>17 March, 2022</date
 ><version
->Version 0.11.0 Alpha</version
+>Version 0.12.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -190,7 +190,10 @@ type="tMenuItem"
 XeLaTeXSpecial="scaled='250'"
 src="../src/org/sil/pcpatreditor/resources/images/ruleNavigator.png"
 ></img
-> icon in the toolbar) brings up a dialog that looked like what is in example <exampleRef
+> icon in the toolbar or typing <object
+type="tKey"
+>Ctrl-R</object
+>) brings up a dialog that looked like what is in example <exampleRef
 letter="xNavigateToRule"
 num="xNavigateToRule"
 ></exampleRef
@@ -199,15 +202,21 @@ num="xNavigateToRule"
 num="xNavigateToRule"
 ><chart
 ><img
-XeLaTeXSpecial="scaled='650'"
+XeLaTeXSpecial="scaled='600'"
 src="resources/NavigateToRule.png"
+width="600"
 ></img
 ></chart
 ></example
 ><p
->Click on the rule you want to show in the editor or use the up and down arrow keys to select the rule you want.  Then click the “OK” button.  Alternatively, you can double-click on the rule you want. That rule will be shown in the editor and the editor will have the focus so you can start typing or using the arrow keys to move around.</p
+>Click on the rule you want to show in the editor or use the up and down arrow keys to select the rule you want. Then click the “OK” button. Alternatively, you can double-click on the rule you want. That rule will be shown in the editor and the editor will have the focus so you can start typing or using the arrow keys to move around.</p
 ><p
->Note that this dialog does not automatically close when you click on the “OK” button or double-click on a rule.  This allows you to keep it open for when you next want to go to a rule.  When you do close it, <object
+>You can also filter which rules to show by clicking in (or using the <object
+type="tKey"
+>TAB</object
+> key to navigate to) the text box at the bottom.  Type the left-hand side non-terminal constituent you want to filter on.  All rules whose entire left-hand side non-terminal constituent which match what is shown in the text box will appear.  Note that nothing will show if nothing matches yet while you type.  Upper/lower case is significant.</p
+><p
+>Note that this dialog does not automatically close when you click on the “OK” button or double-click on a rule. This allows you to keep it open for when you next want to go to a rule. When you do close it, <object
 type="tPcPatrEditor"
 ></object
 > will remember its size and position on the screen for the next time you invoke it.</p
