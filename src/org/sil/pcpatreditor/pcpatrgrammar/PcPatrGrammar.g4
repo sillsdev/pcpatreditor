@@ -17,26 +17,35 @@ grammar PcPatrGrammar;
 	package org.sil.pcpatreditor.pcpatrgrammar.antlr4generated;
 }
 
-patrgrammar : comment* featureTemplates? constraintTemplates? patrRules parameters? lexicalRules? comment* EOF;
+patrgrammar : comment* (featureTemplates | constraintTemplates | patrRules | parameters | lexicalRules)* comment* EOF;
 
 comment: LINECOMMENT;
 
 featureTemplates: featureTemplate+;
 
-featureTemplate: featureTemplateDefinition featurePathTemplateBody '.'? comment*
+featureTemplate: featureTemplateDefinition (featurePathTemplateBody | featureStructureTemplateBody) '.'? comment*
+               | featureTemplateDefinition {notifyErrorListeners("missingTemplateBody");}
                ;
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
-                        ;
+                         | 'Let' {notifyErrorListeners("missingTemplateNameOrBe");}
+                         ;
 featurePathTemplateBody: featurePathUnit '=' atomicValueDisjunction featurePathTemplateBody?
                        | featurePathUnit '=' featureTemplateValue featurePathTemplateBody?
                        | featureTemplateAbbreviation featurePathTemplateBody?
                        | featureTemplateDisjunction featurePathTemplateBody?
+                       | featurePathUnit '=' {notifyErrorListeners("missingDisjunctionOrFeatureTemplateValue");}
+                       | featurePathUnit {notifyErrorListeners("missingEqualsSign");}
                        ;
+featureStructureTemplateBody: featureStructure
+                            ;
+featureTemplateName: atomicValue
+                   | atomicValue '/' atomicValue
+                   ;
 
-featureTemplateName: atomicValue;
-
-featureTemplateAbbreviation: '[' featureTemplateName ']' comment*;
+featureTemplateAbbreviation: '[' featureTemplateName ']' comment*
+                           | featureTemplateName comment*
+                           ;
                    
 featureTemplateValue: featureTemplateDisjunction
                     | featurePathUnit '.'? comment*
@@ -51,9 +60,11 @@ featureTemplateDisjunction: openingBrace featurePathOrStructure featurePathOrStr
 featurePathOrStructure: featurePath comment*
                       | featureStructure comment*
                       | atomicValue comment*
+                      | featureTemplateAbbreviation comment*
                       ;
 
 featureStructure: openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
+                | emptyFeatureStructure comment*
                 ;
 
 featureStructureName: ruleKW
@@ -66,20 +77,17 @@ featureStructureValue: featureStructure
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
                         ;
+emptyFeatureStructure: '[]';
 
 featurePathUnit: openingWedge featurePath closingWedge;
-
-constraintTemplates: constraintTemplate+;
-
-constraintTemplate: 'Constraint' '.'?
-                  ;
 
 patrRules: patrRule+;
 
 patrRule: comment* ruleKW ruleIdentifier? comment* phraseStructureRule comment* constraints? comment* '.'?;
 
-ruleKW: 'Rule'
-      | 'rule'
+ruleKW: 'rule'
+      | 'Rule'
+      | 'RULE'
       ;
     
 ruleIdentifier: '{' .*? '}';
@@ -161,10 +169,49 @@ openingWedge   : '<';
 closingWedge   : '>';
 
 
+parameters: parameter+ comment*;
+parameter: parameterKW ':'? parameterName 'is' parameterValue '.'? comment*
+         | parameterKW ':'? 'Attribute order' 'is' parameterValue+ '.'? comment*
+         ;
+parameterKW: 'parameter'
+           | 'Parameter'
+           | 'PARAMETER'
+           ;
+parameterName: 'Start symbol'
+         | 'Category feature'
+         | 'Lexical feature'
+         | 'Gloss feature'
+         | 'RootGloss feature'
+         // not implemented in PcPatr: | 'Restrictor'
+         ;
+parameterValue: TEXT comment*;
 
-parameters: 'Parameter';
+lexicalRules: lexicalRule+ comment*;
+lexicalRule: lexicalRuleKW lexicalRuleName 'as' lexicalRuleDefinition '.'? comment*
+           ;
+lexicalRuleKW: 'define'
+             | 'Define'
+             | 'DEFINE'
+             ;
+lexicalRuleName: TEXT;
+lexicalRuleDefinition: lexicalRuleMapping+ comment*
+                     ;
+lexicalRuleMapping: lexicalRuleOutput lexicalRuleAssignment lexicalRuleInput comment*
+                  ;
+lexicalRuleAssignment: '='
+                     | '=>'
+                     ;
+lexicalRuleOutput: '<' 'out' featurePath '>' comment*;
+lexicalRuleInput: '<' 'in' featurePath '>' comment*;
 
-lexicalRules: 'Define';
+constraintTemplates: constraintTemplate+;
+
+constraintTemplate: constraintTemplateKW constraintTemplateName 'is' logConstraintExpression '.'? comment*;
+constraintTemplateKW: 'constraint'
+                    | 'Constraint'
+                    | 'CONSTRAINT'
+                    ;
+constraintTemplateName: TEXT;
 
 LINECOMMENT : '|' .*? '\r'? '\n'
             | '|' .*? EOF

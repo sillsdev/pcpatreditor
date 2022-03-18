@@ -11,10 +11,14 @@ package org.sil.pcpatreditor.pcpatrgrammar;
  */
 public class PcPatrGrammarConstants {
 	public static final String CONTENT_AFTER_COMPLETED_TREE = "contentAfterCompletedTree";
-	public static final String MISSING_OPENING_PAREN = "missingOpeningParen";
 	public static final String MISSING_CLOSING_PAREN = "missingClosingParen";
 	public static final String MISSING_CONTENT_AFTER_SUBSCRIPT = "missingContentAfterSubscript";
 	public static final String MISSING_CONTENT_AFTER_SUPERSCRIPT = "missingContentAfterSuperscript";
+	public static final String MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE = "missingDisjunctionOrFeatureTemplateValue";
+	public static final String MISSING_EQUALS_SIGN = "missingEqualsSign";
+	public static final String MISSING_OPENING_PAREN = "missingOpeningParen";
+	public static final String MISSING_TEMPLATE_BODY = "missingTemplateBody";
+	public static final String MISSING_TEMPLATE_NAME_OR_BE = "missingTemplateNameOrBe";
 	public static final String TOO_MANY_CLOSING_PARENS = "tooManyCloseParens";
 	public static final String TOO_MANY_NODE_TYPES = "tooManyNodeTypes";
 	public static final String TOO_MANY_lINE_TYPES = "tooManyLineTypes";
