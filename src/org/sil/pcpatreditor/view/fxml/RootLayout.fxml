@@ -13,7 +13,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
@@ -21,9 +20,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
-<?import org.fxmisc.richtext.CodeArea?>
+<?import javafx.scene.text.TextFlow?>
 
+<!-- <?import org.fxmisc.richtext.CodeArea?> -->
 
 <BorderPane fx:id="mainPane" prefHeight="660.0" prefWidth="1000.0" stylesheets="@PcPatrEditor.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.sil.pcpatreditor.view.RootLayoutController">
    <top>
@@ -37,38 +36,35 @@
 					<MenuItem fx:id="menuItemFileOpen" accelerator="Ctrl+o" mnemonicParsing="true" onAction="#handleOpenDocument" text="%menu.open" />
 					<MenuItem fx:id="menuItemFileSave" accelerator="Ctrl+s" mnemonicParsing="true" onAction="#handleSaveDocument" text="%menu.save" />
 					<MenuItem fx:id="menuItemFileSaveAs" mnemonicParsing="true" onAction="#handleSaveDocumentAs" text="%menu.saveas" />
-<!-- 					<SeparatorMenuItem /> -->
-<!-- 					<CheckMenuItem fx:id="menuItemSaveAsPng" mnemonicParsing="true" onAction="#handleMenuSaveAsPng" text="%menu.saveaspng" /> -->
-<!-- 					<CheckMenuItem fx:id="menuItemSaveAsSVG" mnemonicParsing="true" onAction="#handleMenuSaveAsSVG" text="%menu.saveassvg" /> -->
                     <SeparatorMenuItem />
                     <MenuItem fx:id="menuItemFileExit" mnemonicParsing="true" onAction="#handleExit" text="%menu.exit" />
                   </items>
                 </Menu>
                 <Menu fx:id="menuEdit" mnemonicParsing="true" text="%menu.edit" onShown="#handleShowingEditMenu">
                   <items>
-					<MenuItem fx:id="menuItemEditUndo" mnemonicParsing="true" onAction="#handleUndo" text="%menu.undo" accelerator="Ctrl+z" />
-					<MenuItem fx:id="menuItemEditRedo" mnemonicParsing="true" onAction="#handleRedo" text="%menu.redo" accelerator="Ctrl+y" />
+					<MenuItem fx:id="menuItemEditUndo" accelerator="Ctrl+z" mnemonicParsing="true" onAction="#handleUndo" text="%menu.undo" />
+					<MenuItem fx:id="menuItemEditRedo" accelerator="Ctrl+y" mnemonicParsing="true" onAction="#handleRedo" text="%menu.redo" />
 					<SeparatorMenuItem />
-					<MenuItem fx:id="menuItemEditCut" mnemonicParsing="true" onAction="#handleCut" text="%menu.cut" accelerator="ctrl+x" />
-					<MenuItem fx:id="menuItemEditCopy" mnemonicParsing="true" onAction="#handleCopy" text="%menu.copy" accelerator="ctrl+c" />
-					<MenuItem fx:id="menuItemEditPaste" mnemonicParsing="true" onAction="#handlePaste" text="%menu.paste" accelerator="ctrl+v" />
+					<MenuItem fx:id="menuItemEditCut" accelerator="ctrl+x" mnemonicParsing="true" onAction="#handleCut" text="%menu.cut" />
+					<MenuItem fx:id="menuItemEditCopy" accelerator="ctrl+c" mnemonicParsing="true" onAction="#handleCopy" text="%menu.copy" />
+					<MenuItem fx:id="menuItemEditPaste" accelerator="ctrl+v" mnemonicParsing="true" onAction="#handlePaste" text="%menu.paste" />
 					<SeparatorMenuItem />
-					<MenuItem fx:id="menuItemEditFindReplace" mnemonicParsing="true" onAction="#handleFindReplace" text="%menu.findreplace" accelerator="ctrl+f" />
-					<MenuItem fx:id="menuItemEditFindNext" mnemonicParsing="true" onAction="#handleFindNext" text="%menu.findnext" accelerator="F3" />
-					<MenuItem fx:id="menuItemEditGoToLine" mnemonicParsing="true" onAction="#handleGoToLine" text="%menu.gotoline" accelerator="ctrl+g" />
+					<MenuItem fx:id="menuItemEditFindReplace" accelerator="ctrl+f" mnemonicParsing="true" onAction="#handleFindReplace" text="%menu.findreplace" />
+					<MenuItem fx:id="menuItemEditFindNext" accelerator="F3" mnemonicParsing="true" onAction="#handleFindNext" text="%menu.findnext" />
+					<MenuItem fx:id="menuItemEditGoToLine" accelerator="ctrl+g" mnemonicParsing="true" onAction="#handleGoToLine" text="%menu.gotoline" />
 					<SeparatorMenuItem />
-					<MenuItem fx:id="menuItemEditInsertComment" mnemonicParsing="true" onAction="#handleInsertComment" text="%menu.insertcomment" accelerator="ctrl+shift+c" />
-					<MenuItem fx:id="menuItemEditRemoveComment" mnemonicParsing="true" onAction="#handleRemoveComment" text="%menu.removecomment" accelerator="ctrl+shift+r" />
+					<MenuItem fx:id="menuItemEditInsertComment" accelerator="ctrl+shift+c" mnemonicParsing="true" onAction="#handleInsertComment" text="%menu.insertcomment" />
+					<MenuItem fx:id="menuItemEditRemoveComment" accelerator="ctrl+shift+r" mnemonicParsing="true" onAction="#handleRemoveComment" text="%menu.removecomment" />
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemNavigateToRule" accelerator="Ctrl+r" mnemonicParsing="true" onAction="#handleNavigateToRule" text="%menu.toolsnavigatetorule" />
                   </items>
                 </Menu>
                 <Menu fx:id="menuBookmarks" mnemonicParsing="true" text="%menu.bookmarks">
                   <items>
-					<MenuItem fx:id="menuItemBookmarkToggle" mnemonicParsing="true" onAction="#handleBookmarkToggle" text="%menu.bookmarktoggle" accelerator="Ctrl+F2" />
+					<MenuItem fx:id="menuItemBookmarkToggle" accelerator="Ctrl+F2" mnemonicParsing="true" onAction="#handleBookmarkToggle" text="%menu.bookmarktoggle" />
 					<SeparatorMenuItem />
-					<MenuItem fx:id="menuItemBookmarkNext" mnemonicParsing="true" onAction="#handleBookmarkNext" text="%menu.bookmarknext" accelerator="F2" />
-					<MenuItem fx:id="menuItemBookmarkPrevious" mnemonicParsing="true" onAction="#handleBookmarkPrevious" text="%menu.bookmarkprevious" accelerator="Alt+F2" />
+					<MenuItem fx:id="menuItemBookmarkNext" accelerator="F2" mnemonicParsing="true" onAction="#handleBookmarkNext" text="%menu.bookmarknext" />
+					<MenuItem fx:id="menuItemBookmarkPrevious" accelerator="Alt+F2" mnemonicParsing="true" onAction="#handleBookmarkPrevious" text="%menu.bookmarkprevious" />
 					<SeparatorMenuItem />
 					<MenuItem fx:id="menuItemBookmarkClear" mnemonicParsing="true" onAction="#handleBookmarkClear" text="%menu.bookmarkclear" />
                   </items>
@@ -87,8 +83,6 @@
                 </Menu>
 				<Menu fx:id="menuSettings" mnemonicParsing="true" text="%menu.settings">
 				  <items>
-<!-- 					<MenuItem fx:id="menuItemDescriptionFontSize" mnemonicParsing="true" onAction="#handleMenuDescriptionFontSize" text="%menu.descriptionfontsize" /> -->
-<!-- 					<CheckMenuItem fx:id="menuItemDrawAsType" mnemonicParsing="true" onAction="#handleMenuDrawAsType" text="%menu.drawastype" /> -->
 					<CheckMenuItem fx:id="menuItemShowMatchingItemWithArrowKeys" mnemonicParsing="true" onAction="#handleMenuShowMatchingItemWithArrowKeys" text="%menu.showmatchingitemwitharrowkeys" />
 					<MenuItem fx:id="menuItemShowMatchingItemDelay" mnemonicParsing="true" onAction="#handleMenuShowMatchingItemDelay" text="%menu.showmatchingitemdelay" />
 <!-- 					<SeparatorMenuItem /> -->
@@ -101,9 +95,12 @@
                     </fx:define>
 					<Menu fx:id="menuAfterExtract" mnemonicParsing="true" text="%menu.extractafterextract">
 					   <items>
-                          <RadioMenuItem fx:id="menuItemNoActionAfterExtract" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractNoActionAfterExtract" text="%menu.extractednoaction" />
-                          <RadioMenuItem fx:id="menuItemOpenExtracted" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractOpenExtracted" text="%menu.extractedopen" />
-                          <RadioMenuItem fx:id="menuItemOpenExtractedInNewInstance" toggleGroup="$extractSelectedRulesOptionsGroup" mnemonicParsing="false" onAction="#handleExtractOpenExtractedInNewInstance" text="%menu.extractedopeninnewinstance" />
+                          <RadioMenuItem fx:id="menuItemNoActionAfterExtract" mnemonicParsing="false" onAction="#handleExtractNoActionAfterExtract" text="%menu.extractednoaction">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="extractSelectedRulesOptionsGroup" />
+                                 </toggleGroup></RadioMenuItem>
+                          <RadioMenuItem fx:id="menuItemOpenExtracted" mnemonicParsing="false" onAction="#handleExtractOpenExtracted" text="%menu.extractedopen" toggleGroup="$extractSelectedRulesOptionsGroup" />
+                          <RadioMenuItem fx:id="menuItemOpenExtractedInNewInstance" mnemonicParsing="false" onAction="#handleExtractOpenExtractedInNewInstance" text="%menu.extractedopeninnewinstance" toggleGroup="$extractSelectedRulesOptionsGroup" />
                        </items>
 				   </Menu>
 					<SeparatorMenuItem />
@@ -112,15 +109,17 @@
                     </fx:define>
 					<Menu fx:id="menuFeaturePathSearch" mnemonicParsing="true" text="%menu.featurepathsearch">
 					   <items>
-                          <RadioMenuItem fx:id="menuItemFeaturePathSearchFromStart" toggleGroup="$featurePathSearchOptionsGroup" mnemonicParsing="false" onAction="#handleFeaturePathSearchFromStart" text="%menu.featurepathsearchfromstart" />
-                          <RadioMenuItem fx:id="menuItemFeaturePathSearchAnywhere" toggleGroup="$featurePathSearchOptionsGroup" mnemonicParsing="false" onAction="#handleFeaturePathSearchAnywhere" text="%menu.featurepathsearchanywhere" />
+                          <RadioMenuItem fx:id="menuItemFeaturePathSearchFromStart" mnemonicParsing="false" onAction="#handleFeaturePathSearchFromStart" text="%menu.featurepathsearchfromstart">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="featurePathSearchOptionsGroup" />
+                                 </toggleGroup></RadioMenuItem>
+                          <RadioMenuItem fx:id="menuItemFeaturePathSearchAnywhere" mnemonicParsing="false" onAction="#handleFeaturePathSearchAnywhere" text="%menu.featurepathsearchanywhere" toggleGroup="$featurePathSearchOptionsGroup" />
                        </items>
 				   </Menu>
 				</items>
 				</Menu>
                 <Menu fx:id="menuHelp" mnemonicParsing="true" text="%menu.help">
                   <items>
-<!--                     <MenuItem fx:id="menuItemQuickReferenceGuide" mnemonicParsing="true" onAction="#handleQuickReferenceGuide" text="%menu.quickreferenceguide" /> -->
                     <MenuItem fx:id="menuItemUserDocumentation" mnemonicParsing="true" onAction="#handleUserDocumentation" text="%menu.userdocumentation" />
                     <SeparatorMenuItem />
                     <MenuItem fx:id="menuItemAbout" mnemonicParsing="true" onAction="#handleAbout" text="%menu.about" />
@@ -147,14 +146,7 @@
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
 					<Button fx:id="buttonToolbarToolRuleExtractor" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleExportSelectedRules" prefHeight="23.0" prefWidth="17.0" text="" />
 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
-<!-- 					<Button fx:id="buttonToolbarDrawTree" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" minWidth="17.0" mnemonicParsing="true" onAction="#handleDrawTree" prefHeight="23.0" prefWidth="17.0" text="" /> -->
-<!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
-<!-- 	                <ToggleButton fx:id="toggleButtonUseFlatTree" onAction="#handleUseFlatTree" text="%label.useflattree" /> -->
-<!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
 	                <ToggleButton fx:id="toggleButtonShowMatchingItemWithArrowKeys" onAction="#handleShowMatchingItemWithArrowKeys" text="→(  )←" />
-<!-- 					<Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" /> -->
-<!-- 	                <ToggleButton fx:id="toggleButtonSaveAsPng" onAction="#handleSaveAsPng" text="PNG" /> -->
-<!-- 	                <ToggleButton fx:id="toggleButtonSaveAsSVG" onAction="#handleSaveAsSVG" text="SVG" /> -->
               </items>
             </ToolBar>
          </children>
@@ -179,7 +171,7 @@
    <bottom>
       <VBox prefHeight="21.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
-            <Text fx:id="statusBar" strokeType="OUTSIDE" strokeWidth="0.0" />
+            <TextFlow fx:id="statusBar" />
          </children>
       </VBox>
    </bottom>

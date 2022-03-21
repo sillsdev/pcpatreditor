@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.sil.pcpatreditor.model.Grammar;
+import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarConstants;
 import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarErrorInfo;
 import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarErrorListener;
 import org.sil.pcpatreditor.pcpatrgrammar.PcPatrGrammarErrorListener.VerboseListener;
@@ -132,10 +133,6 @@ public class GrammarBuilder {
 				// do nothing
 			}
 		}
-		if (parseTree == null) {
-			numberOfErrors = 1;
-			return origGrammar;
-		}
 		numberOfErrors = parser.getNumberOfSyntaxErrors();
 		if (numberOfErrors > 0) {
 			errListener = (VerboseListener) parser.getErrorListeners().get(0);
@@ -155,15 +152,19 @@ public class GrammarBuilder {
 	}
 
 	public static String buildErrorMessage(ResourceBundle bundle) {
-		String sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.unknown");
+		String sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.unknown");
 
 		switch (GrammarBuilder.getErrorMessage()) {
-		// TODO: fix when work in adding error messages
-//		case DescriptionConstants.CONTENT_AFTER_COMPLETED_TREE:
-//			sSyntaxErrorMessage = bundle
-//					.getString("descriptionsyntaxerror.content_after_completed_tree");
-//			break;
-//
+		case PcPatrGrammarConstants.MISSING_TEMPLATE_BODY:
+			sSyntaxErrorMessage = bundle
+					.getString("grammarsyntaxerror.missingtemplatebody");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE:
+			sSyntaxErrorMessage = bundle
+					.getString("grammarsyntaxerror.missingtemplatenameorbe");
+			break;
+
 //		case DescriptionConstants.MISSING_CLOSING_PAREN:
 //			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.missing_closing_paren");
 //			break;

@@ -32,10 +32,6 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -53,12 +49,8 @@ import org.sil.pcpatreditor.ApplicationPreferences;
 import org.sil.pcpatreditor.Constants;
 import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.model.BookmarkDocument;
-import org.sil.pcpatreditor.model.BookmarksInDocuments;
-import org.sil.pcpatreditor.model.FeatureTemplate;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.PatrRule;
-import org.sil.pcpatreditor.model.RuleChooserRule;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarLexer;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
@@ -115,6 +107,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -307,7 +300,7 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private VBox centerVBox;
 	@FXML
-	private Text statusBar;
+	private TextFlow statusBar;
 	
 	// following lines from
 	// https://stackoverflow.com/questions/32464974/javafx-change-application-language-on-the-run
@@ -325,7 +318,7 @@ public class RootLayoutController implements Initializable {
 		sFileFilterDescription = RESOURCE_FACTORY.getStringBinding("file.filterdescription").get();
 		createToolbarButtons(bundle);
 		initMenuItemsForLocalization();
-		statusBar.setText(bundle.getString("label.key"));
+		statusBar.getChildren().clear();
         executorHighlighting = Executors.newSingleThreadExecutor();
         executorParsing = Executors.newSingleThreadExecutor();
         grammar = new CodeArea();
@@ -891,7 +884,25 @@ public class RootLayoutController implements Initializable {
 	private void applyParsedGrammar(Grammar pcpatrGrammar) {
 		if (GrammarBuilder.getNumberOfErrors() == 0) {
 			this.pcpatrGrammar = pcpatrGrammar;
+			statusBar.getChildren().clear();
+		} else {
+			reportErrorInDescriptionMessage();
 		}
+	}
+	private void reportErrorInDescriptionMessage() {
+		String sSyntaxErrorMessage = GrammarBuilder.buildErrorMessage(bundle);
+		statusBar.getChildren().clear();
+		TextFlow textFlow = buildErrorMessageAsTextFlow(sSyntaxErrorMessage);
+		statusBar.getChildren().add(textFlow);
+	}
+
+	private TextFlow buildErrorMessageAsTextFlow(String sSyntaxErrorMessage) {
+		String sLocation = GrammarBuilder.getLineNumberOfError() + ":" + GrammarBuilder.getCharacterPositionInLineOfError() + " ";
+		Text tLocation = new Text(sLocation);
+		Text tMessage = new Text(sSyntaxErrorMessage);
+		tMessage.setFill(Color.RED);
+		TextFlow textFlow = new TextFlow(tLocation, tMessage);
+		return textFlow;
 	}
 
 	private void initMenuItemsForLocalization() {
@@ -1852,10 +1863,6 @@ public class RootLayoutController implements Initializable {
 		return bundle;
 	}
 
-	private String getCurrentLocaleCode() {
-		return "_" + currentLocale.getLanguage();
-	}
-
 	public void setMainApp(MainApp mainApp) throws IOException {
 		this.mainApp = mainApp;
 		this.applicationPreferences = mainApp.getApplicationPreferences();
@@ -1869,11 +1876,6 @@ public class RootLayoutController implements Initializable {
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
 		initAnyBookmarks(mainApp.getDocumentFile().getPath());
-//		grammar.requestFollowCaret();
-//		int caret = applicationPreferences.getLastCaretPosition();
-//		caret = (caret > grammar.getText().length()) ? 0 : caret;
-//		grammar.moveTo(caret);
-//		defaultFont = new Font(applicationPreferences.getTreeDescriptionFontSize());
 	}
 
 	public void initAnyBookmarks(String sPath) {
