@@ -122,6 +122,8 @@
                   <items>
                     <MenuItem fx:id="menuItemUserDocumentation" mnemonicParsing="true" onAction="#handleUserDocumentation" text="%menu.userdocumentation" />
                     <SeparatorMenuItem />
+                    <MenuItem fx:id="menuItemPcPatrDocumentation" mnemonicParsing="true" onAction="#handlePcPatrDocumentation" text="%menu.pcpatrdocumentation" />
+                    <SeparatorMenuItem />
                     <MenuItem fx:id="menuItemAbout" mnemonicParsing="true" onAction="#handleAbout" text="%menu.about" />
                   </items>
                 </Menu>

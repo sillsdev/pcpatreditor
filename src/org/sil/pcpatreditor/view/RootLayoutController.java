@@ -270,6 +270,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemUserDocumentation;
 	@FXML
+	private MenuItem menuItemPcPatrDocumentation;
+	@FXML
 	private MenuItem menuItemAbout;
 
 	@FXML
@@ -1455,6 +1457,11 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private void handleUserDocumentation() {
 		showFileToUser("doc/UserDocumentation.pdf");
+	}
+
+	@FXML
+	private void handlePcPatrDocumentation() {
+		showFileToUser("doc/pcpatr.htm");
 	}
 
 	protected void showFileToUser(String sFileToShow) {
