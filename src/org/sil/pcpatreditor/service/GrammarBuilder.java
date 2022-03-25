@@ -155,11 +155,18 @@ public class GrammarBuilder {
 		String sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.unknown");
 
 		switch (GrammarBuilder.getErrorMessage()) {
+		case PcPatrGrammarConstants.MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE:
+			sSyntaxErrorMessage = bundle
+			.getString("grammarsyntaxerror.disjunction_or_feature_template_value");
+			break;
+		case PcPatrGrammarConstants.MISSING_EQUALS_SIGN:
+			sSyntaxErrorMessage = bundle
+			.getString("grammarsyntaxerror.missingequalssign");
+			break;
 		case PcPatrGrammarConstants.MISSING_TEMPLATE_BODY:
 			sSyntaxErrorMessage = bundle
 					.getString("grammarsyntaxerror.missingtemplatebody");
 			break;
-
 		case PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE:
 			sSyntaxErrorMessage = bundle
 					.getString("grammarsyntaxerror.missingtemplatenameorbe");
