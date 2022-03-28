@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->17 March, 2022</date
+>28 March, 2022</date
 ><version
->Version 0.12.0 Alpha</version
+>Version 0.12.1 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -214,7 +214,7 @@ width="600"
 >You can also filter which rules to show by clicking in (or using the <object
 type="tKey"
 >TAB</object
-> key to navigate to) the text box at the bottom.  Type the left-hand side non-terminal constituent you want to filter on.  All rules whose entire left-hand side non-terminal constituent which match what is shown in the text box will appear.  Note that nothing will show if nothing matches yet while you type.  Upper/lower case is significant.</p
+> key to navigate to) the text box at the bottom. Type the left-hand side non-terminal constituent you want to filter on. All rules whose entire left-hand side non-terminal constituent which match what is shown in the text box will appear. Note that nothing will show if nothing matches yet while you type. Upper/lower case is significant.</p
 ><p
 >Note that this dialog does not automatically close when you click on the “OK” button or double-click on a rule. This allows you to keep it open for when you next want to go to a rule. When you do close it, <object
 type="tPcPatrEditor"
@@ -463,7 +463,7 @@ type="tPcPatrEditor"
 ></object
 > will automatically insert the matching closing item.</p
 ><p
->There are times when you need to see the matching items For this reason, there is the first item under the main <object
+>There are times when you need to see the matching items. For this reason, there is the first item under the main <object
 type="tMenuItem"
 >Settings</object
 > menu item: <object
