@@ -18,12 +18,12 @@ import org.sil.pcpatreditor.Constants;
 public class PhraseStructureRule {
 
 	Constituent leftHandSide;
-	List<PhraseStructureRuleRightHandSide> rightHandSide = new ArrayList<PhraseStructureRuleRightHandSide>();
+	List<SequencedOrSingleConstituent> rightHandSide = new ArrayList<>();
 	/**
 	 * @param leftHandSide
 	 * @param rightHandSide
 	 */
-	public PhraseStructureRule(Constituent leftHandSide, List<PhraseStructureRuleRightHandSide> rightHandSide) {
+	public PhraseStructureRule(Constituent leftHandSide, List<SequencedOrSingleConstituent> rightHandSide) {
 		super();
 		this.leftHandSide = leftHandSide;
 		this.rightHandSide = rightHandSide;
@@ -43,13 +43,13 @@ public class PhraseStructureRule {
 	/**
 	 * @return the rightHandSide
 	 */
-	public List<PhraseStructureRuleRightHandSide> getRightHandSide() {
+	public List<SequencedOrSingleConstituent> getRightHandSide() {
 		return rightHandSide;
 	}
 	/**
 	 * @param rightHandSide the rightHandSide to set
 	 */
-	public void setRightHandSide(List<PhraseStructureRuleRightHandSide> rightHandSide) {
+	public void setRightHandSide(List<SequencedOrSingleConstituent> rightHandSide) {
 		this.rightHandSide = rightHandSide;
 	}
 
@@ -58,7 +58,7 @@ public class PhraseStructureRule {
 		sb.append(leftHandSide.nodeRepresentation());
 		sb.append(" = ");
 		for (int i = 0; i < rightHandSide.size(); i++) {
-			PhraseStructureRuleRightHandSide rhs = rightHandSide.get(i);
+			SequencedOrSingleConstituent rhs = rightHandSide.get(i);
 			if (i > 0) {
 				sb.append(Constants.PSR_SEPARATOR);
 			}
@@ -73,9 +73,14 @@ public class PhraseStructureRule {
 
 	public List<String> getTerminalSymbols() {
 		List<String> terminals = new ArrayList<>();
-		for (PhraseStructureRuleRightHandSide rhs : getRightHandSide()) {
-			for (Constituent c : rhs.getConstituents()) {
+		for (SequencedOrSingleConstituent rhs : getRightHandSide()) {
+			if (rhs instanceof Constituent c) {
 				terminals.add(c.getNode());
+			}
+			for (SequencedOrSingleConstituent ssc : rhs.getContents()) {
+				if (ssc instanceof Constituent c) {
+					terminals.add(c.getNode());
+				}
 			}
 		}
 		return terminals;

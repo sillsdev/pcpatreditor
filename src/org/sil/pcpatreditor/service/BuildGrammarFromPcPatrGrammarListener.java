@@ -6,7 +6,6 @@
 
 package org.sil.pcpatreditor.service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.sil.pcpatreditor.model.AtomicValueDisjunction;
 import org.sil.pcpatreditor.model.BinaryOperation;
-import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.DisjunctiveUnificationConstraints;
 import org.sil.pcpatreditor.model.EmbeddedFeatureStructure;
 import org.sil.pcpatreditor.model.FeaturePath;
@@ -32,19 +30,17 @@ import org.sil.pcpatreditor.model.LogicalConstraint;
 import org.sil.pcpatreditor.model.LogicalConstraintExpression;
 import org.sil.pcpatreditor.model.LogicalConstraintFactor;
 import org.sil.pcpatreditor.model.Constituent;
-import org.sil.pcpatreditor.model.ConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.ConstraintLeftHandSide;
 import org.sil.pcpatreditor.model.ConstraintRightHandSide;
 import org.sil.pcpatreditor.model.ConstraintWithLeftRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionConstituents;
-import org.sil.pcpatreditor.model.DisjunctionConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.DisjunctionUnificationConstraints;
+import org.sil.pcpatreditor.model.DisjunctiveConstituents;
 import org.sil.pcpatreditor.model.OptionalConstituents;
-import org.sil.pcpatreditor.model.OptionalConstituentsRightHandSide;
 import org.sil.pcpatreditor.model.PatrRule;
 import org.sil.pcpatreditor.model.PhraseStructureRule;
-import org.sil.pcpatreditor.model.PhraseStructureRuleRightHandSide;
 import org.sil.pcpatreditor.model.PriorityUnionConstraint;
+import org.sil.pcpatreditor.model.SequencedOrSingleConstituent;
 import org.sil.pcpatreditor.model.UnificationConstraint;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarBaseListener;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser;
@@ -54,7 +50,6 @@ import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.Di
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctionUnificationConstraintContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.DisjunctiveUnificationConstraintContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathOrStructureContext;
-import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathTemplateBodyContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeaturePathUnitContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateAbbreviationContext;
 import org.sil.pcpatreditor.pcpatrgrammar.antlr4generated.PcPatrGrammarParser.FeatureTemplateDisjunctionContext;
@@ -94,7 +89,7 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	ConstituentContext constituentCtx = new ConstituentContext(null, 0);
 	DisjunctionConstituentsContext disjunctionConstituentCtx = new DisjunctionConstituentsContext(null, 0);
 	PhraseStructureRule psr;
-	List<PhraseStructureRuleRightHandSide> rhs = new ArrayList<>();
+	List<SequencedOrSingleConstituent> rhs = new ArrayList<>();
 	PatrRule rule;
 	FeatureTemplate featureTemplate;
 	
@@ -253,15 +248,21 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			ParseTree prCtx = ctx.getChild(i);
 			String sChildClass = prCtx.getClass().getSimpleName();
 			switch (sChildClass) {
-			case "DisjunctiveConstituentsContext":
-				DisjunctiveConstituents dc = disjunctiveConstituentsMap.get(prCtx.hashCode());
+			case "DisjunctionConstituentsContext":
+				DisjunctionConstituents dc = disjunctionConstituentsMap.get(prCtx.hashCode());
 				disjunctionConstituents.getContents().add(dc);
+				break;
+			case "DisjunctiveConstituentsContext":
+				DisjunctiveConstituents dcv = disjunctiveConstituentsMap.get(prCtx.hashCode());
+				disjunctionConstituents.getContents().add(dcv);
+				break;
+			case "OptionalConstituentsContext":
+				OptionalConstituents optionalConstituents = optionalConstituentsMap.get(prCtx.hashCode());
+				disjunctionConstituents.getContents().add(optionalConstituents);
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
-				cRhs.getConstituents().add(constituent);
-				disjunctionConstituents.getContents().add(cRhs);
+				disjunctionConstituents.getContents().add(constituent);
 				break;
 			case "CommentContext":
 				// do nothing right now
@@ -283,11 +284,19 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			switch (sChildClass) {
 			case "DisjunctionConstituentsContext":
 				DisjunctionConstituents dc = disjunctionConstituentsMap.get(prCtx.hashCode());
-				disjunctiveConstituents.getDisjunctionConstituents().add(dc);
+				disjunctiveConstituents.getContents().add(dc);
+				break;
+			case "DisjunctiveConstituentsContext":
+				DisjunctiveConstituents dcv = disjunctiveConstituentsMap.get(prCtx.hashCode());
+				disjunctiveConstituents.getContents().add(dcv);
+				break;
+			case "OptionalConstituentsContext":
+				OptionalConstituents optionalConstituents = optionalConstituentsMap.get(prCtx.hashCode());
+				disjunctiveConstituents.getContents().add(optionalConstituents);
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				disjunctiveConstituents.getConstituents().add(constituent);
+				disjunctiveConstituents.getContents().add(constituent);
 				break;
 			case "CommentContext":
 				// do nothing right now
@@ -491,7 +500,6 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		switch (sClass) {
 		case "AtomicValueContext":
 			ftv.setAtomicValue(childCtx.getText());
-//			System.out.println("exitFeatureTemplateValue: text=" + childCtx.getText());
 			break;
 		case "FeatureTemplateDisjunctionContext":
 			ftv.setFeatureTemplateDisjunction(featureTemplateDisjunctionMap.get(childCtx.hashCode()));
@@ -605,15 +613,21 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			ParseTree prCtx = ctx.getChild(i);
 			String sChildClass = prCtx.getClass().getSimpleName();
 			switch (sChildClass) {
-			case "DisjunctiveConstituentsContext":
-				DisjunctiveConstituents dc = disjunctiveConstituentsMap.get(prCtx.hashCode());
+			case "DisjunctionConstituentsContext":
+				DisjunctionConstituents dc = disjunctionConstituentsMap.get(prCtx.hashCode());
 				optionalConstituents.getContents().add(dc);
+				break;
+			case "DisjunctiveConstituentsContext":
+				DisjunctiveConstituents dcv = disjunctiveConstituentsMap.get(prCtx.hashCode());
+				optionalConstituents.getContents().add(dcv);
+				break;
+			case "OptionalConstituentsContext":
+				OptionalConstituents oc = optionalConstituentsMap.get(prCtx.hashCode());
+				optionalConstituents.getContents().add(oc);
 				break;
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
-				cRhs.getConstituents().add(constituent);
-				optionalConstituents.getContents().add(cRhs);
+				optionalConstituents.getContents().add(constituent);
 				break;
 			case "CommentContext":
 				// do nothing right now
@@ -695,28 +709,14 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 	@Override
 	public void exitRightHandSide(PcPatrGrammarParser.RightHandSideContext ctx) {
 		rhs = new ArrayList<>();
-		String lastClass = "";
-		String nextClass = "";
 		int numChildren = ctx.getChildCount();
-		ConstituentsRightHandSide cRhs = new ConstituentsRightHandSide();
 		for (int i = 0; i < numChildren; i++) {
 			ParserRuleContext prCtx = (ParserRuleContext) ctx.getChild(i);
-			ParserRuleContext prCtxNext = null;
-			if (i < numChildren-1) {
-				prCtxNext = (ParserRuleContext) ctx.getChild(i+1);
-				nextClass = prCtxNext.getClass().getSimpleName();
-			}
 			String sClass = prCtx.getClass().getSimpleName();
 			switch (sClass) {
 			case "ConstituentContext":
 				Constituent constituent = constituentMap.get(prCtx.hashCode());
-				if (!lastClass.equals(sClass)) {
-					cRhs = new ConstituentsRightHandSide();
-				}
-				cRhs.getConstituents().add(constituent);
-				if (i == numChildren-1 || !nextClass.equals(sClass)) {
-					rhs.add(cRhs);
-				}
+				rhs.add(constituent);
 				break;
 			case "DisjunctiveConstituentsContext":
 				DisjunctiveConstituents disjunctiveConstituents = disjunctiveConstituentsMap.get(prCtx.hashCode());
@@ -724,18 +724,13 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 			break;
 			case "OptionalConstituentsContext":
 				OptionalConstituents optionalConstituents = optionalConstituentsMap.get(prCtx.hashCode());
-				OptionalConstituentsRightHandSide ocRhs = new OptionalConstituentsRightHandSide();
-				ocRhs.getOptionalConstituents().add(optionalConstituents);
-				rhs.add(ocRhs);
+				rhs.add(optionalConstituents);
 			break;
 			case "DisjunctionConstituentsContext":
 				DisjunctionConstituents dc = disjunctionConstituentsMap.get(prCtx.hashCode());
-				DisjunctionConstituentsRightHandSide dcRhs = new DisjunctionConstituentsRightHandSide();
-				dcRhs.getDisjunctionConstituents().add(dc);
-				rhs.add(dcRhs);
+				rhs.add(dc);
 				break;
 			}
-			lastClass = sClass;
 		}
 	}
 

@@ -134,10 +134,12 @@ public class GrammarBuilder {
 		}
 		if (parseTree == null) {
 			numberOfErrors = 1;
+			System.out.println("GB no tree");
 			return origGrammar;
 		}
 		numberOfErrors = parser.getNumberOfSyntaxErrors();
 		if (numberOfErrors > 0) {
+			System.out.println("GB errors=" + numberOfErrors);
 			errListener = (VerboseListener) parser.getErrorListeners().get(0);
 			PcPatrGrammarErrorInfo info = errListener.getErrorMessages().get(0);
 			errorMessage = info.getMsg();
