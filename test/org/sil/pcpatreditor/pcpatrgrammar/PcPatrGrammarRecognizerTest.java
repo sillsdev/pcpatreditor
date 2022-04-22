@@ -589,6 +589,7 @@ public class PcPatrGrammarRecognizerTest {
 		checkInvalidDescription("Let xyz be <abc> = {d e f", PcPatrGrammarConstants.MISSING_CLOSING_BRACE, 25, 1);
 		checkInvalidDescription("Let xyz be <abc> = [d:e] [e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACE, 19, 1);
 		checkInvalidDescription("Let xyz be <abc> = {[d:e] [e:f]", PcPatrGrammarConstants.MISSING_CLOSING_BRACE, 31, 1);
+		checkInvalidDescription("rule S = {NP / DP", PcPatrGrammarConstants.MISSING_CLOSING_BRACE, 17, 1);
 
 		// Missing opening/closing bracket
 		checkInvalidDescription("Let xyz be <abc> = {d:e] [e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACKET, 20, 1);

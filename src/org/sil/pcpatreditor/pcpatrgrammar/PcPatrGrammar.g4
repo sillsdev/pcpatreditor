@@ -122,7 +122,9 @@ rightHandSide: (constituent
               )+
              ;
 
-disjunctiveConstituents: '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ '}' comment?;
+disjunctiveConstituents: '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ '}' comment?
+                       | '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ {notifyErrorListeners("missingClosingBrace");} comment?
+                       ;
 disjunctionConstituents: '/' comment* (constituent | disjunctiveConstituents | optionalConstituents)+ comment?;
 optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ ')' comment?
                     | {notifyErrorListeners("missingOpeningParen");} (constituent | disjunctiveConstituents | disjunctionOptionalConstituents)+ ')' comment?
