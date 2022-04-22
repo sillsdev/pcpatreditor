@@ -11,6 +11,7 @@ package org.sil.pcpatreditor.pcpatrgrammar;
  */
 public class PcPatrGrammarConstants {
 	public static final String CONTENT_AFTER_COMPLETED_TREE = "contentAfterCompletedTree";
+	public static final String MISSING_BINOP = "missingBinop";
 	public static final String MISSING_CLOSING_BRACE = "missingClosingBrace";
 	public static final String MISSING_CLOSING_BRACKET = "missingClosingBracket";
 	public static final String MISSING_CLOSING_PAREN = "missingClosingParen";

@@ -636,6 +636,20 @@ public class PcPatrGrammarRecognizerTest {
 		// Missing colon
 		checkInvalidDescription("Let xyz be <abc> = {[d e] [e:f]}", PcPatrGrammarConstants.MISSING_COLON, 23, 1);
 		checkInvalidDescription("Let xyz be <abc> = {[d:[e g]] [e:f]}", PcPatrGrammarConstants.MISSING_COLON, 26, 1);
+
+		// Missing binop
+		checkInvalidDescription("rule IP = I <IP head> == [subject:[head:[type:[coordination:+]]]]"
+				+ " [type:[pro-drop:-]]"
+				, PcPatrGrammarConstants.MISSING_BINOP, 66, 1);
+		checkInvalidDescription("rule IP = I <IP head> == ~[subject:[head:[type:[coordination:+]]]]"
+				+ " [type:[pro-drop:-]]"
+				, PcPatrGrammarConstants.MISSING_BINOP, 67, 1);
+		checkInvalidDescription("rule IP = I <IP head> == [subject:[head:[type:[coordination:+]]]]"
+				+ " ~[type:[pro-drop:-]]"
+				, PcPatrGrammarConstants.MISSING_BINOP, 66, 1);
+		checkInvalidDescription("rule IP = I <IP head> == ~[subject:[head:[type:[coordination:+]]]]"
+				+ " ~[type:[pro-drop:-]]"
+				, PcPatrGrammarConstants.MISSING_BINOP, 67, 1);
 	}
 
 	private void checkInvalidDescription(String sDescription, String sFailedPortion, int iPos,

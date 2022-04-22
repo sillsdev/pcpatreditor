@@ -161,21 +161,9 @@ public class GrammarBuilder {
 		String sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.unknown");
 
 		switch (GrammarBuilder.getErrorMessage()) {
-		case PcPatrGrammarConstants.MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE:
-			sSyntaxErrorMessage = bundle
-			.getString("grammarsyntaxerror.disjunction_or_feature_template_value");
-			break;
-		case PcPatrGrammarConstants.MISSING_EQUALS_SIGN:
-			sSyntaxErrorMessage = bundle
-			.getString("grammarsyntaxerror.missing_equals_sign");
-			break;
-		case PcPatrGrammarConstants.MISSING_TEMPLATE_BODY:
-			sSyntaxErrorMessage = bundle
-					.getString("grammarsyntaxerror.missing_template_body");
-			break;
-		case PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE:
-			sSyntaxErrorMessage = bundle
-					.getString("grammarsyntaxerror.missing_template_name_or_be");
+
+		case PcPatrGrammarConstants.MISSING_BINOP:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_binop");
 			break;
 
 		case PcPatrGrammarConstants.MISSING_CLOSING_BRACE:
@@ -198,21 +186,16 @@ public class GrammarBuilder {
 			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_colon");
 			break;
 
-//		case DescriptionConstants.MISSING_CONSTITUENT:
-//			sSyntaxErrorMessage = bundle
-//					.getString("grammarsyntaxerror.missing_constituent");
-//			break;
-//
-//		case DescriptionConstants.MISSING_CONTENT:
-//			sSyntaxErrorMessage = bundle
-//					.getString("grammarsyntaxerror.missing_content");
-//			break;
-//
-//		case DescriptionConstants.MISSING_CONTENT_AND_CLOSING_PAREN:
-//			sSyntaxErrorMessage = bundle
-//					.getString("grammarsyntaxerror.missing_content_and_closing_paren");
-//			break;
-//
+		case PcPatrGrammarConstants.MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE:
+			sSyntaxErrorMessage = bundle
+			.getString("grammarsyntaxerror.disjunction_or_feature_template_value");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_EQUALS_SIGN:
+			sSyntaxErrorMessage = bundle
+			.getString("grammarsyntaxerror.missing_equals_sign");
+			break;
+
 		case PcPatrGrammarConstants.MISSING_OPENING_BRACE:
 			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_opening_brace");
 			break;
@@ -229,14 +212,15 @@ public class GrammarBuilder {
 			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_opening_wedge");
 			break;
 
-//		case DescriptionConstants.MISSING_RIGHT_BRANCH:
-//			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_right_branch");
-//			break;
-//
-//		case DescriptionConstants.TOO_MANY_CLOSING_PARENS:
-//			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.too_many_close_parens");
-//			break;
-//
+		case PcPatrGrammarConstants.MISSING_TEMPLATE_BODY:
+			sSyntaxErrorMessage = bundle
+					.getString("grammarsyntaxerror.missing_template_body");
+			break;
+		case PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE:
+			sSyntaxErrorMessage = bundle
+					.getString("grammarsyntaxerror.missing_template_name_or_be");
+			break;
+
 		default:
 			System.out.println("error was: " + GrammarBuilder.getErrorMessage());
 			System.out.println("number of errors was: " + GrammarBuilder.getNumberOfErrors());

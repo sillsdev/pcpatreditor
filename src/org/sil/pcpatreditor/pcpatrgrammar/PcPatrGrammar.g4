@@ -185,6 +185,10 @@ logConstraintExpression: logConstraintFactor
 					   | '~' logConstraintFactor binop     logConstraintFactor
 					   |     logConstraintFactor binop '~' logConstraintFactor
 					   | '~' logConstraintFactor binop '~' logConstraintFactor
+					   |     logConstraintFactor {notifyErrorListeners("missingBinop");}     logConstraintFactor
+					   | '~' logConstraintFactor {notifyErrorListeners("missingBinop");}     logConstraintFactor
+					   |     logConstraintFactor {notifyErrorListeners("missingBinop");} '~' logConstraintFactor
+					   | '~' logConstraintFactor {notifyErrorListeners("missingBinop");} '~' logConstraintFactor
                        ;
 logConstraintFactor: featureStructure
                    | '(' logConstraintExpression ')'
