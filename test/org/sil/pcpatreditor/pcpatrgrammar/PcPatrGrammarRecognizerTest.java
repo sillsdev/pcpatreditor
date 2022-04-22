@@ -65,6 +65,9 @@ public class PcPatrGrammarRecognizerTest {
 				+ "S = AdvP / DP    |/ VP / PP "
 				, "(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { testing }) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent AdvP) (disjunctionConstituents / (constituent DP) (comment |/ VP / PP )))))) <EOF>)");
 		checkValidGrammar(
+				"rule\n S = NP_1 V (NP_2 ({Adv / Adj (P)}))",
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP_1) (constituent V) (optionalConstituents ( (constituent NP_2) (optionalConstituents ( (disjunctiveConstituents { (constituent Adv) (disjunctionConstituents / (constituent Adj) (optionalConstituents ( (constituent P) ))) }) )) )))))) <EOF>)");
+		checkValidGrammar(
 				"rule\n S = NP VP\n<S head cat> = <VP head cat>",
 				"(patrgrammar (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP) (constituent VP))) (constraints (unificationConstraint (uniConstraintLeftHandSide (openingWedge <) (constituent S) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >)) = (uniConstraintRightHandSide (openingWedge <) (constituent VP) (featurePath (atomicValue head) (featurePath (atomicValue cat))) (closingWedge >)))))) <EOF>)");
 		// Following Let statements based on ones in the PcPatr documentation
@@ -105,6 +108,12 @@ public class PcPatrGrammarRecognizerTest {
 				"Let N be <number> = !sg\nrule\n S = NP VP\n",
 				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue N)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue number)) (closingWedge >)) = (featureTemplateValue (atomicValue !sg))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP) (constituent VP))))) <EOF>)");
 		// Following Let statements based on ones in active grammars
+		checkValidGrammar(
+				"rule {VP option 6cIpastNew - V final, DP initial or final or medial (2) and ditransitive with PP, past only}\r\n"
+				+ "VP = {DP (AdvP) {(PP_1) PP / PP PP_1} / {(PP_3) PP_2 / PP_2 PP_3} (AdvP) DP / {PP_2 / PP_2 PP_3} DP (AdvP) PP_1} V | RL 5Oct21 - don't think we need 1st PP_3 since it can come in the I' phrase. Try turning it off sometime.\r\n"
+				+ "                                                                                                                   | RL 17Nov21 added optional AdvP\r\n"
+				,
+				"(patrgrammar (patrRules (patrRule (ruleKW rule) (ruleIdentifier { VP option 6cIpastNew - V final, DP initial or final or medial ( 2 ) and ditransitive with PP, past only }) (phraseStructureRule (constituent VP) (ruleDef =) (rightHandSide (disjunctiveConstituents { (constituent DP) (optionalConstituents ( (constituent AdvP) )) (disjunctiveConstituents { (optionalConstituents ( (constituent PP_1) )) (constituent PP) (disjunctionConstituents / (constituent PP) (constituent PP_1)) }) (disjunctionConstituents / (disjunctiveConstituents { (optionalConstituents ( (constituent PP_3) )) (constituent PP_2) (disjunctionConstituents / (constituent PP_2) (constituent PP_3)) }) (optionalConstituents ( (constituent AdvP) )) (constituent DP)) (disjunctionConstituents / (disjunctiveConstituents { (constituent PP_2) (disjunctionConstituents / (constituent PP_2) (constituent PP_3)) }) (constituent DP) (optionalConstituents ( (constituent AdvP) )) (constituent PP_1)) }) (constituent V))) (comment | RL 5Oct21 - don't think we need 1st PP_3 since it can come in the I' phrase. Try turning it off sometime.\\r\\n) (comment | RL 17Nov21 added optional AdvP\\r\\n))) <EOF>)");
 		checkValidGrammar(
 				"Let absolutive be <head case> = absolutive\nrule\n S = NP VP\n",
 				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue absolutive)) be) (featurePathTemplateBody (featurePathUnit (openingWedge <) (featurePath (atomicValue head) (featurePath (atomicValue case))) (closingWedge >)) = (featureTemplateValue (atomicValue absolutive))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP) (constituent VP))))) <EOF>)");

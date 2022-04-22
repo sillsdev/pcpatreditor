@@ -83,7 +83,7 @@ public class ConstituentsCollectorTest {
 		
 		terminals = collector.getTerminals();
 		assertNotNull(terminals);
-		assertEquals(15, terminals.size());
+		assertEquals(16, terminals.size());
 		List<String> tList = terminals.stream().collect(Collectors.toList());
 		assertEquals("Adj", tList.get(0));
 		assertEquals("Adv", tList.get(1));
@@ -100,6 +100,7 @@ public class ConstituentsCollectorTest {
 		assertEquals("P", tList.get(12));
 		assertEquals("Pron", tList.get(13));
 		assertEquals("Q", tList.get(14));
+		assertEquals("Quote", tList.get(15));
 	}
 
 }

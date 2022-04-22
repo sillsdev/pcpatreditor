@@ -495,27 +495,31 @@ public class RootLayoutController implements Initializable {
 				} else if (fOpenParenJustTyped) {
 					fOpenParenJustTyped = false;
 					insertMatchingClosingItem(")");
-					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-					GrammarUIService.processLeftItem(grammar, false,
-							'(', ')', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+					// using the matching can cause the caret to move drastically to the top
+//					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+//					GrammarUIService.processLeftItem(grammar, false,
+//							'(', ')', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				} else if (fOpenBracketJustTyped) {
 					fOpenBracketJustTyped = false;
 					insertMatchingClosingItem("]");
-					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-					GrammarUIService.processLeftItem(grammar, false,
-							'[', ']', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+					// using the matching can cause the caret to move drastically to the top
+//					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+//					GrammarUIService.processLeftItem(grammar, false,
+//							'[', ']', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				} else if (fOpenWedgeJustTyped) {
 					fOpenWedgeJustTyped = false;
 					insertMatchingClosingItem(">");
-					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-					GrammarUIService.processLeftItem(grammar, false,
-							'<', '>', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+					// using the matching can cause the caret to move drastically to the top
+//					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+//					GrammarUIService.processLeftItem(grammar, false,
+//							'<', '>', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				} else if (fOpenBraceJustTyped) {
 					fOpenBraceJustTyped = false;
 					insertMatchingClosingItem("}");
-					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
-					GrammarUIService.processLeftItem(grammar, false,
-							'{', '}', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
+					// using the matching can cause the caret to move drastically to the top
+//					GrammarUIService.setItemsKeyedDuringPause(itemsKeyedDuringPause);
+//					GrammarUIService.processLeftItem(grammar, false,
+//							'{', '}', applicationPreferences.getShowMatchingItemDelay(), false, bundle, mainIcon);
 				}
 				switch (event.getCode()) {
 				// ignore these

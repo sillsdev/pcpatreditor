@@ -133,8 +133,14 @@ public class GrammarBuilder {
 				// do nothing
 			}
 		}
+		if (parseTree == null) {
+			numberOfErrors = 1;
+			System.out.println("GB no tree");
+			return origGrammar;
+		}
 		numberOfErrors = parser.getNumberOfSyntaxErrors();
 		if (numberOfErrors > 0) {
+			System.out.println("GB errors=" + numberOfErrors);
 			errListener = (VerboseListener) parser.getErrorListeners().get(0);
 			PcPatrGrammarErrorInfo info = errListener.getErrorMessages().get(0);
 			errorMessage = info.getMsg();
@@ -161,15 +167,15 @@ public class GrammarBuilder {
 			break;
 		case PcPatrGrammarConstants.MISSING_EQUALS_SIGN:
 			sSyntaxErrorMessage = bundle
-			.getString("grammarsyntaxerror.missingequalssign");
+			.getString("grammarsyntaxerror.missing_equals_sign");
 			break;
 		case PcPatrGrammarConstants.MISSING_TEMPLATE_BODY:
 			sSyntaxErrorMessage = bundle
-					.getString("grammarsyntaxerror.missingtemplatebody");
+					.getString("grammarsyntaxerror.missing_template_body");
 			break;
 		case PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE:
 			sSyntaxErrorMessage = bundle
-					.getString("grammarsyntaxerror.missingtemplatenameorbe");
+					.getString("grammarsyntaxerror.missing_template_name_or_be");
 			break;
 
 //		case DescriptionConstants.MISSING_CLOSING_PAREN:
