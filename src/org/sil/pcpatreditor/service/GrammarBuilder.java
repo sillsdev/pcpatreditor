@@ -178,43 +178,63 @@ public class GrammarBuilder {
 					.getString("grammarsyntaxerror.missing_template_name_or_be");
 			break;
 
-//		case DescriptionConstants.MISSING_CLOSING_PAREN:
-//			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.missing_closing_paren");
-//			break;
-//
-//		case DescriptionConstants.MISSING_CLOSING_WEDGE:
-//			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.missing_closing_wedge");
-//			break;
-//
+		case PcPatrGrammarConstants.MISSING_CLOSING_BRACE:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_closing_brace");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_CLOSING_BRACKET:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_closing_bracket");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_CLOSING_PAREN:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_closing_paren");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_CLOSING_WEDGE:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_closing_wedge");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_COLON:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_colon");
+			break;
+
 //		case DescriptionConstants.MISSING_CONSTITUENT:
 //			sSyntaxErrorMessage = bundle
-//					.getString("descriptionsyntaxerror.missing_constituent");
+//					.getString("grammarsyntaxerror.missing_constituent");
 //			break;
 //
 //		case DescriptionConstants.MISSING_CONTENT:
 //			sSyntaxErrorMessage = bundle
-//					.getString("descriptionsyntaxerror.missing_content");
+//					.getString("grammarsyntaxerror.missing_content");
 //			break;
 //
 //		case DescriptionConstants.MISSING_CONTENT_AND_CLOSING_PAREN:
 //			sSyntaxErrorMessage = bundle
-//					.getString("descriptionsyntaxerror.missing_content_and_closing_paren");
+//					.getString("grammarsyntaxerror.missing_content_and_closing_paren");
 //			break;
 //
-//		case DescriptionConstants.MISSING_OPENING_PAREN:
-//			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.missing_opening_paren");
-//			break;
-//
-//		case DescriptionConstants.MISSING_OPENING_WEDGE:
-//			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.missing_opening_wedge");
-//			break;
-//
+		case PcPatrGrammarConstants.MISSING_OPENING_BRACE:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_opening_brace");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_OPENING_BRACKET:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_opening_bracket");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_OPENING_PAREN:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_opening_paren");
+			break;
+
+		case PcPatrGrammarConstants.MISSING_OPENING_WEDGE:
+			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_opening_wedge");
+			break;
+
 //		case DescriptionConstants.MISSING_RIGHT_BRANCH:
-//			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.missing_right_branch");
+//			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.missing_right_branch");
 //			break;
 //
 //		case DescriptionConstants.TOO_MANY_CLOSING_PARENS:
-//			sSyntaxErrorMessage = bundle.getString("descriptionsyntaxerror.too_many_close_parens");
+//			sSyntaxErrorMessage = bundle.getString("grammarsyntaxerror.too_many_close_parens");
 //			break;
 //
 		default:
@@ -226,20 +246,6 @@ public class GrammarBuilder {
 			break;
 		}
 		return sSyntaxErrorMessage;
-	}
-
-	public static String buildErrorMessagePart1(String sSyntaxErrorMessage, ResourceBundle bundle) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(bundle.getString("descriptionsyntaxerror.errorindescription"));
-		sb.append(sSyntaxErrorMessage);
-		String sMsgDetectedAt = bundle.getString("descriptionsyntaxerror.detectedat");
-		int iLine = GrammarBuilder.getLineNumberOfError();
-		int iPos = GrammarBuilder.getCharacterPositionInLineOfError();
-		String sMessage = sMsgDetectedAt.replace("{0}", String.valueOf(iLine)).replace("{1}",
-				String.valueOf(iPos));
-		sb.append(sMessage);
-		sb.append("\n\n");
-		return sb.toString();
 	}
 
 }

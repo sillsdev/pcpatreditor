@@ -629,6 +629,10 @@ public class PcPatrGrammarRecognizerTest {
 		checkInvalidDescription("rule IP = I <IP head> == ~([subject:[head:[type:[coordination:+]]]]"
 				+ "& [type:[pro-drop:-]]"
 				, PcPatrGrammarConstants.MISSING_CLOSING_PAREN, 88, 1);
+
+		// Missing colon
+		checkInvalidDescription("Let xyz be <abc> = {[d e] [e:f]}", PcPatrGrammarConstants.MISSING_COLON, 23, 1);
+		checkInvalidDescription("Let xyz be <abc> = {[d:[e g]] [e:f]}", PcPatrGrammarConstants.MISSING_COLON, 26, 1);
 	}
 
 	private void checkInvalidDescription(String sDescription, String sFailedPortion, int iPos,

@@ -72,6 +72,7 @@ featureStructure: openingBracket featureStructureName ':' featureStructureValue 
                 | emptyFeatureStructure comment*
                 | {notifyErrorListeners("missingOpeningBracket");} featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
                 | openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* {notifyErrorListeners("missingClosingBracket");}
+                | openingBracket featureStructureName {notifyErrorListeners("missingColon");}  featureStructureValue embeddedFeatureStructure* closingBracket comment*
                 ;
 
 featureStructureName: ruleKW
@@ -83,6 +84,7 @@ featureStructureValue: featureStructure
                      | 'be'
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
+                        | featureStructureName {notifyErrorListeners("missingColon");} featureStructureValue comment*
                         ;
 emptyFeatureStructure: '[]';
 

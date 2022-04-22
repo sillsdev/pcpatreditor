@@ -15,6 +15,7 @@ public class PcPatrGrammarConstants {
 	public static final String MISSING_CLOSING_BRACKET = "missingClosingBracket";
 	public static final String MISSING_CLOSING_PAREN = "missingClosingParen";
 	public static final String MISSING_CLOSING_WEDGE = "missingClosingWedge";
+	public static final String MISSING_COLON = "missingColon";
 	public static final String MISSING_CONTENT_AFTER_SUBSCRIPT = "missingContentAfterSubscript";
 	public static final String MISSING_CONTENT_AFTER_SUPERSCRIPT = "missingContentAfterSuperscript";
 	public static final String MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE = "missingDisjunctionOrFeatureTemplateValue";
