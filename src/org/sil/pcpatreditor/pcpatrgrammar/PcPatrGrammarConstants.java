@@ -11,12 +11,18 @@ package org.sil.pcpatreditor.pcpatrgrammar;
  */
 public class PcPatrGrammarConstants {
 	public static final String CONTENT_AFTER_COMPLETED_TREE = "contentAfterCompletedTree";
+	public static final String MISSING_CLOSING_BRACE = "missingClosingBrace";
+	public static final String MISSING_CLOSING_BRACKET = "missingClosingBracket";
 	public static final String MISSING_CLOSING_PAREN = "missingClosingParen";
+	public static final String MISSING_CLOSING_WEDGE = "missingClosingWedge";
 	public static final String MISSING_CONTENT_AFTER_SUBSCRIPT = "missingContentAfterSubscript";
 	public static final String MISSING_CONTENT_AFTER_SUPERSCRIPT = "missingContentAfterSuperscript";
 	public static final String MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE = "missingDisjunctionOrFeatureTemplateValue";
 	public static final String MISSING_EQUALS_SIGN = "missingEqualsSign";
+	public static final String MISSING_OPENING_BRACE = "missingOpeningBrace";
+	public static final String MISSING_OPENING_BRACKET = "missingOpeningBracket";
 	public static final String MISSING_OPENING_PAREN = "missingOpeningParen";
+	public static final String MISSING_OPENING_WEDGE = "missingOpeningWedge";
 	public static final String MISSING_TEMPLATE_BODY = "missingTemplateBody";
 	public static final String MISSING_TEMPLATE_NAME_OR_BE = "missingTemplateNameOrBe";
 	public static final String TOO_MANY_CLOSING_PARENS = "tooManyCloseParens";

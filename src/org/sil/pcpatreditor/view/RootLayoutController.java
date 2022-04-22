@@ -102,6 +102,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -151,6 +152,7 @@ public class RootLayoutController implements Initializable {
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
 	protected RuleLocator psrCollector = RuleLocator.getInstance();
 	protected Grammar pcpatrGrammar = new Grammar();
+	protected TextFlow statusBarTextFlow;
 
 	@FXML
 	BorderPane mainPane;
@@ -677,6 +679,29 @@ public class RootLayoutController implements Initializable {
 				event.consume();
 			}
 		});
+
+		statusBar.setOnMouseClicked(mouseEvent -> {
+			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+				if (mouseEvent.getClickCount() == 2) {
+					if (GrammarBuilder.getNumberOfErrors() > 0) {
+						int line = Math.max(GrammarBuilder.getLineNumberOfError()-1,0);
+						int charPos = GrammarBuilder.getCharacterPositionInLineOfError();
+						if (charPos == 0) {
+							// we assume that the error is at the end of the previous line;
+							// move the caret to the end of the previous line
+							line--;
+							charPos = grammar.getParagraphLength(line);
+						} else {
+							// try to put the caret at the right spot
+							charPos = Math.min(++charPos, grammar.getParagraphLength(line));
+						}
+						grammar.moveTo(line, charPos);
+						grammar.requestFollowCaret();
+					}
+				}
+			}
+		});
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -898,8 +923,8 @@ public class RootLayoutController implements Initializable {
 	private void reportErrorInDescriptionMessage() {
 		String sSyntaxErrorMessage = GrammarBuilder.buildErrorMessage(bundle);
 		statusBar.getChildren().clear();
-		TextFlow textFlow = buildErrorMessageAsTextFlow(sSyntaxErrorMessage);
-		statusBar.getChildren().add(textFlow);
+		statusBarTextFlow = buildErrorMessageAsTextFlow(sSyntaxErrorMessage);
+		statusBar.getChildren().add(statusBarTextFlow);
 	}
 
 	private TextFlow buildErrorMessageAsTextFlow(String sSyntaxErrorMessage) {

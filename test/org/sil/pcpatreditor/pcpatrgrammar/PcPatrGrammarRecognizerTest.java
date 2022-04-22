@@ -578,12 +578,46 @@ public class PcPatrGrammarRecognizerTest {
 		checkInvalidDescription("(S NP) (VP))",
 				"mismatched input '(' expecting {<EOF>, 'Let', 'rule', 'Rule', 'RULE', 'parameter', 'Parameter', 'PARAMETER', 'define', 'Define', 'DEFINE', 'constraint', 'Constraint', 'CONSTRAINT', LINECOMMENT}",
 				0, 1);
+		// template beginning
 		checkInvalidDescription("Let", PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE, 3, 2);
 		checkInvalidDescription("Let xyz", PcPatrGrammarConstants.MISSING_TEMPLATE_NAME_OR_BE, 4, 1);
 		checkInvalidDescription("Let xyz be", PcPatrGrammarConstants.MISSING_TEMPLATE_BODY, 10, 1);
 		checkInvalidDescription("Let xyz be <abc>", PcPatrGrammarConstants.MISSING_EQUALS_SIGN, 16, 1);
-		checkInvalidDescription("Let xyz be <abc> =", PcPatrGrammarConstants.MISSING_DISJUNCTION_OR_FEATURE_TEMPLATE_VALUE, 18, 1);
 
+		// Missing opening/closing brace
+		checkInvalidDescription("Let xyz be <abc> = d e f}", PcPatrGrammarConstants.MISSING_OPENING_BRACE, 19, 1);
+		checkInvalidDescription("Let xyz be <abc> = {d e f", PcPatrGrammarConstants.MISSING_CLOSING_BRACE, 25, 1);
+		checkInvalidDescription("Let xyz be <abc> = [d:e] [e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACE, 19, 1);
+		checkInvalidDescription("Let xyz be <abc> = {[d:e] [e:f]", PcPatrGrammarConstants.MISSING_CLOSING_BRACE, 31, 1);
+
+		// Missing opening/closing bracket
+		checkInvalidDescription("Let xyz be <abc> = {d:e] [e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACKET, 20, 1);
+		checkInvalidDescription("Let xyz be <abc> = {[d:e] e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACKET, 26, 1);
+		checkInvalidDescription("Let xyz be <abc> = {[d:e [e:f]}", PcPatrGrammarConstants.MISSING_CLOSING_BRACKET, 25, 1);
+		checkInvalidDescription("Let xyz be <abc> = {[d:e] [e:f}", PcPatrGrammarConstants.MISSING_CLOSING_BRACKET, 30, 1);
+
+		// Missing opening/closing wedge
+		checkInvalidDescription("Let xyz be abc> = def", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 11, 1);
+		checkInvalidDescription("Let xyz be <abc = def", PcPatrGrammarConstants.MISSING_CLOSING_WEDGE, 16, 1);
+
+		checkInvalidDescription("rule S = VP\nS head> = <VP head>", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 0, 1);
+		checkInvalidDescription("rule S = VP\n<S head = <VP head>", PcPatrGrammarConstants.MISSING_CLOSING_WEDGE, 8, 1);
+		checkInvalidDescription("rule S = VP\n<S head> = VP head>", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 11, 1);
+		checkInvalidDescription("rule S = VP\n<S head> = <VP head", PcPatrGrammarConstants.MISSING_CLOSING_WEDGE, 19, 1);
+
+		checkInvalidDescription("rule S = VP\nS head> <= <VP head>", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 0, 1);
+		checkInvalidDescription("rule S = VP\n<S head <= <VP head>", PcPatrGrammarConstants.MISSING_CLOSING_WEDGE, 8, 1);
+		checkInvalidDescription("rule S = VP\n<S head> <= VP head>", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 12, 1);
+		checkInvalidDescription("rule S = VP\n<S head> <= <VP head", PcPatrGrammarConstants.MISSING_CLOSING_WEDGE, 20, 1);
+
+		checkInvalidDescription("rule S = VP\nS head> == [finite:+]", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 2, 1);
+		checkInvalidDescription("rule S = VP\n<S head == [finite:+]", PcPatrGrammarConstants.MISSING_CLOSING_WEDGE, 8, 1);
+
+		// Missing opening/closing paren
+		checkInvalidDescription("rule S = VP) NP", PcPatrGrammarConstants.MISSING_OPENING_PAREN, 9, 1);
+		checkInvalidDescription("rule S = VP NP) PP", PcPatrGrammarConstants.MISSING_OPENING_PAREN, 12, 1);
+		checkInvalidDescription("rule S = (VP NP", "no viable alternative at input '(VPNP'", 15, 1);
+		checkInvalidDescription("rule S = VP (NP PP", "no viable alternative at input '(NPPP'", 18, 1);
 	}
 
 	private void checkInvalidDescription(String sDescription, String sFailedPortion, int iPos,

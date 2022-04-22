@@ -481,7 +481,9 @@ public class BuildGrammarFromPcPatrGrammarListener extends PcPatrGrammarBaseList
 		ParseTree childCtx = ctx.getChild(1);
 		ParserRuleContext parentCtx = ctx.getParent();
 		FeaturePathTemplateBody fptb = featurePathTemplateBodyMap.get(parentCtx.hashCode());
-		fptb.setFeatureTemplateAbbreviation(childCtx.getText());
+		if (childCtx != null) {
+			fptb.setFeatureTemplateAbbreviation(childCtx.getText());
+		}
 	}
 
 	@Override
