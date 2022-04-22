@@ -45,6 +45,8 @@ featureTemplateName: atomicValue
 
 featureTemplateAbbreviation: '[' featureTemplateName ']' comment*
                            | featureTemplateName comment*
+                           |  {notifyErrorListeners("missingOpeningBracket");} featureTemplateName ']' comment*
+                           |  '[' featureTemplateName {notifyErrorListeners("missingClosingBracket");} comment*
                            ;
                    
 featureTemplateValue: featureTemplateDisjunction

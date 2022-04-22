@@ -593,8 +593,10 @@ public class PcPatrGrammarRecognizerTest {
 		// Missing opening/closing bracket
 		checkInvalidDescription("Let xyz be <abc> = {d:e] [e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACKET, 20, 1);
 		checkInvalidDescription("Let xyz be <abc> = {[d:e] e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACKET, 26, 1);
+		checkInvalidDescription("Let xyz be <abc> = {de] [e:f]}", PcPatrGrammarConstants.MISSING_OPENING_BRACKET, 20, 1);
 		checkInvalidDescription("Let xyz be <abc> = {[d:e [e:f]}", PcPatrGrammarConstants.MISSING_CLOSING_BRACKET, 25, 1);
 		checkInvalidDescription("Let xyz be <abc> = {[d:e] [e:f}", PcPatrGrammarConstants.MISSING_CLOSING_BRACKET, 30, 1);
+		checkInvalidDescription("Let xyz be <abc> = {[d:e] [ef}", PcPatrGrammarConstants.MISSING_CLOSING_BRACKET, 29, 1);
 
 		// Missing opening/closing wedge
 		checkInvalidDescription("Let xyz be abc> = def", PcPatrGrammarConstants.MISSING_OPENING_WEDGE, 11, 1);
