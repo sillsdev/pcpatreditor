@@ -618,6 +618,17 @@ public class PcPatrGrammarRecognizerTest {
 		checkInvalidDescription("rule S = VP NP) PP", PcPatrGrammarConstants.MISSING_OPENING_PAREN, 12, 1);
 		checkInvalidDescription("rule S = (VP NP", "no viable alternative at input '(VPNP'", 15, 1);
 		checkInvalidDescription("rule S = VP (NP PP", "no viable alternative at input '(NPPP'", 18, 1);
+
+		checkInvalidDescription("rule S = VP / IP) NP", PcPatrGrammarConstants.MISSING_OPENING_PAREN, 12, 1);
+		checkInvalidDescription("rule S = (VP / IP NP", PcPatrGrammarConstants.MISSING_CLOSING_PAREN, 20, 1);
+
+		checkInvalidDescription("rule IP = I <IP head> == ~[subject:[head:[type:[coordination:+]]]]"
+				+ "& [type:[pro-drop:-]])"
+				, "extraneous input ')' expecting {<EOF>, 'Let', 'rule', 'Rule', 'RULE', 'parameter', 'Parameter', 'PARAMETER', 'define', 'Define', 'DEFINE', 'constraint', 'Constraint', 'CONSTRAINT', LINECOMMENT}"
+				, 87, 1);
+		checkInvalidDescription("rule IP = I <IP head> == ~([subject:[head:[type:[coordination:+]]]]"
+				+ "& [type:[pro-drop:-]]"
+				, PcPatrGrammarConstants.MISSING_CLOSING_PAREN, 88, 1);
 	}
 
 	private void checkInvalidDescription(String sDescription, String sFailedPortion, int iPos,

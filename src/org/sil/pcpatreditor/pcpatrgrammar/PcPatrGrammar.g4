@@ -127,7 +127,10 @@ optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConst
 // Note: following goes down a bad path and reports two errors sometime when it still parses.
 //                    | '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ {notifyErrorListeners("missingClosingParen");}
                     ;
-disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?;
+disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?
+                               | {notifyErrorListeners("missingOpeningParen");} constituent+ disjunctionOptionalConstituents+ ')' comment?
+                               | '(' constituent+ disjunctionOptionalConstituents+ {notifyErrorListeners("missingClosingParen");} comment?
+                               ;
 disjunctionOptionalConstituents: '/' comment* constituent+ comment?;
 
 constraints: (unificationConstraint | priorityUnionConstraint | logicalConstraint | comment)+;
@@ -179,6 +182,9 @@ logConstraintExpression: logConstraintFactor
                        ;
 logConstraintFactor: featureStructure
                    | '(' logConstraintExpression ')'
+                   // following causes left recursion problem
+//                   | {notifyErrorListeners("missingOpeningParen");} logConstraintExpression ')'
+                   | '(' logConstraintExpression {notifyErrorListeners("missingClosingParen");}
                    ;
 
 binop: '&'   comment*
