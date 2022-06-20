@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->28 March, 2022</date
+>20 June, 2022</date
 ><version
->Version 0.12.1 Alpha</version
+>Version 0.13.0 Alpha</version
 ><version
 >Copyright © 2021-2022 SIL International</version
 ><contents
@@ -60,7 +60,15 @@ width="450"
 ></chart
 ></example
 ><p
->The file name of the grammar file is shown in the upper left part of the window. You edit the grammar in the main pane.</p
+>The file name of the grammar file is shown in the upper left part of the window. You edit the grammar in the main pane. When <object
+type="tPcPatrEditor"
+></object
+> finds any error messages, a message will show in the status bar. If you double-click on the status bar, you will be shown where the error was found.<endnote
+id="nError"
+><p
+>When the grammar is large, it may take a while for an error message to appear or go away.</p
+></endnote
+></p
 ><p
 >You can drag the edges of the window to make it larger.</p
 ></section1

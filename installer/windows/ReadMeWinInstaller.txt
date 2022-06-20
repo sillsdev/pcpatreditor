@@ -1,6 +1,6 @@
 To produce the Windows installer:
 
-Make sure the progam has been compiled.
+Make sure the program has been compiled.
 
 In a command prompt with administrator privilege, make sure have the path set to the correct version of Java and WiX.  (See setPath.bat)
 

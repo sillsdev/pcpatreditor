@@ -6,6 +6,7 @@
 
 package org.sil.pcpatreditor.service;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -136,16 +137,17 @@ public class GrammarBuilder {
 		if (parseTree == null) {
 			numberOfErrors = 1;
 			System.out.println("GB no tree");
+			errListener = (VerboseListener) parser.getErrorListeners().get(0);
+			if (errListener != null && errListener.getErrorMessages().size() > 0) {
+				collectErrorInfo(errListener);
+			}
 			return origGrammar;
 		}
 		numberOfErrors = parser.getNumberOfSyntaxErrors();
 		if (numberOfErrors > 0) {
 			System.out.println("GB errors=" + numberOfErrors);
 			errListener = (VerboseListener) parser.getErrorListeners().get(0);
-			PcPatrGrammarErrorInfo info = errListener.getErrorMessages().get(0);
-			errorMessage = info.getMsg();
-			lineNumberOfError = info.getLine();
-			characterPositionInLineOfError = info.getCharPositionInLine();
+			collectErrorInfo(errListener);
 			return origGrammar;
 		}
 		ParseTreeWalker walker = new ParseTreeWalker(); // create standard
@@ -155,6 +157,13 @@ public class GrammarBuilder {
 											// listener
 		Grammar newGrammar = validator.getGrammar();
 		return newGrammar;
+	}
+
+	protected static void collectErrorInfo(VerboseListener errListener) {
+		PcPatrGrammarErrorInfo info = errListener.getErrorMessages().get(0);
+		errorMessage = info.getMsg();
+		lineNumberOfError = info.getLine();
+		characterPositionInLineOfError = info.getCharPositionInLine();
 	}
 
 	public static String buildErrorMessage(ResourceBundle bundle) {
@@ -229,7 +238,15 @@ public class GrammarBuilder {
 					+ GrammarBuilder.getCharacterPositionInLineOfError());
 			break;
 		}
-		return sSyntaxErrorMessage;
+		StringBuilder sb = new StringBuilder();
+		sb.append(sSyntaxErrorMessage);
+		Object[] args = { GrammarBuilder.getLineNumberOfError(), (GrammarBuilder.getCharacterPositionInLineOfError()+1) };
+		MessageFormat msgFormatter = new MessageFormat("");
+		msgFormatter.setLocale(bundle.getLocale());
+		msgFormatter.applyPattern(bundle.getString("grammarsyntaxerror.location"));
+		String sMessage = msgFormatter.format(args);
+		sb.append(sMessage);
+		return sb.toString();
 	}
 
 }

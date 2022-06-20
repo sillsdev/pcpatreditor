@@ -17,6 +17,11 @@ grammar PcPatrGrammar;
 	package org.sil.pcpatreditor.pcpatrgrammar.antlr4generated;
 }
 
+
+// NOTE: Commented off all notify error listener items because they make the parser run much too slowly
+// (on the order of 10 seconds instead of less than a second).
+//  We're going with a generic "syntax error found" message, instead.
+
 patrgrammar : comment* (featureTemplates | constraintTemplates | patrRules | parameters | lexicalRules)* comment* EOF;
 
 comment: LINECOMMENT;
@@ -24,18 +29,18 @@ comment: LINECOMMENT;
 featureTemplates: featureTemplate+;
 
 featureTemplate: featureTemplateDefinition (featurePathTemplateBody | featureStructureTemplateBody) '.'? comment*
-               | featureTemplateDefinition {notifyErrorListeners("missingTemplateBody");}
+//               | featureTemplateDefinition {notifyErrorListeners("missingTemplateBody");}
                ;
 
 featureTemplateDefinition: 'Let' featureTemplateName 'be'
-                         | 'Let' {notifyErrorListeners("missingTemplateNameOrBe");}
+//                         | 'Let' {notifyErrorListeners("missingTemplateNameOrBe");}
                          ;
 featurePathTemplateBody: featurePathUnit '=' atomicValueDisjunction featurePathTemplateBody?
                        | featurePathUnit '=' featureTemplateValue featurePathTemplateBody?
                        | featureTemplateAbbreviation featurePathTemplateBody?
                        | featureTemplateDisjunction featurePathTemplateBody?
-                       | featurePathUnit '=' {notifyErrorListeners("missingDisjunctionOrFeatureTemplateValue");}
-                       | featurePathUnit {notifyErrorListeners("missingEqualsSign");}
+//                       | featurePathUnit '=' {notifyErrorListeners("missingDisjunctionOrFeatureTemplateValue");}
+//                       | featurePathUnit {notifyErrorListeners("missingEqualsSign");}
                        ;
 featureStructureTemplateBody: featureStructure
                             ;
@@ -45,8 +50,8 @@ featureTemplateName: atomicValue
 
 featureTemplateAbbreviation: '[' featureTemplateName ']' comment*
                            | featureTemplateName comment*
-                           |  {notifyErrorListeners("missingOpeningBracket");} featureTemplateName ']' comment*
-                           |  '[' featureTemplateName {notifyErrorListeners("missingClosingBracket");} comment*
+//                           |  {notifyErrorListeners("missingOpeningBracket");} featureTemplateName ']' comment*
+//                           |  '[' featureTemplateName {notifyErrorListeners("missingClosingBracket");} comment*
                            ;
                    
 featureTemplateValue: featureTemplateDisjunction
@@ -55,13 +60,13 @@ featureTemplateValue: featureTemplateDisjunction
                     ;
 
 atomicValueDisjunction: openingBrace atomicValue atomicValue+ closingBrace
-                      | {notifyErrorListeners("missingOpeningBrace");} atomicValue atomicValue+ closingBrace
-                      | openingBrace atomicValue atomicValue+ {notifyErrorListeners("missingClosingBrace");}
+//                      | {notifyErrorListeners("missingOpeningBrace");} atomicValue atomicValue+ closingBrace
+//                      | openingBrace atomicValue atomicValue+ {notifyErrorListeners("missingClosingBrace");}
                       ;
 
 featureTemplateDisjunction: openingBrace featurePathOrStructure featurePathOrStructure+ closingBrace
-                          | {notifyErrorListeners("missingOpeningBrace");} featurePathOrStructure featurePathOrStructure+ closingBrace
-                          | openingBrace featurePathOrStructure featurePathOrStructure+ {notifyErrorListeners("missingClosingBrace");}
+//                          | {notifyErrorListeners("missingOpeningBrace");} featurePathOrStructure featurePathOrStructure+ closingBrace
+//                          | openingBrace featurePathOrStructure featurePathOrStructure+ {notifyErrorListeners("missingClosingBrace");}
                           ;
 
 featurePathOrStructure: featurePath comment*
@@ -72,9 +77,9 @@ featurePathOrStructure: featurePath comment*
 
 featureStructure: openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
                 | emptyFeatureStructure comment*
-                | {notifyErrorListeners("missingOpeningBracket");} featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
-                | openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* {notifyErrorListeners("missingClosingBracket");}
-                | openingBracket featureStructureName {notifyErrorListeners("missingColon");}  featureStructureValue embeddedFeatureStructure* closingBracket comment*
+//                | {notifyErrorListeners("missingOpeningBracket");} featureStructureName ':' featureStructureValue embeddedFeatureStructure* closingBracket comment*
+//                | openingBracket featureStructureName ':' featureStructureValue embeddedFeatureStructure* {notifyErrorListeners("missingClosingBracket");}
+//                | openingBracket featureStructureName {notifyErrorListeners("missingColon");}  featureStructureValue embeddedFeatureStructure* closingBracket comment*
                 ;
 
 featureStructureName: ruleKW
@@ -86,13 +91,13 @@ featureStructureValue: featureStructure
                      | 'be'
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
-                        | featureStructureName {notifyErrorListeners("missingColon");} featureStructureValue comment*
+//                        | featureStructureName {notifyErrorListeners("missingColon");} featureStructureValue comment*
                         ;
 emptyFeatureStructure: '[]';
 
 featurePathUnit: openingWedge featurePath closingWedge
-               | {notifyErrorListeners("missingOpeningWedge");} featurePath closingWedge
-               | openingWedge featurePath {notifyErrorListeners("missingClosingWedge");}
+//               | {notifyErrorListeners("missingOpeningWedge");} featurePath closingWedge
+//               | openingWedge featurePath {notifyErrorListeners("missingClosingWedge");}
                ;
 
 patrRules: patrRule+;
@@ -123,19 +128,19 @@ rightHandSide: (constituent
              ;
 
 disjunctiveConstituents: '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ '}' comment?
-                       | '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ {notifyErrorListeners("missingClosingBrace");} comment?
+//                       | '{' (constituent | optionalConstituents | disjunctiveConstituents)+ disjunctionConstituents+ {notifyErrorListeners("missingClosingBrace");} comment?
                        ;
 disjunctionConstituents: '/' comment* (constituent | disjunctiveConstituents | optionalConstituents)+ comment?;
 optionalConstituents: '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ ')' comment?
-                    | {notifyErrorListeners("missingOpeningParen");} (constituent | disjunctiveConstituents | disjunctionOptionalConstituents)+ ')' comment?
+//                    | {notifyErrorListeners("missingOpeningParen");} (constituent | disjunctiveConstituents | disjunctionOptionalConstituents)+ ')' comment?
 // Note: including optionalConstituents creates left-recursion and the grammar will not parse
 //                    | {notifyErrorListeners("missingOpeningParen");} (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ ')' comment?
 // Note: following goes down a bad path and reports two errors sometime when it still parses.
 //                    | '(' (constituent | disjunctiveConstituents | optionalConstituents | disjunctionOptionalConstituents)+ {notifyErrorListeners("missingClosingParen");}
                     ;
 disjunctiveOptionalConstituents: '(' constituent+ disjunctionOptionalConstituents+ ')' comment?
-                               | {notifyErrorListeners("missingOpeningParen");} constituent+ disjunctionOptionalConstituents+ ')' comment?
-                               | '(' constituent+ disjunctionOptionalConstituents+ {notifyErrorListeners("missingClosingParen");} comment?
+//                               | {notifyErrorListeners("missingOpeningParen");} constituent+ disjunctionOptionalConstituents+ ')' comment?
+//                               | '(' constituent+ disjunctionOptionalConstituents+ {notifyErrorListeners("missingClosingParen");} comment?
                                ;
 disjunctionOptionalConstituents: '/' comment* constituent+ comment?;
 
@@ -145,13 +150,13 @@ unificationConstraint: uniConstraintLeftHandSide '=' uniConstraintRightHandSide 
                      | disjunctiveUnificationConstraint 
                      ;
 uniConstraintLeftHandSide: openingWedge constituent featurePath closingWedge
-                         | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath closingWedge
-                         | openingWedge constituent featurePath {notifyErrorListeners("missingClosingWedge");}
+//                         | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath closingWedge
+//                         | openingWedge constituent featurePath {notifyErrorListeners("missingClosingWedge");}
                          ;
 uniConstraintRightHandSide: openingWedge constituent featurePath? closingWedge comment?
                           | atomicValue comment?
-                          | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath closingWedge
-                          | openingWedge constituent featurePath {notifyErrorListeners("missingClosingWedge");}
+//                          | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath closingWedge
+//                          | openingWedge constituent featurePath {notifyErrorListeners("missingClosingWedge");}
                           ;
 disjunctiveUnificationConstraint: '{' unificationConstraint+ disjunctionUnificationConstraint+ '}' comment?;
 disjunctionUnificationConstraint: '/' comment* unificationConstraint+ comment?;
@@ -165,19 +170,19 @@ atomicValue : TEXT;
 
 priorityUnionConstraint: priorityUnionLeftHandSide '<=' priorityUnionRightHandSide comment?;
 priorityUnionLeftHandSide: openingWedge constituent featurePath closingWedge
-                         | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath closingWedge
-                         | openingWedge constituent featurePath {notifyErrorListeners("missingClosingWedge");}
+//                         | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath closingWedge
+//                         | openingWedge constituent featurePath {notifyErrorListeners("missingClosingWedge");}
                          ;
 priorityUnionRightHandSide: openingWedge constituent featurePath? closingWedge
                           | atomicValue
-                          | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath? closingWedge
-                          | openingWedge constituent featurePath? {notifyErrorListeners("missingClosingWedge");}
+//                          | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath? closingWedge
+//                          | openingWedge constituent featurePath? {notifyErrorListeners("missingClosingWedge");}
                           ;
 
 logicalConstraint: logConstraintLeftHandSide '==' logConstraintExpression;
 logConstraintLeftHandSide: openingWedge constituent featurePath? closingWedge
-                         | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath? closingWedge
-                         | openingWedge constituent featurePath? {notifyErrorListeners("missingClosingWedge");}
+//                         | {notifyErrorListeners("missingOpeningWedge");} constituent featurePath? closingWedge
+//                         | openingWedge constituent featurePath? {notifyErrorListeners("missingClosingWedge");}
                          ;
 logConstraintExpression: logConstraintFactor
                        |'~' logConstraintFactor
@@ -185,16 +190,16 @@ logConstraintExpression: logConstraintFactor
 					   | '~' logConstraintFactor binop     logConstraintFactor
 					   |     logConstraintFactor binop '~' logConstraintFactor
 					   | '~' logConstraintFactor binop '~' logConstraintFactor
-					   |     logConstraintFactor {notifyErrorListeners("missingBinop");}     logConstraintFactor
-					   | '~' logConstraintFactor {notifyErrorListeners("missingBinop");}     logConstraintFactor
-					   |     logConstraintFactor {notifyErrorListeners("missingBinop");} '~' logConstraintFactor
-					   | '~' logConstraintFactor {notifyErrorListeners("missingBinop");} '~' logConstraintFactor
+//					   |     logConstraintFactor {notifyErrorListeners("missingBinop");}     logConstraintFactor
+//					   | '~' logConstraintFactor {notifyErrorListeners("missingBinop");}     logConstraintFactor
+//					   |     logConstraintFactor {notifyErrorListeners("missingBinop");} '~' logConstraintFactor
+//					   | '~' logConstraintFactor {notifyErrorListeners("missingBinop");} '~' logConstraintFactor
                        ;
 logConstraintFactor: featureStructure
                    | '(' logConstraintExpression ')'
                    // following causes left recursion problem
 //                   | {notifyErrorListeners("missingOpeningParen");} logConstraintExpression ')'
-                   | '(' logConstraintExpression {notifyErrorListeners("missingClosingParen");}
+//                   | '(' logConstraintExpression {notifyErrorListeners("missingClosingParen");}
                    ;
 
 binop: '&'   comment*

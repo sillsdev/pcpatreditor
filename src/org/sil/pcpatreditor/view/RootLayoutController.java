@@ -909,7 +909,10 @@ public class RootLayoutController implements Initializable {
     }
 
 	private static Grammar computeParsedGrammar(String text, Grammar pcpatrGrammar) {
-		return GrammarBuilder.parseAString(text, pcpatrGrammar);
+		long timeStart = System.currentTimeMillis();
+		Grammar g = GrammarBuilder.parseAString(text, pcpatrGrammar);
+		ControllerUtilities.formatTimePassed(timeStart, "build grammar=");
+		return g;
 	}
 
 	private void applyParsedGrammar(Grammar pcpatrGrammar) {
@@ -928,11 +931,9 @@ public class RootLayoutController implements Initializable {
 	}
 
 	private TextFlow buildErrorMessageAsTextFlow(String sSyntaxErrorMessage) {
-		String sLocation = GrammarBuilder.getLineNumberOfError() + ":" + GrammarBuilder.getCharacterPositionInLineOfError() + " ";
-		Text tLocation = new Text(sLocation);
 		Text tMessage = new Text(sSyntaxErrorMessage);
 		tMessage.setFill(Color.RED);
-		TextFlow textFlow = new TextFlow(tLocation, tMessage);
+		TextFlow textFlow = new TextFlow(tMessage);
 		return textFlow;
 	}
 

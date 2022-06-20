@@ -573,7 +573,8 @@ public class PcPatrGrammarRecognizerTest {
 		return parser;
 	}
 
-	@Test
+// Not running this test since checking for these makes the parser run much too slowly.
+//	@Test
 	public void invalidDescriptionsTest() {
 		checkInvalidDescription("(S NP) (VP))",
 				"mismatched input '(' expecting {<EOF>, 'Let', 'rule', 'Rule', 'RULE', 'parameter', 'Parameter', 'PARAMETER', 'define', 'Define', 'DEFINE', 'constraint', 'Constraint', 'CONSTRAINT', LINECOMMENT}",
