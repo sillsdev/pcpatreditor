@@ -88,7 +88,16 @@ featureStructureName: ruleKW
 
 featureStructureValue: featureStructure
                      | atomicValue
+                     | 'Attribute order'
                      | 'be'
+                     | 'in'
+                     | 'is'
+                     | 'out'
+                     | constraintTemplateKW
+                     | lexicalRuleKW
+                     | parameterKW
+                     | parameterName
+                     | ruleKW
                      ;
 embeddedFeatureStructure: featureStructureName ':' featureStructureValue comment*
 //                        | featureStructureName {notifyErrorListeners("missingColon");} featureStructureValue comment*

@@ -791,6 +791,16 @@ public class BuildGrammarFromPcPatrGrammarListenerTest extends BuildGrammarTestB
 		nestedFeatureStructure = checkNestedFeatureStructure("coordination", featureStructureValue.getFeatureStructure());
 		assertEquals("+", nestedFeatureStructure.getValue().getAtomicValue());
 
+		// key word in feature structure value position
+		constraints = checkConstraints("<P'> == [gloss: in] -> ~[head:[object:[head:[rootgloss: out]]]]"
+				+ "<P'> == [prep:[gloss: be]] -> ~[head:[object:[head:[rootgloss: is]]]]"
+				+ "<P'> == [prep:[gloss: constraint]] -> ~[head:[object:[head:[rootgloss: define]]]]"
+				+ "<P'> == [prep:[gloss: parameter]] -> ~[head:[object:[head:[rootgloss: Start symbol]]]]"
+				+ "<P'> == [prep:[gloss: Category feature]] -> ~[head:[object:[head:[rootgloss: Lexical feature]]]]"
+				+ "<P'> == [prep:[gloss: Gloss feature]] -> ~[head:[object:[head:[rootgloss: RootGloss feature]]]]"
+				+ "<P'> == [prep:[gloss: rule]] -> ~[head:[object:[head:[rootgloss: Rule]]]]"
+				, 7);
+
 		// nesting
 		constraints = checkConstraints("<IP head> == ((([subject:[head:[participle:[cat:V]]]] / [subject:[head:[possessor:[head:[participle:[cat:V]]]]]]))\r\n"
 				+ "& ([type:[no_intervening:+]])) <-> \r\n"
