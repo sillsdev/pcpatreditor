@@ -179,7 +179,7 @@ public class BookmarkManager {
 		return -1;
 	}
 
-	public int previoustBookmark() {
+	public int previousBookmark() {
 		int line = grammar.getCurrentParagraph();
 		return previousBookmarkFromLine(line);
 	}

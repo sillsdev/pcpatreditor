@@ -11,7 +11,7 @@ package org.sil.pcpatreditor;
  *
  */
 public class Constants {
-	public static final String VERSION_NUMBER = "0.13.0 Alpha";
+	public static final String VERSION_NUMBER = "0.13.1 Alpha";
 
 	public static final String RESOURCE_LOCATION = "org.sil.pcpatreditor.resources.PcPatrEditor";
 	public static final String RESOURCE_SOURCE_LOCATION = "src/org/sil/pcpatreditor/";

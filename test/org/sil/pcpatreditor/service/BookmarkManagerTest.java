@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2023 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -59,6 +59,14 @@ public class BookmarkManagerTest {
 	public void toggleTest() {
 		bookmarks = manager.getBookmarks();
 		assertEquals(0, bookmarks.size());
+		int caret = manager.nextBookmarkFromLine(0);
+		assertEquals(-1, caret);
+		caret = manager.nextBookmarkFromLine(10);
+		assertEquals(-1, caret);
+		caret = manager.previousBookmarkFromLine(0);
+		assertEquals(-1, caret);
+		caret = manager.previousBookmarkFromLine(100);
+		assertEquals(-1, caret);
 
 		addBookmarks();
 

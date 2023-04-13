@@ -1351,7 +1351,7 @@ public class RootLayoutController implements Initializable {
 		initGrammar();
 		grammar.moveTo(0);
 		grammar.requestFocus();
-		initAnyBookmarks(mainApp.getDocumentFile().getPath());
+		initAnyBookmarks(mainApp.getDocumentFile());
 	}
 
 	public void initGrammar() {
@@ -1697,7 +1697,7 @@ public class RootLayoutController implements Initializable {
 						rememberCurrentFile(currentFile);
 						handleSaveDocument();
 						mainApp.loadDocument(file);
-						initAnyBookmarks(file.getPath());
+						initAnyBookmarks(file);
 						break;
 					case OPEN_EXTRACTED_FILE_IN_NEW_INSTANCE:
 						rememberCurrentFile(currentFile);
@@ -1912,10 +1912,10 @@ public class RootLayoutController implements Initializable {
 		initializeFeaturePathSearchAction();
 		grammar.replaceText(mainApp.getContent());
 		initGrammar();
-		initAnyBookmarks(mainApp.getDocumentFile().getPath());
+		initAnyBookmarks(mainApp.getDocumentFile());
 	}
 
-	public void initAnyBookmarks(String sPath) {
+	public void initAnyBookmarks(File file) {
 		bookmarksInDocsManager = BookmarksInDocumentsManager.getInstance(mainApp.getOperatingSystem());
 		try {
 			bookmarksInDocsManager.loadDocumentHistory();
@@ -1923,7 +1923,10 @@ public class RootLayoutController implements Initializable {
 			MainApp.reportException(e, null);
 			e.printStackTrace();
 		}
-		bookmarkDoc = bookmarksInDocsManager.findDocumentInHistory(sPath);
+		if (file != null)
+			bookmarkDoc = bookmarksInDocsManager.findDocumentInHistory(file.getPath());
+		else
+			bookmarkDoc = new BookmarkDocument();
 		bookmarkManager.setGrammar(grammar);
 		bookmarkManager.clearBookmarks();
 		for (Integer i : bookmarkDoc.getLines()) {
@@ -1997,22 +2000,26 @@ public class RootLayoutController implements Initializable {
 			grammar.moveTo(caret, 0);
 			tryToShowLineInMiddleOfWindow();
 		} else {
-			grammar.moveTo(0,0);
-			grammar.requestFollowCaret();
-			handleBookmarkNext();
+			if (bookmarkManager.getBookmarks().size() > 0) {
+				grammar.moveTo(0,0);
+				grammar.requestFollowCaret();
+				handleBookmarkNext();
+			}
 		}
 	}
 
 	@FXML
 	public void handleBookmarkPrevious() {
-		int caret = bookmarkManager.previoustBookmark();
+		int caret = bookmarkManager.previousBookmark();
 		if (caret != -1 && caret < grammar.getParagraphs().size()) {
 			grammar.moveTo(caret,0);
 			tryToShowLineInMiddleOfWindow();
 		} else {
-			grammar.moveTo(grammar.getParagraphs().size()-1,0);
-			grammar.requestFollowCaret();
-			handleBookmarkPrevious();
+			if (bookmarkManager.getBookmarks().size() > 0) {
+				grammar.moveTo(grammar.getParagraphs().size()-1,0);
+				grammar.requestFollowCaret();
+				handleBookmarkPrevious();
+			}
 		}
 	}
 

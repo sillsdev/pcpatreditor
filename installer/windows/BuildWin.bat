@@ -6,4 +6,4 @@ echo CreateWinApp
 call CreateWinApp.bat
 echo WinInstaller
 call WinInstaller.bat
-bell
+rundll32 user32.dll,MessageBeep
