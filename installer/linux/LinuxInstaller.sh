@@ -5,7 +5,7 @@ if [ -d installtemp ]; then
 fi
 echo "	invoking jpackage, part 2"
 # 	--verbose \
-$1/jpackage --type deb \
+$1/bin/jpackage --type deb \
 	--copyright "2021-2023 SIL International" \
 	--description "Editor for PcPatr" \
 	--name PcPatrEditor \
