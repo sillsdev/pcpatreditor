@@ -1,5 +1,16 @@
 @echo off
 if exist output rmdir output /S /q
 REM if exist apptemp rmdir apptemp /S /q
-jpackage --verbose --type app-image --input input --dest output --name PcPatrEditor --main-jar pcpatreditor.jar --main-class org.sil.pcpatreditor.MainApp --icon input/PcPatrEditor.ico --module-path "C:\Users\Andy Black\Favorites\Downloads\Java\AzulZulu\zulu17.30.15-ca-fx-jdk17.0.1-win_x64\jmods" --vendor "SIL International" --app-version 0.13.1
+echo 	invoking jpackage, pass 1
+REM use --verbose to see more
+%1\bin\jpackage --type app-image ^
+	--input input ^
+	--dest output ^
+	--name PcPatrEditor ^
+	--main-jar pcpatreditor.jar ^
+	--main-class org.sil.pcpatreditor.MainApp ^
+	--icon input/PcPatrEditor.ico ^
+	--module-path %1\jmods ^
+	--vendor "SIL International"
+echo 	MoveResources
 call MoveResources.bat
