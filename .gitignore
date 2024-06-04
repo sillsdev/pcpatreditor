@@ -1,4 +1,8 @@
 /mods/
+/installer/linux/input/
+/installer/linux/output/
+/installer/linux/installtemp/
+/installer/linux/*.deb
 /installer/windows/input/
 /installer/windows/output/
 /installer/windows/installtemp/
