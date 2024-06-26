@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=PcPatrEditor
+Comment=Editor for PcPatr
+Exec=/opt/sil/pcpatreditor/bin/PcPatrEditor
+Path=/opt/sil/pcpatreditor/bin
+Icon=/opt/sil/pcpatreditor/lib/PcPatrEditor.png
+Terminal=false
+Type=Application
+Categories=Education
+MimeType=

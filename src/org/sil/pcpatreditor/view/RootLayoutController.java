@@ -142,7 +142,6 @@ public class RootLayoutController implements Initializable {
 	private final String kPressedStyle = "buttonpressed";
 	private final String kUnPressedStyle = "buttonunpressed";
 	private final String kFindReplaceDialog = "Find/Replace Dialog";
-	private final String kLinuxInstallDirectory = "/opt/sil/pcpatreditor/lib/app/";
 	private BookmarkManager bookmarkManager = new BookmarkManager();
 	private BookmarksInDocumentsManager bookmarksInDocsManager;
 	private BookmarkDocument bookmarkDoc;
@@ -1500,11 +1499,6 @@ public class RootLayoutController implements Initializable {
 			try {
 				File myFile = new File(sFileToShow);
 				if (mainApp.getOperatingSystem().toLowerCase().contains("linux")) {
-					if (!myFile.exists()) {
-						String sFullPath = kLinuxInstallDirectory + sFileToShow;
-						System.out.println("File '" + sFileToShow + "' does not exist; trying it as '" + sFullPath + "'");
-						myFile = new File(sFullPath);
-					}
 					Runtime.getRuntime().exec(new String[] { "xdg-open", myFile.getAbsolutePath() });
 				} else {
 					Desktop.getDesktop().open(myFile);
