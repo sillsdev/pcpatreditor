@@ -4,6 +4,10 @@
 /installer/linux/debtemp/
 /installer/linux/installtemp/
 /installer/linux/*.deb
+/installer/macos/input/
+/installer/macos/output/
+/installer/macos/installtemp/
+/installer/macos/*.dmg
 /installer/windows/input/
 /installer/windows/output/
 /installer/windows/installtemp/
@@ -11,3 +15,4 @@
 XLingPaperPDFTemp/
 *.*~
 .settings
+*.DS_Store

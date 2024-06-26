@@ -142,6 +142,7 @@ public class RootLayoutController implements Initializable {
 	private final String kPressedStyle = "buttonpressed";
 	private final String kUnPressedStyle = "buttonunpressed";
 	private final String kFindReplaceDialog = "Find/Replace Dialog";
+	private final String kMacOSInstallDirectory = "/Applications/PcPatrEditor.app/Contents/app/";
 	private BookmarkManager bookmarkManager = new BookmarkManager();
 	private BookmarksInDocumentsManager bookmarksInDocsManager;
 	private BookmarkDocument bookmarkDoc;
@@ -1498,8 +1499,17 @@ public class RootLayoutController implements Initializable {
 		if (Desktop.isDesktopSupported()) {
 			try {
 				File myFile = new File(sFileToShow);
-				if (mainApp.getOperatingSystem().toLowerCase().contains("linux")) {
+				String sOS = mainApp.getOperatingSystem().toLowerCase();
+				if (sOS.contains("linux")) {
 					Runtime.getRuntime().exec(new String[] { "xdg-open", myFile.getAbsolutePath() });
+				} else if (sOS.contains("mac")) {
+					if (!myFile.exists()) {
+						String sFullPath = kMacOSInstallDirectory + sFileToShow;
+						System.out
+								.println("File '" + sFileToShow + "' does not exist; trying it as '" + sFullPath + "'");
+						myFile = new File(sFullPath);
+					}
+					Desktop.getDesktop().open(myFile);
 				} else {
 					Desktop.getDesktop().open(myFile);
 				}

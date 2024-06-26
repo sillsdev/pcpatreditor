@@ -14,7 +14,8 @@ public class Constants {
 	public static final String VERSION_NUMBER = "0.13.1 Alpha";
 
 	public static final String RESOURCE_LOCATION = "org.sil.pcpatreditor.resources.PcPatrEditor";
-	public static final String RESOURCE_SOURCE_LOCATION = "src/org/sil/pcpatreditor/";
+//	Windows and Linux work fine with the default;  macOS does not so we use the following
+	public static final String RESOURCE_SOURCE_LOCATION = "/Applications/PcPatrEditor.app/Contents/app/";
 	public static final String PCPATR_EDITOR_DATA_FILE_EXTENSION = "grm";
 	public static final String PCPATR_EDITOR_DATA_FILE_EXTENSIONS = "*."
 			+ PCPATR_EDITOR_DATA_FILE_EXTENSION;
