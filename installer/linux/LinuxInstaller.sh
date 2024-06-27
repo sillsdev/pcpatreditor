@@ -1,10 +1,10 @@
 #! /usr/bin/bash
+VERSION=0.13.1
 if [ -d installtemp ]; then
  echo "	removing installtemp"
  rm -rf installtemp
 fi
 echo "	invoking jpackage, part 2"
-VERSION=0.13.1
 # 	--verbose \
 #	--linux-shortcut \
 $1/bin/jpackage --type deb \
@@ -20,4 +20,4 @@ $1/bin/jpackage --type deb \
 	--app-version $VERSION \
 	--icon input/PcPatrEditor.png \
 	--vendor "SIL International"
-./FixDesktopShortcutInDebFile.sh $VERSION
+

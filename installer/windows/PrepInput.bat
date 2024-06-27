@@ -22,7 +22,7 @@ REM Resources
 echo 	Resources
 if not exist input\resources mkdir input\resources
 del /s /q input\resources\* > nul
-xcopy ..\..\src\org\sil\pcpatreditor\resources input\resources /E > nul
+xcopy ..\..\resources input\resources /E > nul
 copy PcPatrEditor.ico input > nul
 
 REM Jar file
