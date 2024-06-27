@@ -28,7 +28,7 @@ else
 fi
 # xcopy ../../src/org/sil/pcpatreditor/resources input/resources /E > /dev/null
 cp -r ../../resources input
-cp ../../resources/images/PcPatrEditor256x256.icns input/PcPatrEditor.icns > /dev/null
+cp PcPatrEditor256x256.icns input/PcPatrEditor.icns > /dev/null
 
 echo "	Jar file"
 ./CreateJar.sh $1
