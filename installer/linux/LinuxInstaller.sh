@@ -15,7 +15,7 @@ $1/bin/jpackage --type deb \
 	--resource-dir jpackageResources \
 	--app-image output/PcPatrEditor \
 	--linux-menu-group "Education" \
-	--license-file License.txt \
+	--license-file ../License.txt \
 	--temp installtemp \
 	--app-version $VERSION \
 	--icon input/PcPatrEditor.png \

@@ -12,7 +12,7 @@ $1/bin/jpackage --type dmg \
 	--resource-dir output/ \
 	--app-image output/PcPatrEditor.app \
     --mac-package-name "Editor for PcPatr" \
-	--license-file License.txt \
+	--license-file ../License.txt \
 	--temp installtemp \
 	--app-version 0.13.1 \
 	--icon input/PcPatrEditor.icns \

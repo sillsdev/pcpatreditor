@@ -10,7 +10,7 @@ echo 	invoking jpackage, pass 2
 	--app-image output/PcPatrEditor ^
 	--win-menu ^
 	--win-shortcut ^
-	--license-file License.txt ^
+	--license-file ..\License.txt ^
 	--temp installtemp ^
 	--vendor "SIL International" ^
 	--app-version 0.13.1
