@@ -842,7 +842,7 @@ public class RootLayoutController implements Initializable {
     private static final String CONDITIONAL_PATTERN = "-\\>";
     private static final String WEDGE_PATTERN = "\\<|\\>";
     private static final String COMMENT_PATTERN = "\\|[^\n]*";// + "|" + "/\\*(.|\\R)*?\\*/";
-    private static final String RULE_KEYWORD_PATTERN = "[^ a-z0-9]rule\\b|[^ a-z0-9]Rule\\b|[^ a-z0-9]RULE\\b";
+    private static final String RULE_KEYWORD_PATTERN = "[^ a-z0-9|]rule\\b|[^ a-z0-9]Rule\\b|[^ a-z0-9]RULE\\b";
 
     private static final Pattern PATTERN = Pattern.compile(
             "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
