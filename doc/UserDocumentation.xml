@@ -20,11 +20,11 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->20 June, 2022</date
+>27 October, 2026</date
 ><version
->Version 0.13.0 Alpha</version
+>Version 0.14.0 Beta</version
 ><version
->Copyright © 2021-2022 SIL International</version
+>Copyright © 2021-2026 SIL International</version
 ><contents
 ></contents
 ></frontMatter
@@ -39,7 +39,7 @@ type="tPcPatrEditor"
 > is a tool to edit <object
 type="tPcPatr"
 ></object
-> grammar files. It is designed to help you see the grammar file items more easily. Eventually, we hope to make it even show things like the feature system implied within the grammar file</p
+> grammar files. It is designed to help you see the grammar file items more easily.</p
 ><p
 ><object
 type="tPcPatrEditor"
@@ -139,7 +139,7 @@ id="sFindNext"
 >You can use the <object
 type="tMenuItem"
 >Find next</object
-> item to repeat whatever the last find/replace operation was. There will be an audible beep if cannot go to the next item.</p
+> item to repeat whatever the last find/replace operation was. There will be an audible beep if it cannot go to the next item.</p
 ></section2
 ><section2
 id="sGoToLine"
@@ -196,7 +196,7 @@ type="tMenuItem"
 >Navigate to rule</object
 > item (or clicking on the <img
 XeLaTeXSpecial="scaled='250'"
-src="../src/org/sil/pcpatreditor/resources/images/ruleNavigator.png"
+src="../resources/images/ruleNavigator.png"
 ></img
 > icon in the toolbar or typing <object
 type="tKey"
@@ -315,12 +315,12 @@ type="tMenuItem"
 >Export selected rules for debugging</object
 >. You can also invoke it by clicking on the <img
 XeLaTeXSpecial="scaled='250'"
-src="../src/org/sil/pcpatreditor/resources/images/ruleExtractor.png"
+src="../resources/images/ruleExtractor.png"
 ></img
 > icon in the toolbar. This is useful when you are trying to debug a <object
 type="tPcPatr"
 ></object
-> grammar file and want to create a separate grammar file that contains only selected rules.</p
+> grammar file and want to create a separate grammar file that contains only certain selected rules.</p
 ><p
 >When you invoke this option, <object
 type="tPcPatrEditor"
@@ -393,7 +393,7 @@ width="500"
 ></chart
 ></example
 ><p
->Unlike most dialog boxes, you can still edit the grammar, etc., in the main program. Note, however, that it shows the set of constituents at the time the report was generated. If you make changes after that, you will need to invoke the report again. We suggest you close the older dialog first.</p
+>Unlike most dialog boxes, you can still edit the grammar, etc., in the main program while this dialog is running. Note, however, that it shows the set of constituents at the time the report was generated. If you make changes after that, you will need to invoke the report again. We suggest you close the older dialog first.</p
 ></section2
 ><section2
 id="sFeatureSystem"
@@ -416,17 +416,20 @@ letter="xFeatureSystemDialog"
 num="xFeatureSystemDialog"
 ></exampleRef
 >.</p
+><p
+>You can save the report to a file by clicking on the “Save” button. This allows you to print it out via your web browser, if you so choose.</p
 ><example
 num="xFeatureSystemDialog"
 ><chart
 ><img
+XeLaTeXSpecial="scaled='500'"
 src="resources/FeatureSystemDialog.png"
 width="500"
 ></img
 ></chart
 ></example
 ><p
->Unlike most dialog boxes, you can still edit the grammar, etc., in the main program. Note, however, that it shows the feature system at the time the report was generated. If you make changes after that, you will need to invoke the report again. We suggest you close the older dialog first.</p
+>Unlike most dialog boxes, you can still edit the grammar, etc., in the main program while this dialog is running. Note, however, that it shows the feature system at the time the report was generated. If you make changes after that, you will need to invoke the report again. We suggest you close the older dialog first.</p
 ></section2
 ></section1
 ><section1
@@ -833,8 +836,6 @@ type="tPcPatrEditor"
 ></object
 >:</p
 ><ul
-><li
->When exporting selected rules or showing constituents, there will probably be a pause before the dialog comes up. We would like to have the mouse cursor have the “wait” shape during this processing, but have not figured out how to do it.</li
 ><li
 >When you are using bookmarks and export selected rules with the “Open the exported file in a new instance” option, the bookmarks of the original file may be stored as the bookmarks for the exported file.</li
 ><li

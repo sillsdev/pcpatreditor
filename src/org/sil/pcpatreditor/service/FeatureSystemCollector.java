@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 SIL International
+ * Copyright (c) 2022-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -179,10 +179,12 @@ public class FeatureSystemCollector {
 	}
 
 	public void collectEmbeddedFeaturePathTemplateBodies(FeaturePathTemplateBody fptb) {
-		FeaturePathTemplateBody embeddedFtpb = fptb.getFeaturePathTemplateBody();
-		if (embeddedFtpb != null) {
-			templateBodies.add(embeddedFtpb);
-			collectEmbeddedFeaturePathTemplateBodies(embeddedFtpb);
+		if (fptb != null) {
+			FeaturePathTemplateBody embeddedFtpb = fptb.getFeaturePathTemplateBody();
+			if (embeddedFtpb != null) {
+				templateBodies.add(embeddedFtpb);
+				collectEmbeddedFeaturePathTemplateBodies(embeddedFtpb);
+			}
 		}
 	}
 
@@ -252,6 +254,27 @@ public class FeatureSystemCollector {
 
 	protected void addTemplatesToFeatureSystem(List<FeaturePathTemplateBody> fptbs) {
 		for (FeaturePathTemplateBody fptb : fptbs) {
+			if (fptb == null) {
+				// following is failed attempt to figure out where the null is
+//				int index = fptbs.indexOf(fptb);
+// 				System.out.println("null fptb found; index = " + index);
+//				if (index > 0 && index < fptbs.size()) {
+//					List<String> fslist = featureSystem.stream().toList();
+//					System.out.println("\tfslist size = " + fslist.size());
+//					if (fslist.size() < index && fslist.size() > index) {
+//						System.out.println("\tidex = " + fslist.get(index));
+//					}
+//					fptb = fptbs.get(index -1);
+//					String sReport = "";
+//					if (fptb.getFeatureTemplateAbbreviation() != null) {
+//						sReport = fptb.getFeatureTemplateAbbreviation();
+//					} else if (fptb.getFeaturePathTemplateBody() != null) {
+//						sReport = fptb.getFeaturePathTemplateBody().getFeatureTemplateValue().getAtomicValue();
+//					}
+//					System.out.println("\tprevious is " + sReport);
+//				}
+				continue;
+			}
 			FeaturePathUnit fpu = fptb.getFeaturePathUnit();
 			if (fpu != null) {
 				FeatureTemplateValue ftv = fptb.getFeatureTemplateValue();
@@ -324,7 +347,7 @@ public class FeatureSystemCollector {
 					collectUnificationConstraints(uc, unificationConstraints);
 				} else if (c instanceof PriorityUnionConstraint puc) {
 					priorityUnionConstraints.add(puc);
-					PriorityUnionConstraint puc1 = puc;
+//					PriorityUnionConstraint puc1 = puc;
 				} else if (c instanceof LogicalConstraint lc) {
 					logicalConstraints.add(lc);
 				}

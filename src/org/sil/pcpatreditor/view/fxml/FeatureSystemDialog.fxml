@@ -14,6 +14,7 @@
    <children>
       <ButtonBar layoutX="114.0" layoutY="355.0" prefHeight="40.0" prefWidth="272.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="14.0">
         <buttons>
+          <Button fx:id="btnSave" defaultButton="false" mnemonicParsing="false" onAction="#handleSave" text="%label.save" />
           <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOK" text="%label.ok" />
         </buttons>
       </ButtonBar>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -313,7 +313,7 @@ public class RootLayoutController implements Initializable {
 			.getInstance();
 	static {
 		RESOURCE_FACTORY.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION,
-				new Locale("en")));
+				Locale.of("en")));
 	}
 
 	@Override
@@ -1217,12 +1217,17 @@ public class RootLayoutController implements Initializable {
 	}
 
 	public void collectFeatureSystem() {
-		if (fsCollector == null) {
-			fsCollector = new FeatureSystemCollector(grammar.getText());
-			fsCollector.parseGrammar();
+		try {
+			if (fsCollector == null) {
+				fsCollector = new FeatureSystemCollector(grammar.getText());
+				fsCollector.parseGrammar();
+			}
+			fsCollector.prepareCollect(pcpatrGrammar);
+			fsCollector.collect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			MainApp.reportException(e, null);
 		}
-		fsCollector.prepareCollect(pcpatrGrammar);
-		fsCollector.collect();
 	}
 
 	@FXML

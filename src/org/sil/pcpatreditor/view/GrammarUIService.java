@@ -129,7 +129,12 @@ public class GrammarUIService {
 	private static Object removeMatchingLeftItemHighlightAndRestoreCaret(
 			int iLeftItem, int iRightItem) {
 		grammarArea.requestFollowCaret();
-		grammarArea.moveTo(iRightItem);
+		int len = grammarArea.getLength();
+		if (iRightItem < len) {
+			grammarArea.moveTo(iRightItem);
+		} else
+			System.out.println("right past length; right = " + iRightItem +"; len =" + len);
+
 		return null;
 	}
 

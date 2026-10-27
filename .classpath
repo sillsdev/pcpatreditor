@@ -2,22 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/zulu17.30.15-ca-fx-jdk17.0.1-win_x64">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="Richtextfx/richtextfx-fat-0.10.7.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-			<attribute name="add-exports" value="richtextfx.fat/org.reactfx=org.sil.pcpatreditor:richtextfx.fat/org.reactfx.util=org.sil.pcpatreditor:richtextfx.fat/org.fxmisc.flowless=org.sil.pcpatreditor:richtextfx.fat/org.reactfx.collection=org.sil.pcpatreditor:richtextfx.fat/org.reactfx.value=org.sil.pcpatreditor"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="ANTLR/antlr-4.7-complete.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -49,6 +33,31 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="ControlsFX/controlsfx-11.0.2.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Andy Black/.p2/pool/plugins/org.hamcrest.core_1.3.0.v20180420-1519.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Andy Black/.p2/pool/plugins/org.junit_4.13.2.v20230809-1000.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="Richtextfx/richtextfx-fat-0.11.6.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
