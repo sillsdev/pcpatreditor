@@ -168,6 +168,7 @@ public class RuleNavigatorChooserController extends TableViewController {
 				setData(ruleLocations);
 			}
 		});
+		Platform.runLater(filterText::requestFocus);
 	}
 
 	protected int adjustIndexValue(int value, int max) {
