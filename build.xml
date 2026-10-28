@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="org.sil.pcpatreditor">
+	<property environment="env" />
+	<property name="ECLIPSE_HOME" value="../../../eclipse/java-2023-09/eclipse/" />
+	<property name="junit.output.dir" value="junit" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="25" />
+	<property name="source" value="25" />
+	<path id="JUnit 4.libraryclasspath">
+		<pathelement
+			location="../../../.p2/pool/plugins/org.junit_4.13.2.v20230809-1000.jar" />
+		<pathelement location="../../../.p2/pool/plugins/org.hamcrest_2.2.0.jar" />
+		<pathelement
+			location="../../../.p2/pool/plugins/org.hamcrest.core_2.2.0.v20230809-1000.jar" />
+	</path>
+	<path id="JavaFX SDK.libraryclasspath">
+		<pathelement
+			location="../../../.p2/pool/plugins/org.eclipse.fx.ide.css.jfx8_3.10.0.202303150700.jar" />
+	</path>
+	<path id="org.sil.pcpatreditor.classpath">
+		<pathelement location="mods" />
+		<path refid="JUnit 4.libraryclasspath" />
+		<path refid="JavaFX SDK.libraryclasspath" />
+		<pathelement location="libs/ANTLR/antlr-4.7-complete.jar" />
+		<pathelement location="libs/ControlsFX/controlsfx-11.0.2.jar" />
+		<pathelement location="libs/LibJavaDev/libjavadev-1.5.0.jar" />
+		<pathelement location="libs/Richtextfx/richtextfx-fat-0.11.6.jar" />
+		<pathelement location="libs/JAXB/jakarta.activation.jar" />
+		<pathelement location="libs/JAXB/jakarta.xml.bind-api.jar" />
+		<pathelement location="libs/JAXB/jaxb-core.jar" />
+		<pathelement location="libs/JAXB/jaxb-jxc.jar" />
+		<pathelement location="libs/JAXB/jaxb-xjc.jar" />
+	</path>
+	<path id="run.PcPatrEditor.classpath">
+		<path refid="org.sil.pcpatreditor.classpath" />
+		<path refid="JUnit 4.libraryclasspath" />
+		<path refid="JavaFX SDK.libraryclasspath" />
+		<pathelement location="libs/ANTLR/antlr-4.7-complete.jar" />
+		<pathelement location="libs/ControlsFX/controlsfx-11.0.2.jar" />
+		<pathelement location="libs/LibJavaDev/libjavadev-1.5.0.jar" />
+		<pathelement location="libs/Richtextfx/richtextfx-fat-0.11.6.jar" />
+		<pathelement location="libs/JAXB/jakarta.activation.jar" />
+		<pathelement location="libs/JAXB/jakarta.xml.bind-api.jar" />
+		<pathelement location="libs/JAXB/jaxb-core.jar" />
+		<pathelement location="libs/JAXB/jaxb-impl.jar" />
+		<pathelement location="libs/JAXB/jaxb-xjc.jar" />
+		<pathelement location="libs/JAXB/jaxb-jxc.jar" />
+	</path>
+	<target name="init">
+		<mkdir dir="mods" />
+		<copy includeemptydirs="false" todir="mods">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.xtend" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" todir="mods">
+			<fileset dir="test">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.xtend" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="mods" />
+	</target>
+	<target depends="clean" name="cleanall" />
+	<target depends="build-subprojects,build-project" name="build" />
+	<target name="build-subprojects" />
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="mods"
+			encoding="utf-8" includeantruntime="false" source="${source}"
+			target="${target}">
+			<src path="src" />
+<!--			<src path="test" />-->
+			<classpath refid="org.sil.pcpatreditor.classpath" />
+		</javac>
+	</target>
+	<target
+		description="Build all projects which reference this project. Useful to propagate changes."
+		name="build-refprojects" />
+	<target description="copy Eclipse compiler jars to ant lib directory"
+		name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins"
+				includes="org.eclipse.jdt.core_*.jar" />
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar" />
+			<fileset dir="${ECLIPSE_HOME}/plugins"
+				includes="org.eclipse.jdt.core_*.jar" />
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler"
+		name="build-eclipse-compiler">
+		<property name="build.compiler"
+			value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+		<antcall target="build" />
+	</target>
+	<target name="PcPatrEditor">
+		<java classname="org.sil.pcpatreditor.MainApp" failonerror="true"
+			fork="yes">
+			<jvmarg
+				line="--enable-native-access=javafx.graphics&#13;&#10;--enable-native-access=javafx.web" />
+			<classpath refid="run.PcPatrEditor.classpath" />
+		</java>
+	</target>
+	<target name="junitreport">
+		<junitreport todir="${junit.output.dir}">
+			<fileset dir="${junit.output.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.output.dir}" />
+		</junitreport>
+	</target>
+</project>
