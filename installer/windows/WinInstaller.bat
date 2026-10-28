@@ -2,7 +2,7 @@
 if exist installtemp rmdir installtemp /S /q
 echo 	invoking jpackage, pass 2
 %1\bin\jpackage --type exe ^
-	--copyright "2021-2024 SIL International" ^
+	--copyright "2021-2026 SIL International" ^
 	--description "Editor for PcPatr" ^
 	--name PcPatrEditor ^
 	--install-dir "SIL\PcPatrEditor" ^
@@ -11,6 +11,10 @@ echo 	invoking jpackage, pass 2
 	--win-menu ^
 	--win-shortcut ^
 	--license-file ..\License.txt ^
+
+	--icon input/DiagSap.ico ^
+	--win-upgrade-uuid C966E03D-ADC0-4DB0-A86F-A165F3B8C807 ^
 	--temp installtemp ^
-	--vendor "SIL International" ^
-	--app-version 0.13.1
+	--app-version %1 ^
+	--file-associations pcpatreditor.properties ^
+	--vendor "SIL International"

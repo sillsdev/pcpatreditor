@@ -5,11 +5,11 @@ REM echo java_path=%1
 echo 	Libraries
 if not exist input\libs mkdir input\libs
 del /q input\libs\*
-copy ..\..\ANTLR\* input\libs > nul
-copy ..\..\ControlsFX\* input\libs > nul
-copy ..\..\LibJavaDev input\libs > nul
-copy ..\..\Richtextfx input\libs > nul
-copy ..\..\JAXB input\libs > nul
+copy ..\..\libs\ANTLR\* input\libs > nul
+copy ..\..\libs\ControlsFX\* input\libs > nul
+copy ..\..\libs\JAXB input\libs > nul
+copy ..\..\libs\LibJavaDev input\libs > nul
+copy ..\..\libs\Richtextfx input\libs > nul
 
 REM Documentation
 echo 	Documentation
