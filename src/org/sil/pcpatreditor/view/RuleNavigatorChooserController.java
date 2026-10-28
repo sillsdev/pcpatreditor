@@ -233,13 +233,15 @@ public class RuleNavigatorChooserController extends TableViewController {
 	@FXML
 	private void handleOk() {
 		okClicked = true;
-		mainApp.getPrimaryStage().requestFocus();
-		CodeArea grammar = rootLayoutController.getGrammar();
-		if (ruleChosen != null) {
-			grammar.moveTo(ruleChosen.getRuleLocationInfo().lineNumber(), 0);
-			grammar.requestFollowCaret();
-			rootLayoutController.tryToShowLineInMiddleOfWindow();
-		}
+		Platform.runLater(() -> {
+			mainApp.getPrimaryStage().requestFocus();
+			CodeArea grammar = rootLayoutController.getGrammar();
+			if (ruleChosen != null) {
+				grammar.moveTo(ruleChosen.getRuleLocationInfo().lineNumber(), 0);
+				grammar.requestFollowCaret();
+				rootLayoutController.tryToShowLineInMiddleOfWindow();
+			}
+		});
 	}
 
 	/**

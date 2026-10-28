@@ -20,7 +20,7 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->27 October, 2026</date
+>28 October, 2026</date
 ><version
 >Version 0.14.0 Beta</version
 ><version
@@ -53,7 +53,7 @@ num="xSample"
 num="xSample"
 ><chart
 ><img
-XeLaTeXSpecial="scaled='650' "
+XeLaTeXSpecial="scaled='500' "
 src="resources/PcPatrEditor.png"
 width="450"
 ></img
@@ -80,7 +80,63 @@ id="sEditMenu"
 >The <object
 type="tMenuItem"
 >Edit</object
-> menu item has the standard set of options such as copy, cut and paste. It also allows you to undo and redo changes. There are two other items as described below.</p
+> menu item has the standard set of options such as copy, cut and paste. It also allows you to undo and redo changes. There are several other items as described below.</p
+><section2
+id="sShowFeatureSystemContext"
+><secTitle
+>Show feature system for inserting</secTitle
+><p
+>At any point while editing, you can use this option (or type <object
+type="tKey"
+>Ctrl-space</object
+> or right-click the mouse) and <object
+type="tPcPatrEditor"
+></object
+> will show you a dialog box like the one in example <exampleRef
+letter="xFeaturePathSearch"
+num="xFeaturePathSearch"
+></exampleRef
+>.</p
+><example
+num="xFeaturePathSearch"
+><chart
+><img
+src="resources/FeaturePathSearch1.png"
+></img
+></chart
+></example
+><p
+>As you type, it will show all feature paths that match what you type. When you click on “OK” or hit the <object
+type="tKey"
+>Enter</object
+> key, <object
+type="tPcPatrEditor"
+></object
+> will insert the text of the full path you have chosen into the grammar at the point of the text cursor.</p
+><p
+>If the cursor is within a feature path, then this dialog will start with whatever preceding text is in the path. In one case it looked like what is in example <exampleRef
+letter="xFeaturePathSearchContext"
+num="xFeaturePathSearchContext"
+></exampleRef
+>.</p
+><example
+num="xFeaturePathSearchContext"
+><chart
+><img
+XeLaTeXSpecial="scaled='600' "
+src="resources/FeaturePathSearch2.png"
+width="300"
+></img
+></chart
+></example
+><pc
+>Whatever you select will replace the selected text in the grammar.</pc
+><p
+>See also section <sectionRef
+sec="sFeaturePathSearching"
+></sectionRef
+> for the two options this dialog has.</p
+></section2
 ><section2
 id="sFindReplace"
 ><secTitle
@@ -605,53 +661,10 @@ id="sFeaturePathSearching"
 ><secTitle
 >Feature path searching</secTitle
 ><p
->At any point while editing, you can type <object
-type="tKey"
->Ctrl-space</object
-> or right-click the mouse and <object
-type="tPcPatrEditor"
-></object
-> will show you a dialog box like the one in example <exampleRef
-letter="xFeaturePathSearch"
-num="xFeaturePathSearch"
-></exampleRef
->.</p
-><example
-num="xFeaturePathSearch"
-><chart
-><img
-src="resources/FeaturePathSearch1.png"
-></img
-></chart
-></example
-><p
->As you type, it will show all feature paths that match what you type. When you click on “OK” or hit the <object
-type="tKey"
->Enter</object
-> key, <object
-type="tPcPatrEditor"
-></object
-> will insert the text of the full path you have chosen into the grammar at the point of the text cursor.</p
-><p
->If the cursor is within a feature path, then this dialog will start with whatever preceding text is in the path. In one case it looked like what is in example <exampleRef
-letter="xFeaturePathSearchContext"
-num="xFeaturePathSearchContext"
-></exampleRef
->.</p
-><example
-num="xFeaturePathSearchContext"
-><chart
-><img
-XeLaTeXSpecial="scaled='600' "
-src="resources/FeaturePathSearch2.png"
-width="300"
-></img
-></chart
-></example
-><pc
->Whatever you select will replace the selected text in the grammar.</pc
-><p
->There are two possible ways to search the list of feature paths. The default is to search from the beginning of the path. The other is to search for any part of a path that matches part of what is typed in the box.</p
+>There are two possible ways to search the list of feature paths as described in section <sectionRef
+sec="sShowFeatureSystemContext"
+></sectionRef
+>. The default is to search from the beginning of the path. The other is to search for any part of a path that matches part of what is typed in the box.</p
 ><p
 >The fifth item under the main <object
 type="tMenuItem"

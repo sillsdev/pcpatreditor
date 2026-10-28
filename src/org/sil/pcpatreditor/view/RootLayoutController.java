@@ -182,6 +182,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private Button buttonToolbarToolRuleExtractor;
 	@FXML
+	private Button buttonToolbarShowFeatureSystemContextMenu;
+	@FXML
 	private ToggleButton toggleButtonShowMatchingItemWithArrowKeys;
 
 	@FXML
@@ -220,6 +222,8 @@ public class RootLayoutController implements Initializable {
 	private MenuItem menuItemEditInsertComment;
 	@FXML
 	private MenuItem menuItemEditRemoveComment;
+	@FXML
+	private MenuItem menuItemShowFeatureSystemContextMenu;
 	@FXML
 	private Menu menuBookmarks;
 	@FXML
@@ -293,6 +297,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditUndo;
 	@FXML
 	private Tooltip tooltipToolbarEditRedo;
+	@FXML
+	private Tooltip tooltipToolbarShowFeatureSystemContextMenu;
 	@FXML
 	private Tooltip tooltipToolbarEditFindReplace;
 	@FXML
@@ -1049,6 +1055,10 @@ public class RootLayoutController implements Initializable {
 				bundle.getString("tooltip.paste"), Constants.RESOURCE_SOURCE_LOCATION);
 		tooltipToolbarEditPaste.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.paste"));
+		tooltipToolbarShowFeatureSystemContextMenu = ControllerUtilities.createToolbarButtonWithImage("showFeatureSystemContextMenu.png",
+				buttonToolbarShowFeatureSystemContextMenu, tooltipToolbarShowFeatureSystemContextMenu, bundle.getString("tooltip.showfeaturesystemcontextmenu"),
+				Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarShowFeatureSystemContextMenu.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.showfeaturesystemcontextmenu"));
 		tooltipToolbarEditFindReplace = ControllerUtilities.createToolbarButtonWithImage("findReplaceAction.png",
 				buttonToolbarEditFindReplace, tooltipToolbarEditFindReplace, bundle.getString("tooltip.findreplace"),
 				Constants.RESOURCE_SOURCE_LOCATION);
@@ -1170,6 +1180,11 @@ public class RootLayoutController implements Initializable {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
 		}
+	}
+
+	@FXML
+	private void handleShowFeatureSystemContextMenu() {
+		showFeatureSystemContextMenu();
 	}
 
 	@FXML

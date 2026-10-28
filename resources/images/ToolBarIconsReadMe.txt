@@ -46,5 +46,6 @@ PcPatrEditor256x256 (was controls.png)
 redoAction.png (was undo_blue.png)
 ruleExtractor.png (was file_yellow_hierarchy1_expanded_save_hdd.png)
 ruleNavigator.png (was magnifier_plus_blue.png)
-saveAction.png (was floppy_35inch_blue.png)
+saveAction.png (was floppy_35inch_blue.png
+showFeatureSystemContextMenu.png (was file_yellow_open.png)
 undoAction.png (was redo_blue.png)
