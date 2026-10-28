@@ -12,15 +12,12 @@
 	<property name="target" value="25" />
 	<property name="source" value="25" />
 	<path id="JUnit 4.libraryclasspath">
-		<pathelement
-			location="../../../.p2/pool/plugins/org.junit_4.13.2.v20230809-1000.jar" />
+		<pathelement location="../../../.p2/pool/plugins/org.junit_4.13.2.v20230809-1000.jar" />
 		<pathelement location="../../../.p2/pool/plugins/org.hamcrest_2.2.0.jar" />
-		<pathelement
-			location="../../../.p2/pool/plugins/org.hamcrest.core_2.2.0.v20230809-1000.jar" />
+		<pathelement location="../../../.p2/pool/plugins/org.hamcrest.core_2.2.0.v20230809-1000.jar" />
 	</path>
 	<path id="JavaFX SDK.libraryclasspath">
-		<pathelement
-			location="../../../.p2/pool/plugins/org.eclipse.fx.ide.css.jfx8_3.10.0.202303150700.jar" />
+		<pathelement location="../../../.p2/pool/plugins/org.eclipse.fx.ide.css.jfx8_3.10.0.202303150700.jar" />
 	</path>
 	<path id="org.sil.pcpatreditor.classpath">
 		<pathelement location="mods" />
@@ -76,40 +73,32 @@
 	<target name="build-subprojects" />
 	<target depends="init" name="build-project">
 		<echo message="${ant.project.name}: ${ant.file}" />
-		<javac debug="true" debuglevel="${debuglevel}" destdir="mods"
-			encoding="utf-8" includeantruntime="false" source="${source}"
-			target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="mods" encoding="utf-8" includeantruntime="false" source="${source}" target="${target}">
 			<src path="src" />
-<!--			<src path="test" />-->
+			<!--			<src path="test" />-->
+			<modulepath>
+				<pathelement path="libs" />
+			</modulepath>
 			<classpath refid="org.sil.pcpatreditor.classpath" />
 		</javac>
 	</target>
-	<target
-		description="Build all projects which reference this project. Useful to propagate changes."
-		name="build-refprojects" />
-	<target description="copy Eclipse compiler jars to ant lib directory"
-		name="init-eclipse-compiler">
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
 		<copy todir="${ant.library.dir}">
-			<fileset dir="${ECLIPSE_HOME}/plugins"
-				includes="org.eclipse.jdt.core_*.jar" />
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
 		</copy>
 		<unzip dest="${ant.library.dir}">
 			<patternset includes="jdtCompilerAdapter.jar" />
-			<fileset dir="${ECLIPSE_HOME}/plugins"
-				includes="org.eclipse.jdt.core_*.jar" />
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
 		</unzip>
 	</target>
-	<target description="compile project with Eclipse compiler"
-		name="build-eclipse-compiler">
-		<property name="build.compiler"
-			value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
 		<antcall target="build" />
 	</target>
 	<target name="PcPatrEditor">
-		<java classname="org.sil.pcpatreditor.MainApp" failonerror="true"
-			fork="yes">
-			<jvmarg
-				line="--enable-native-access=javafx.graphics&#13;&#10;--enable-native-access=javafx.web" />
+		<java classname="org.sil.pcpatreditor.MainApp" failonerror="true" fork="yes">
+			<jvmarg line="--enable-native-access=javafx.graphics&#13;&#10;--enable-native-access=javafx.web" />
 			<classpath refid="run.PcPatrEditor.classpath" />
 		</java>
 	</target>
