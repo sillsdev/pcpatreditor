@@ -4,7 +4,7 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="org.sil.pcpatreditor">
+<project basedir="." default="build" name="pcpatreditor">
 	<property environment="env" />
 	<property name="ECLIPSE_HOME" value="../../../eclipse/java-2023-09/eclipse/" />
 	<property name="junit.output.dir" value="junit" />
@@ -34,7 +34,7 @@
 		<pathelement location="libs/JAXB/jaxb-xjc.jar" />
 	</path>
 	<path id="run.PcPatrEditor.classpath">
-		<path refid="org.sil.pcpatreditor.classpath" />
+		<path refid="pcpatreditor.classpath" />
 		<path refid="JUnit 4.libraryclasspath" />
 		<path refid="JavaFX SDK.libraryclasspath" />
 		<pathelement location="libs/ANTLR/antlr-4.7-complete.jar" />
@@ -79,7 +79,7 @@
 			<modulepath>
 				<pathelement path="libs" />
 			</modulepath>
-			<classpath refid="org.sil.pcpatreditor.classpath" />
+			<classpath refid="pcpatreditor.classpath" />
 		</javac>
 	</target>
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
