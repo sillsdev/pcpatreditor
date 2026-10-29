@@ -1864,11 +1864,13 @@ public class RootLayoutController implements Initializable {
 
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(lineNo -> {
-			int line = Integer.valueOf(lineNo) - 1;
-			line = Math.min(line, grammar.getParagraphs().size());
-			line = Math.max(line, 0);
-			grammar.moveTo(line, 0);
-			grammar.requestFollowCaret();
+			Platform.runLater(() -> {
+				int line = Integer.valueOf(lineNo) - 1;
+				line = Math.min(line, grammar.getParagraphs().size());
+				line = Math.max(line, 0);
+				grammar.moveTo(line, 0);
+				grammar.requestFollowCaret();
+			});
 		});
 	}
 
@@ -2029,21 +2031,24 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	public void handleBookmarkNext() {
-		int caret = bookmarkManager.nextBookmark();
-		if (caret != -1 && caret < grammar.getParagraphs().size()) {
-			grammar.moveTo(caret, 0);
-			tryToShowLineInMiddleOfWindow();
-		} else {
-			if (bookmarkManager.getBookmarks().size() > 0) {
-				grammar.moveTo(0,0);
-				grammar.requestFollowCaret();
-				handleBookmarkNext();
+		Platform.runLater(() -> {
+			int caret = bookmarkManager.nextBookmark();
+			if (caret != -1 && caret < grammar.getParagraphs().size()) {
+				grammar.moveTo(caret, 0);
+				tryToShowLineInMiddleOfWindow();
+			} else {
+				if (bookmarkManager.getBookmarks().size() > 0) {
+					grammar.moveTo(0,0);
+					grammar.requestFollowCaret();
+					handleBookmarkNext();
+				}
 			}
-		}
+		});
 	}
 
 	@FXML
 	public void handleBookmarkPrevious() {
+		Platform.runLater(() -> {
 		int caret = bookmarkManager.previousBookmark();
 		if (caret != -1 && caret < grammar.getParagraphs().size()) {
 			grammar.moveTo(caret,0);
@@ -2055,6 +2060,7 @@ public class RootLayoutController implements Initializable {
 				handleBookmarkPrevious();
 			}
 		}
+		});
 	}
 
 	@FXML
