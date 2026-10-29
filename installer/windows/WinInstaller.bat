@@ -11,8 +11,7 @@ jpackage --type exe ^
 	--win-menu ^
 	--win-shortcut ^
 	--license-file ..\License.txt ^
-
-	--icon input/DiagSap.ico ^
+	--icon input/PcPatrEditor.ico ^
 	--win-upgrade-uuid C966E03D-ADC0-4DB0-A86F-A165F3B8C807 ^
 	--temp installtemp ^
 	--app-version %1 ^
