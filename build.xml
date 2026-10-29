@@ -76,9 +76,17 @@
 		<javac debug="true" debuglevel="${debuglevel}" destdir="mods" encoding="utf-8" includeantruntime="false" source="${source}" target="${target}">
 			<src path="src" />
 			<!--			<src path="test" />-->
-<!--			<modulepath>-->
-<!--				<pathelement path="libs" />-->
-<!--			</modulepath>-->
+			<modulepath>
+				<pathelement location="libs/ANTLR/antlr-4.7-complete.jar" />
+				<pathelement location="libs/ControlsFX/controlsfx-11.0.2.jar" />
+				<pathelement location="libs/LibJavaDev/libjavadev-1.5.0.jar" />
+				<pathelement location="libs/Richtextfx/richtextfx-fat-0.11.6.jar" />
+				<pathelement location="libs/JAXB/jakarta.activation.jar" />
+				<pathelement location="libs/JAXB/jakarta.xml.bind-api.jar" />
+				<pathelement location="libs/JAXB/jaxb-core.jar" />
+				<pathelement location="libs/JAXB/jaxb-jxc.jar" />
+				<pathelement location="libs/JAXB/jaxb-xjc.jar" />
+			</modulepath>
 			<classpath refid="pcpatreditor.classpath" />
 		</javac>
 	</target>
