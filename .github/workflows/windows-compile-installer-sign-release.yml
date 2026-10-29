@@ -49,7 +49,8 @@ jobs:
 
       - name: Build with Ant
         run: |
-          ls -lr libs
+          pwd
+          ls -lR libs
           ant -noinput -buildfile build.xml
           echo $JAVA_HOME
         shell: bash
@@ -102,7 +103,7 @@ jobs:
           description-url: 'https://software.sil.org/paws/'
       - uses: actions/upload-artifact@v4
         with:
-          name: DiagSapSigned
+          name: PcPatrEditorSigned
           path: PcPatrEditor-*.exe
           if-no-files-found: error
       - name: Create Release

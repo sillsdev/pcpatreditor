@@ -19,7 +19,7 @@
 	<path id="JavaFX SDK.libraryclasspath">
 		<pathelement location="../../../.p2/pool/plugins/org.eclipse.fx.ide.css.jfx8_3.10.0.202303150700.jar" />
 	</path>
-	<path id="org.sil.pcpatreditor.classpath">
+	<path id="pcpatreditor.classpath">
 		<pathelement location="mods" />
 		<path refid="JUnit 4.libraryclasspath" />
 		<path refid="JavaFX SDK.libraryclasspath" />
