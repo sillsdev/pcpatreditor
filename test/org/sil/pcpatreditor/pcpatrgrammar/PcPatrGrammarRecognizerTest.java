@@ -74,6 +74,9 @@ public class PcPatrGrammarRecognizerTest {
 		checkValidGrammar(
 				"Let singular |added October 2026\nbe [number:sg]\nrule\n S = NP VP\n",
 				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue singular)) (comment |added October 2026\\n) be) (featureStructureTemplateBody (featureStructure (openingBracket [) (featureStructureName (atomicValue number)) : (featureStructureValue (atomicValue sg)) (closingBracket ]))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP) (constituent VP))))) <EOF>)");
+		checkValidGrammar(
+				"Let singular \nbe |added October 2026\n [number:sg]\nrule\n S = NP VP\n",
+				"(patrgrammar (featureTemplates (featureTemplate (featureTemplateDefinition Let (featureTemplateName (atomicValue singular)) be (comment |added October 2026\\n)) (featureStructureTemplateBody (featureStructure (openingBracket [) (featureStructureName (atomicValue number)) : (featureStructureValue (atomicValue sg)) (closingBracket ]))))) (patrRules (patrRule (ruleKW rule) (phraseStructureRule (constituent S) (ruleDef =) (rightHandSide (constituent NP) (constituent VP))))) <EOF>)");
 		// Following Let statements based on ones in the PcPatr documentation
 		checkValidGrammar(
 				"Let singular be [number:sg]\nrule\n S = NP VP\n",
