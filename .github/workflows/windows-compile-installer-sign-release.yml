@@ -49,8 +49,6 @@ jobs:
 
       - name: Build with Ant
         run: |
-          pwd
-          ls -lR libs
           ant -noinput -buildfile build.xml
           echo $JAVA_HOME
         shell: bash
