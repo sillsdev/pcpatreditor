@@ -26,7 +26,7 @@ module org.sil.pcpatreditor {
 	opens org.sil.pcpatreditor.model;
 
 	// JUnit
-	requires junit;
+//	requires junit;
 
 	// Other modules/libraries
 	requires antlr;
