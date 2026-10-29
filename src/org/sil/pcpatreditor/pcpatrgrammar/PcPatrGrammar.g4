@@ -32,7 +32,7 @@ featureTemplate: featureTemplateDefinition (featurePathTemplateBody | featureStr
 //               | featureTemplateDefinition {notifyErrorListeners("missingTemplateBody");}
                ;
 
-featureTemplateDefinition: 'Let' featureTemplateName 'be'
+featureTemplateDefinition: 'Let' featureTemplateName comment? 'be'
 //                         | 'Let' {notifyErrorListeners("missingTemplateNameOrBe");}
                          ;
 featurePathTemplateBody: featurePathUnit '=' atomicValueDisjunction featurePathTemplateBody?
