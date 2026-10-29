@@ -76,9 +76,9 @@
 		<javac debug="true" debuglevel="${debuglevel}" destdir="mods" encoding="utf-8" includeantruntime="false" source="${source}" target="${target}">
 			<src path="src" />
 			<!--			<src path="test" />-->
-			<modulepath>
-				<pathelement path="libs" />
-			</modulepath>
+<!--			<modulepath>-->
+<!--				<pathelement path="libs" />-->
+<!--			</modulepath>-->
 			<classpath refid="pcpatreditor.classpath" />
 		</javac>
 	</target>
