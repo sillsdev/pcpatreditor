@@ -17,3 +17,4 @@ jpackage --type exe ^
 	--app-version %1 ^
 	--file-associations pcpatreditor.properties ^
 	--vendor "SIL International"
+
