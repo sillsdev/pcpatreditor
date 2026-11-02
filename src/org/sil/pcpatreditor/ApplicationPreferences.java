@@ -53,6 +53,7 @@ public class ApplicationPreferences extends ApplicationPreferencesUtilities {
 	public static final String LAST_FIND_REPLACE_DIALOG = "lastFindReplaceDialog";
 	public static final String LAST_RULE_EXTRACTOR_DIALOG = "lastRuleExtractorDialog";
 	public static final String LAST_RULE_NAVIGATOR_DIALOG = "lastRuleNavigatorDialog";
+	public static final String LAST_TEMPLATE_NAVIGATOR_DIALOG = "lastTemplateNavigatorDialog";
 	public static final String LAST_CONSTITUENTS_DIALOG = "lastConstituentsDialog";
 	public static final String LAST_CONSTITUENTS_DIALOG_SPLITTER_POSITION = "lastConstituentsDialogSplitterPosition";
 	public static final String LAST_FEATURE_SYSTEM_DIALOG="lastFeatureSystemDialog";

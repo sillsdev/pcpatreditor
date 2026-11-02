@@ -166,6 +166,7 @@ public class RuleNavigatorChooserController extends TableViewController {
 				ruleNavigatorTable.refresh();
 			} else {
 				setData(ruleLocations);
+				filterText.requestFocus();
 			}
 		});
 		Platform.runLater(filterText::requestFocus);

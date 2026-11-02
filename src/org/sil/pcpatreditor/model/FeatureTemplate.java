@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 SIL International
+ * Copyright (c) 2022-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -14,7 +14,9 @@ public class FeatureTemplate extends PcPatrBase {
 
 	String name;
 	FeaturePathTemplateBody featurePathTemplateBody;
-	
+	int lineNumber = -1;
+	int characterIndex = -1;
+
 	/**
 	 * @param enabled
 	 * @param useWhenDebugging
@@ -35,6 +37,22 @@ public class FeatureTemplate extends PcPatrBase {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
+	public void setLineNumber(int lineNumber) {
+		this.lineNumber = lineNumber;
+	}
+
+	public int getCharacterIndex() {
+		return characterIndex;
+	}
+
+	public void setCharacterIndex(int characterIndex) {
+		this.characterIndex = characterIndex;
 	}
 
 	/**

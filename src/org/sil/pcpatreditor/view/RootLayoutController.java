@@ -51,6 +51,7 @@ import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.model.BookmarkDocument;
 import org.sil.pcpatreditor.model.Grammar;
 import org.sil.pcpatreditor.model.PatrRule;
+import org.sil.pcpatreditor.model.TemplateChooserTemplate;
 import org.sil.pcpatreditor.service.BookmarkManager;
 import org.sil.pcpatreditor.service.BookmarksInDocumentsManager;
 import org.sil.pcpatreditor.service.CommentToggler;
@@ -65,6 +66,8 @@ import org.sil.pcpatreditor.service.GrammarBuilder;
 import org.sil.pcpatreditor.service.RuleExtractor;
 import org.sil.pcpatreditor.service.RuleLocationInfo;
 import org.sil.pcpatreditor.service.RuleLocator;
+import org.sil.pcpatreditor.service.TemplateLocationInfo;
+import org.sil.pcpatreditor.service.TemplateLocator;
 import org.reactfx.Subscription;
 
 import javafx.application.Platform;
@@ -152,6 +155,7 @@ public class RootLayoutController implements Initializable {
 	protected ConstituentsCollector constituentsCollector = new ConstituentsCollector("");
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
 	protected RuleLocator psrCollector = RuleLocator.getInstance();
+	protected TemplateLocator templateCollector = TemplateLocator.getInstance();
 	protected Grammar pcpatrGrammar = new Grammar();
 	protected TextFlow statusBarTextFlow;
 
@@ -175,6 +179,8 @@ public class RootLayoutController implements Initializable {
 	private Button buttonToolbarEditFindReplace;
 	@FXML
 	private Button buttonToolbarEditRuleNavigator;
+	@FXML
+	private Button buttonToolbarEditTemplateNavigator;
 	@FXML
 	private Button buttonToolbarEditUndo;
 	@FXML
@@ -241,6 +247,8 @@ public class RootLayoutController implements Initializable {
 	@FXML
 	private MenuItem menuItemNavigateToRule;
 	@FXML
+	private MenuItem menuItemNavigateToTemplate;
+	@FXML
 	private Menu menuReports;
 	@FXML
 	private MenuItem menuItemShowConstituents;
@@ -303,6 +311,8 @@ public class RootLayoutController implements Initializable {
 	private Tooltip tooltipToolbarEditFindReplace;
 	@FXML
 	private Tooltip tooltipToolbarEditRuleNavigator;
+	@FXML
+	private Tooltip tooltipToolbarEditTemplateNavigator;
 	@FXML
 	private Tooltip tooltipToolbarToolRuleExtractor;
 	@FXML
@@ -1067,6 +1077,10 @@ public class RootLayoutController implements Initializable {
 				buttonToolbarEditRuleNavigator, tooltipToolbarEditRuleNavigator, bundle.getString("tooltip.rulenavigator"),
 				Constants.RESOURCE_SOURCE_LOCATION);
 		tooltipToolbarEditRuleNavigator.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.rulenavigator"));
+		tooltipToolbarEditTemplateNavigator = ControllerUtilities.createToolbarButtonWithImage("templateNavigator.png",
+				buttonToolbarEditTemplateNavigator, tooltipToolbarEditTemplateNavigator, bundle.getString("tooltip.templatenavigator"),
+				Constants.RESOURCE_SOURCE_LOCATION);
+		tooltipToolbarEditTemplateNavigator.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.templatenavigator"));
 		tooltipToolbarEditUndo = ControllerUtilities.createToolbarButtonWithImage(
 				"undoAction.png", buttonToolbarEditUndo, tooltipToolbarEditUndo,
 				bundle.getString("tooltip.undo"), Constants.RESOURCE_SOURCE_LOCATION);
@@ -1696,6 +1710,79 @@ public class RootLayoutController implements Initializable {
 
 			dialogStage.showAndWait();
 			return controller.getRulesToExtract();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
+		return null;
+	}
+
+	@FXML
+	protected void handleNavigateToTemplate() {
+		List<TemplateLocationInfo> templatsInfo = calculateCurrentTemplateLocationInfo();
+
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(RootLayoutController.class.getResource("fxml/TemplateNavigatorChooser.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.NONE);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			TemplateNavigatorChooserController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setRootLayoutController(this);
+			controller.setData(templatsInfo);
+			controller.initialize(location, bundle);
+			grammar.requestFocus();
+
+			dialogStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainApp.reportException(e, bundle);
+		}
+	}
+
+	public List<TemplateLocationInfo> calculateCurrentTemplateLocationInfo() {
+		templateCollector.findTemplateLocationsFromTemplates(pcpatrGrammar.getFeatureTemplates());
+		List<TemplateLocationInfo> rulesInfo = templateCollector.getTemplateLocations();
+		return rulesInfo;
+	}
+
+	public TemplateChooserTemplate showTemplateNavigatorChooser(List<TemplateLocationInfo> rulesInfo) {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(RootLayoutController.class.getResource("fxml/TemplateNavigatorChooser.fxml"));
+			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
+
+			AnchorPane page = loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(mainApp.getPrimaryStage());
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+			// set the icon
+			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			dialogStage.setTitle(MainApp.kApplicationTitle);
+
+			TemplateNavigatorChooserController controller = loader.getController();
+			controller.setDialogStage(dialogStage);
+			controller.setMainApp(mainApp);
+			controller.setData(rulesInfo);
+			controller.initialize(location, bundle);
+//			controller.initializeTableColumnWidths(mainApp.getApplicationPreferences());
+
+			dialogStage.showAndWait();
+			return controller.getTemplateChosen();
 
 		} catch (IOException e) {
 			e.printStackTrace();

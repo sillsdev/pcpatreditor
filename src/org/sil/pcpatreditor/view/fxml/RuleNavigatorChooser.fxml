@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Copyright (c) 2022 SIL International
+<!-- Copyright (c) 2022-2026 SIL International
     This software is licensed under the LGPL, version 2.1 or later
     (http://www.gnu.org/licenses/lgpl-2.1.html) -->
 
@@ -16,8 +16,8 @@
    <children>
       <ButtonBar layoutX="114.0" layoutY="355.0" prefHeight="40.0" prefWidth="272.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="14.0">
         <buttons>
-          <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOk" text="%label.ok" />
-            <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="%label.cancel" />
+          <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOk" text="%label.showrule" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="%label.close" />
         </buttons>
       </ButtonBar>
       <Label layoutX="11.0" layoutY="14.0" text="%label.navigatetorule" />

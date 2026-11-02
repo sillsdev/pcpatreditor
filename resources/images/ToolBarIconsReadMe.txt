@@ -48,4 +48,5 @@ ruleExtractor.png (was file_yellow_hierarchy1_expanded_save_hdd.png)
 ruleNavigator.png (was magnifier_plus_blue.png)
 saveAction.png (was floppy_35inch_blue.png
 showFeatureSystemContextMenu.png (was file_yellow_open.png)
+templateNavigator.png (was magnifier_minus_blue.png)
 undoAction.png (was redo_blue.png)
