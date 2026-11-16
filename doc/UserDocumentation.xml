@@ -20,9 +20,9 @@ type="tPcPatrEditor"
 ><emailAddress
 >blackhandrew@gmail.com</emailAddress
 ><date
->2 November, 2026</date
+>16 November, 2026</date
 ><version
->Version 0.14.0 Beta</version
+>Version 0.15.0 Beta</version
 ><version
 >Copyright © 2021-2026 SIL International</version
 ><contents
@@ -301,12 +301,12 @@ src="../resources/images/templateNavigator.png"
 type="tKey"
 >Ctrl-R</object
 >) brings up a dialog that looked like what is in example <exampleRef
-letter="xNavigateToRule"
-num="xNavigateToRule"
+letter="xNavigateToTemplate"
+num="xNavigateToTemplate"
 ></exampleRef
 > for one grammar file.</p
 ><example
-num="xNavigateToRule"
+num="xNavigateToTemplate"
 ><chart
 ><img
 XeLaTeXSpecial="scaled='550'"
@@ -321,7 +321,7 @@ width="600"
 >You can also filter which templates to show by clicking in (or using the <object
 type="tKey"
 >TAB</object
-> key to navigate to) the text box at the bottom. Type the name you want to filter on. All template names beginning with what you type will appear.  Upper/lower case is significant.</p
+> key to navigate to) the text box at the bottom. Type the name you want to filter on. All template names beginning with what you type will appear. Upper/lower case is significant.</p
 ><p
 >Note that this dialog does not automatically close when you click on the “Show template” button or double-click on a template. This allows you to keep it open for when you next want to go to a template. When you do close it, <object
 type="tPcPatrEditor"
@@ -433,6 +433,7 @@ num="xRuleSelector"
 num="xRuleSelector"
 ><chart
 ><img
+XeLaTeXSpecial="scaled='500'"
 src="resources/RuleSelector.png"
 width="500"
 ></img
@@ -440,6 +441,8 @@ width="500"
 ></example
 ><p
 >For each rule, it has a check box, the phrase structure rule and the rule identifier. You select which rules you want to export by clicking on them. (You can also use the up and down arrows and the space bar to select/deselect rules).</p
+><p
+>More conveniently, you can type the left-hand side non-terminal constituent you want to check next in the text box at the bottom.  After you select another rule, the focus will return to the text box. This can make it easier to choose which rules you need.  Upper/lower case is significant.</p
 ><p
 >When you have chosen the rules you want to use, click on the “OK” button. <object
 type="tPcPatrEditor"

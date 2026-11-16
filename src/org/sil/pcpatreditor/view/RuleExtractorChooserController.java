@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -16,12 +16,15 @@ import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.model.RuleExtractorRule;
 import org.sil.pcpatreditor.service.RuleLocationInfo;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -50,6 +53,10 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 	private TableColumn<RuleExtractorRule, String> rulePSRColumn;
 	@FXML
 	private TableColumn<RuleExtractorRule, String> ruleIdColumn;
+	@FXML
+	private Label filterLabel;
+	@FXML
+	private TextField filterText;
 	Stage dialogStage;
 	private boolean okClicked = false;
 	private ApplicationPreferences preferences;
@@ -93,25 +100,54 @@ public class RuleExtractorChooserController extends TableViewWithCheckBoxColumnC
 		ruleExtractorTable.setEditable(false);
 		ruleExtractorTable.setOnMouseClicked(mouseEvent -> {
 			RuleExtractorRule rule = ruleExtractorTable.getSelectionModel().getSelectedItem();
-			if (rule != null) {
-				rule.setChecked(!rule.isChecked());
-			}
+			processSelectedRule(rule);
 		});
 		ruleExtractorTable.setOnKeyPressed(keyEvent -> {
 			switch (keyEvent.getCode()) {
 			case SPACE: {
 				keyEvent.consume();
 				RuleExtractorRule rule = ruleExtractorTable.getSelectionModel().getSelectedItem();
-				if (rule != null) {
-					rule.setChecked(!rule.isChecked());
-				}
+				processSelectedRule(rule);
 				break;
 			}
 			default:
 				break;
 			}
 		});
+		filterLabel.setText(resources.getString("label.filterrulesbylefthandside"));
+		filterText.textProperty().addListener((observable, oldValue, newValue) -> {
+			Platform.runLater(() -> {
+				if (newValue.length() > 0) {
+					if (newValue.equals(" ")) {
+						filterText.clear();
+					} else {
+						List<RuleExtractorRule> items = ruleExtractorTable.getItems().stream()
+								.filter(rl -> (rl.getPhraseStructureRule().startsWith(newValue + " ")
+										|| rl.getPhraseStructureRule().startsWith(newValue + "_")))
+								.toList();
+						if (!items.isEmpty()) {
+							RuleExtractorRule r = items.getFirst();
+							ruleExtractorTable.getSelectionModel().select(r);
+							int index = ruleExtractorTable.getSelectionModel().getSelectedIndex();
+							ruleExtractorTable.getSelectionModel().clearAndSelect(index);
+							ruleExtractorTable.getFocusModel().focus(index);
+							ruleExtractorTable.scrollTo(index);
+							ruleExtractorTable.requestFocus();
+						}
+					}
+				} else {
+					filterText.requestFocus();
+				}
+			});
+		});
+		Platform.runLater(filterText::requestFocus);
+	}
 
+	protected void processSelectedRule(RuleExtractorRule rule) {
+		if (rule != null) {
+			rule.setChecked(!rule.isChecked());
+			filterText.requestFocus();
+		}
 	}
 
 	/**
