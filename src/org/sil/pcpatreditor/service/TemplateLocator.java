@@ -35,7 +35,8 @@ public class TemplateLocator {
 
 	public void findTemplateLocations(String grammarText) {
 		Grammar pcpatrGrammar = new Grammar();
-		pcpatrGrammar = GrammarBuilder.parseAString(grammarText, pcpatrGrammar);
+		GrammarParseResult result = GrammarBuilder.parseAString(grammarText, pcpatrGrammar);
+		pcpatrGrammar = result.getGrammar();
 		List<FeatureTemplate> templates = pcpatrGrammar.getFeatureTemplates();
 		findTemplateLocationsFromTemplates(templates);
 	}

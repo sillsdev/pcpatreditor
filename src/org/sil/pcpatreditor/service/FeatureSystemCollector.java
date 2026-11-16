@@ -160,8 +160,8 @@ public class FeatureSystemCollector {
 
 	public void parseGrammar() {
 		Grammar pcpatrGrammar = new Grammar();
-		pcpatrGrammar = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
-		prepareCollect(pcpatrGrammar);
+		GrammarParseResult result = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
+		prepareCollect(result.getGrammar());
 	}
 
 	public void prepareCollect(Grammar pcpatrGrammar) {

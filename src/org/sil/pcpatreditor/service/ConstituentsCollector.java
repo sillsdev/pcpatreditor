@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 SIL International
+ * Copyright (c) 2022-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -76,7 +76,8 @@ public class ConstituentsCollector {
 	
 	public void collect() {
 		Grammar pcpatrGrammar = new Grammar();
-		pcpatrGrammar = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
+		GrammarParseResult result = GrammarBuilder.parseAString(grammar, pcpatrGrammar);
+		pcpatrGrammar = result.getGrammar();
 		List<PatrRule> rules = pcpatrGrammar.getRules();
 		collectFromRules(rules);
 	}

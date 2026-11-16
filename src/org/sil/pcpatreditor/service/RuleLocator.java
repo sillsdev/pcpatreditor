@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -35,7 +35,8 @@ public class RuleLocator {
 
 	public void findRuleLocations(String grammarText) {
 		Grammar pcpatrGrammar = new Grammar();
-		pcpatrGrammar = GrammarBuilder.parseAString(grammarText, pcpatrGrammar);
+		GrammarParseResult result = GrammarBuilder.parseAString(grammarText, pcpatrGrammar);
+		pcpatrGrammar = result.getGrammar();
 		List<PatrRule> rules = pcpatrGrammar.getRules();
 		findRuleLocationsFromRules(rules);
 	}

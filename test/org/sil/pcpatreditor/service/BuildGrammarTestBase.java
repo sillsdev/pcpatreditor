@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 SIL International
+ * Copyright (c) 2022-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -101,7 +101,8 @@ public abstract class BuildGrammarTestBase {
 
 	protected void checkFeatureTemplate(String sTemplate, String sName) {
 		Grammar grammar = new Grammar();
-		grammar = GrammarBuilder.parseAString(sTemplate + "\nrule S = V\n", grammar);
+		GrammarParseResult result = GrammarBuilder.parseAString(sTemplate + "\nrule S = V\n", grammar);
+		grammar = result.getGrammar();
 		List<FeatureTemplate> featureTemplates = grammar.getFeatureTemplates();
 		assertEquals(1, featureTemplates.size());
 		featureTemplate = featureTemplates.get(0);

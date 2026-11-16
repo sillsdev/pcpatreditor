@@ -63,6 +63,7 @@ import org.sil.pcpatreditor.service.FeatureSystemCollector;
 import org.sil.pcpatreditor.service.FeatureSystemHTMLFormatter;
 import org.sil.pcpatreditor.service.FindReplaceOperator;
 import org.sil.pcpatreditor.service.GrammarBuilder;
+import org.sil.pcpatreditor.service.GrammarParseResult;
 import org.sil.pcpatreditor.service.RuleExtractor;
 import org.sil.pcpatreditor.service.RuleLocationInfo;
 import org.sil.pcpatreditor.service.RuleLocator;
@@ -156,6 +157,7 @@ public class RootLayoutController implements Initializable {
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
 	protected RuleLocator psrCollector = RuleLocator.getInstance();
 	protected TemplateLocator templateCollector = TemplateLocator.getInstance();
+	protected GrammarParseResult parseResult = new GrammarParseResult(null, 0, 0, 0, kFindReplaceDialog, pcPatrEditorFilterDescription);
 	protected Grammar pcpatrGrammar = new Grammar();
 	protected TextFlow statusBarTextFlow;
 
@@ -700,9 +702,9 @@ public class RootLayoutController implements Initializable {
 		statusBar.setOnMouseClicked(mouseEvent -> {
 			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 				if (mouseEvent.getClickCount() == 2) {
-					if (GrammarBuilder.getNumberOfErrors() > 0) {
-						int line = Math.max(GrammarBuilder.getLineNumberOfError()-1,0);
-						int charPos = GrammarBuilder.getCharacterPositionInLineOfError();
+					if (parseResult.hasErrors()) {
+						int line = Math.max(parseResult.getLineNumberOfError()-1,0);
+						int charPos = parseResult.getCharacterPositionInLineOfError();
 						if (charPos == 0) {
 							// we assume that the error is at the end of the previous line;
 							// move the caret to the end of the previous line
@@ -925,15 +927,15 @@ public class RootLayoutController implements Initializable {
         return task;
     }
 
-	private static Grammar computeParsedGrammar(String text, Grammar pcpatrGrammar) {
+	private Grammar computeParsedGrammar(String text, Grammar pcpatrGrammar) {
 		long timeStart = System.currentTimeMillis();
-		Grammar g = GrammarBuilder.parseAString(text, pcpatrGrammar);
+		parseResult = GrammarBuilder.parseAString(text, pcpatrGrammar);
 		ControllerUtilities.formatTimePassed(timeStart, "build grammar=");
-		return g;
+		return parseResult.getGrammar();
 	}
 
 	private void applyParsedGrammar(Grammar pcpatrGrammar) {
-		if (GrammarBuilder.getNumberOfErrors() == 0) {
+		if (!parseResult.hasErrors()) {
 			this.pcpatrGrammar = pcpatrGrammar;
 			statusBar.getChildren().clear();
 		} else {
@@ -941,7 +943,7 @@ public class RootLayoutController implements Initializable {
 		}
 	}
 	private void reportErrorInDescriptionMessage() {
-		String sSyntaxErrorMessage = GrammarBuilder.buildErrorMessage(bundle);
+		String sSyntaxErrorMessage = GrammarBuilder.buildErrorMessage(parseResult, bundle);
 		statusBar.getChildren().clear();
 		statusBarTextFlow = buildErrorMessageAsTextFlow(sSyntaxErrorMessage);
 		statusBar.getChildren().add(statusBarTextFlow);

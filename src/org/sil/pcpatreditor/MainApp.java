@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -109,13 +109,13 @@ public class MainApp extends Application  implements MainAppUtilities {
 	public void start(Stage primaryStage) {
 		try {
 			applicationPreferences = new ApplicationPreferences(this);
-			locale = new Locale(applicationPreferences.getLastLocaleLanguage());
+			locale = Locale.of(applicationPreferences.getLastLocaleLanguage());
 			
 			String docPath = applicationPreferences.getLastOpenedFilePath();
 			if (!StringUtilities.isNullOrEmpty(docPath)) {
 				File file = new File(docPath);
 				if (file.exists() && !file.isDirectory()) {
-					content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+					content = new String(Files.readString(file.toPath(), StandardCharsets.UTF_8));
 				} else {
 					content = "";
 				}

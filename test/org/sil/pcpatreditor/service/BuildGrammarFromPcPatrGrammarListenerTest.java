@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -527,7 +527,8 @@ public class BuildGrammarFromPcPatrGrammarListenerTest extends BuildGrammarTestB
 	protected PhraseStructureRule checkPhraseStuctureRule(int numberOfRules, String sId, String sPsr, String sLhs) {
 		rhs.clear();
 		Grammar grammar = new Grammar();
-		grammar = GrammarBuilder.parseAString("rule {" + sId + "}\n " + sPsr, grammar);
+		GrammarParseResult result = GrammarBuilder.parseAString("rule {" + sId + "}\n " + sPsr, grammar);
+		grammar = result.getGrammar();
 		List<PatrRule> rules = grammar.getRules();
 		assertEquals(numberOfRules, rules.size());
 		PatrRule rule = rules.get(0);
@@ -931,7 +932,8 @@ public class BuildGrammarFromPcPatrGrammarListenerTest extends BuildGrammarTestB
 
 	protected List<Constraint> checkConstraints(String sConstraint, int size) {
 		Grammar grammar = new Grammar();
-		grammar = GrammarBuilder.parseAString("\nrule S = V\n" + sConstraint, grammar);
+		GrammarParseResult result = GrammarBuilder.parseAString("\nrule S = V\n" + sConstraint, grammar);
+		grammar = result.getGrammar();
 		PatrRule rule = grammar.getRules().get(0);
 		constraints = rule.getConstraints();
 		assertEquals(size, constraints.size());
