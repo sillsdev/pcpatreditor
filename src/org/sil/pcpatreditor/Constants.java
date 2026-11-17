@@ -11,7 +11,7 @@ package org.sil.pcpatreditor;
  *
  */
 public class Constants {
-	public static final String VERSION_NUMBER = "0.15.0 Beta";
+	public static final String VERSION_NUMBER = "0.16.0 Beta";
 
 	public static final String RESOURCE_LOCATION = "org.sil.pcpatreditor.resources.PcPatrEditor";
 //	Windows and Linux work fine with the default;  macOS does not so we use the following
