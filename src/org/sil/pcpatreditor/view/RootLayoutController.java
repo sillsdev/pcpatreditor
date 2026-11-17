@@ -115,7 +115,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 public class RootLayoutController implements Initializable {
 	
@@ -150,16 +149,25 @@ public class RootLayoutController implements Initializable {
 	private BookmarkManager bookmarkManager = new BookmarkManager();
 	private BookmarksInDocumentsManager bookmarksInDocsManager;
 	private BookmarkDocument bookmarkDoc;
-	private FindReplaceDialogController findReplaceController;
 	protected ExtractorAction extractorAction = ExtractorAction.NO_ACTION;
 	protected FeaturePathSearchAction featurePathSearchAction = FeaturePathSearchAction.FROM_THE_START;
 	protected ConstituentsCollector constituentsCollector = new ConstituentsCollector("");
 	protected FeatureSystemCollector fsCollector = new FeatureSystemCollector("");
 	protected RuleLocator psrCollector = RuleLocator.getInstance();
 	protected TemplateLocator templateCollector = TemplateLocator.getInstance();
-	protected GrammarParseResult parseResult = new GrammarParseResult(null, 0, 0, 0, kFindReplaceDialog, pcPatrEditorFilterDescription);
+	protected GrammarParseResult parseResult = new GrammarParseResult(null, 0, 0, 0, "", pcPatrEditorFilterDescription);
 	protected Grammar pcpatrGrammar = new Grammar();
 	protected TextFlow statusBarTextFlow;
+	protected Stage findReplaceDialogStage;
+	protected Stage navigateToRuleDialogStage;
+	protected Stage navigateToTemplateDialogStage;
+	protected Stage featureSystemDialogStage;
+	protected Stage constituentsDialogStage;
+	private FindReplaceDialogController findReplaceController;
+	protected RuleNavigatorChooserController navigateToRuleController;
+	protected TemplateNavigatorChooserController navigateToTemplateController;
+	protected FeatureSystemDialogController featureSystemDialogController;
+	protected ConstituentsDialogController constituentsDialogController;
 
 	@FXML
 	BorderPane mainPane;
@@ -1171,27 +1179,35 @@ public class RootLayoutController implements Initializable {
 		constituentsCollector.collectFromRules(rules);
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		try {
+			if (constituentsDialogStage != null && constituentsDialogStage.isShowing()) {
+				if (constituentsDialogController != null) {
+					constituentsDialogController.setData(constituentsCollector.getNonTerminals(),
+							constituentsCollector.getTerminals());
+				}
+				restoreDialog(constituentsDialogStage);
+				return;
+			}
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(ConstituentsDialogController.class.getResource("fxml/ConstituentsDialog.fxml"));
 			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
 
 			AnchorPane page = loader.load();
-			Stage dialogStage = new Stage();
-			dialogStage.initModality(Modality.NONE);
-			dialogStage.initOwner(mainApp.getPrimaryStage());
+			constituentsDialogStage = new Stage();
+			constituentsDialogStage.initModality(Modality.NONE);
+			constituentsDialogStage.initOwner(mainApp.getPrimaryStage());
 			Scene scene = new Scene(page);
-			dialogStage.setScene(scene);
+			constituentsDialogStage.setScene(scene);
 			// set the icon
-			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
-			dialogStage.setTitle(MainApp.kApplicationTitle);
+			constituentsDialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			constituentsDialogStage.setTitle(MainApp.kApplicationTitle);
 
-			ConstituentsDialogController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
-			controller.setMainApp(mainApp);
-			controller.setData(constituentsCollector.getNonTerminals(), constituentsCollector.getTerminals());
-			controller.initialize(location, bundle);
+			constituentsDialogController = loader.getController();
+			constituentsDialogController.setDialogStage(constituentsDialogStage);
+			constituentsDialogController.setMainApp(mainApp);
+			constituentsDialogController.setData(constituentsCollector.getNonTerminals(), constituentsCollector.getTerminals());
+			constituentsDialogController.initialize(location, bundle);
 
-			dialogStage.show();
+			constituentsDialogStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
@@ -1220,27 +1236,35 @@ public class RootLayoutController implements Initializable {
 		String html = formatter.format(fsCollector.getFeatureSystemAsList());
 		mainPane.getScene().setCursor(Cursor.DEFAULT);
 		try {
+			if (featureSystemDialogStage != null && featureSystemDialogStage.isShowing()) {
+				if (featureSystemDialogController != null) {
+					featureSystemDialogController.setHtmlContent(html);
+					featureSystemDialogController.initialize(location, bundle);
+				}
+				restoreDialog(featureSystemDialogStage);
+				return;
+			}
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(FeatureSystemDialogController.class.getResource("fxml/FeatureSystemDialog.fxml"));
 			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
 
 			AnchorPane page = loader.load();
-			Stage dialogStage = new Stage();
-			dialogStage.initModality(Modality.NONE);
-			dialogStage.initOwner(mainApp.getPrimaryStage());
+			featureSystemDialogStage = new Stage();
+			featureSystemDialogStage.initModality(Modality.NONE);
+			featureSystemDialogStage.initOwner(mainApp.getPrimaryStage());
 			Scene scene = new Scene(page);
-			dialogStage.setScene(scene);
+			featureSystemDialogStage.setScene(scene);
 			// set the icon
-			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
-			dialogStage.setTitle(MainApp.kApplicationTitle);
+			featureSystemDialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			featureSystemDialogStage.setTitle(MainApp.kApplicationTitle);
 
-			FeatureSystemDialogController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
-			controller.setMainApp(mainApp);
-			controller.setHtmlContent(html);
-			controller.initialize(location, bundle);
+			featureSystemDialogController = loader.getController();
+			featureSystemDialogController.setDialogStage(featureSystemDialogStage);
+			featureSystemDialogController.setMainApp(mainApp);
+			featureSystemDialogController.setHtmlContent(html);
+			featureSystemDialogController.initialize(location, bundle);
 
-			dialogStage.show();
+			featureSystemDialogStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
@@ -1607,17 +1631,16 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	protected void handleFindReplace() {
-		for (Window win : Window.getWindows()) {
-			if (win.getUserData() != null && win.getUserData().equals(kFindReplaceDialog)) {
-				// dialog is already there; give it focus
-				win.requestFocus();
+		if (findReplaceDialogStage != null && findReplaceDialogStage.isShowing()) {
+			if (findReplaceController != null) {
 				findReplaceController.setData(grammar);
-				return;
 			}
+			restoreDialog(findReplaceDialogStage);
+			return;
 		}
 		try {
 			// Load the fxml file and create a new stage for the popup.
-			Stage dialogStage = new Stage();
+			findReplaceDialogStage = new Stage();
 			String resource = "fxml/FindReplaceDialog.fxml";
 			String title = RESOURCE_FACTORY.getStringBinding("findreplace.title").get();
 			FXMLLoader loader = new FXMLLoader();
@@ -1625,25 +1648,33 @@ public class RootLayoutController implements Initializable {
 			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
 
 			BorderPane page = loader.load();
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			dialogStage.initOwner(mainApp.getPrimaryStage());
+			findReplaceDialogStage.initModality(Modality.WINDOW_MODAL);
+			findReplaceDialogStage.initOwner(mainApp.getPrimaryStage());
 			Scene scene = new Scene(page);
-			dialogStage.setScene(scene);
+			findReplaceDialogStage.setScene(scene);
 			// set the icon
-			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
-			dialogStage.setTitle(title);
+			findReplaceDialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			findReplaceDialogStage.setTitle(title);
 
 			findReplaceController = loader.getController();
-			findReplaceController.setDialogStage(dialogStage);
+			findReplaceController.setDialogStage(findReplaceDialogStage);
 			findReplaceController.setData(grammar);
 			findReplaceController.setMainApp(mainApp);
-			dialogStage.initModality(Modality.NONE);
-			dialogStage.setUserData(kFindReplaceDialog);
-			dialogStage.show();
+			findReplaceDialogStage.initModality(Modality.NONE);
+			findReplaceDialogStage.setUserData(kFindReplaceDialog);
+			findReplaceDialogStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, null);
 		}
+	}
+
+	protected void restoreDialog(Stage dialog) {
+		if (dialog.isIconified()) {
+			dialog.setIconified(false);
+		}
+		dialog.toFront();
+		dialog.requestFocus();
 	}
 
 	@FXML
@@ -1651,30 +1682,37 @@ public class RootLayoutController implements Initializable {
 		List<RuleLocationInfo> rulesInfo = calculateCurrentRuleLocationInfo();
 
 		try {
+			if (navigateToRuleDialogStage != null && navigateToRuleDialogStage.isShowing()) {
+				if (navigateToRuleController != null) {
+					navigateToRuleController.setData(rulesInfo);
+				}
+				restoreDialog(navigateToRuleDialogStage);
+				return;
+			}
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(RootLayoutController.class.getResource("fxml/RuleNavigatorChooser.fxml"));
 			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
 
 			AnchorPane page = loader.load();
-			Stage dialogStage = new Stage();
-			dialogStage.initModality(Modality.NONE);
-			dialogStage.initOwner(mainApp.getPrimaryStage());
+			navigateToRuleDialogStage = new Stage();
+			navigateToRuleDialogStage.initModality(Modality.NONE);
+			navigateToRuleDialogStage.initOwner(mainApp.getPrimaryStage());
 			Scene scene = new Scene(page);
-			dialogStage.setScene(scene);
+			navigateToRuleDialogStage.setScene(scene);
 			// set the icon
-			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
-			dialogStage.setTitle(MainApp.kApplicationTitle);
+			navigateToRuleDialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			navigateToRuleDialogStage.setTitle(MainApp.kApplicationTitle);
 
-			RuleNavigatorChooserController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
-			controller.setMainApp(mainApp);
-			controller.setRootLayoutController(this);
-			controller.setData(rulesInfo);
-			controller.initialize(location, bundle);
-			controller.initializeTableColumnWidths(mainApp.getApplicationPreferences());
+			navigateToRuleController = loader.getController();
+			navigateToRuleController.setDialogStage(navigateToRuleDialogStage);
+			navigateToRuleController.setMainApp(mainApp);
+			navigateToRuleController.setRootLayoutController(this);
+			navigateToRuleController.setData(rulesInfo);
+			navigateToRuleController.initialize(location, bundle);
+			navigateToRuleController.initializeTableColumnWidths(mainApp.getApplicationPreferences());
 			grammar.requestFocus();
 
-			dialogStage.show();
+			navigateToRuleDialogStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
@@ -1722,32 +1760,40 @@ public class RootLayoutController implements Initializable {
 
 	@FXML
 	protected void handleNavigateToTemplate() {
-		List<TemplateLocationInfo> templatsInfo = calculateCurrentTemplateLocationInfo();
+		List<TemplateLocationInfo> templatesInfo = calculateCurrentTemplateLocationInfo();
 
 		try {
+			if (navigateToTemplateDialogStage != null && navigateToTemplateDialogStage.isShowing()) {
+				if (navigateToTemplateController != null) {
+					navigateToTemplateController.setData(templatesInfo);
+				}
+				restoreDialog(navigateToTemplateDialogStage);
+				return;
+			}
+
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(RootLayoutController.class.getResource("fxml/TemplateNavigatorChooser.fxml"));
 			loader.setResources(ResourceBundle.getBundle(Constants.RESOURCE_LOCATION, currentLocale));
 
 			AnchorPane page = loader.load();
-			Stage dialogStage = new Stage();
-			dialogStage.initModality(Modality.NONE);
-			dialogStage.initOwner(mainApp.getPrimaryStage());
+			navigateToTemplateDialogStage = new Stage();
+			navigateToTemplateDialogStage.initModality(Modality.NONE);
+			navigateToTemplateDialogStage.initOwner(mainApp.getPrimaryStage());
 			Scene scene = new Scene(page);
-			dialogStage.setScene(scene);
+			navigateToTemplateDialogStage.setScene(scene);
 			// set the icon
-			dialogStage.getIcons().add(mainApp.getNewMainIconImage());
-			dialogStage.setTitle(MainApp.kApplicationTitle);
+			navigateToTemplateDialogStage.getIcons().add(mainApp.getNewMainIconImage());
+			navigateToTemplateDialogStage.setTitle(MainApp.kApplicationTitle);
 
-			TemplateNavigatorChooserController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
-			controller.setMainApp(mainApp);
-			controller.setRootLayoutController(this);
-			controller.setData(templatsInfo);
-			controller.initialize(location, bundle);
+			navigateToTemplateController = loader.getController();
+			navigateToTemplateController.setDialogStage(navigateToTemplateDialogStage);
+			navigateToTemplateController.setMainApp(mainApp);
+			navigateToTemplateController.setRootLayoutController(this);
+			navigateToTemplateController.setData(templatesInfo);
+			navigateToTemplateController.initialize(location, bundle);
 			grammar.requestFocus();
 
-			dialogStage.show();
+			navigateToTemplateDialogStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 			MainApp.reportException(e, bundle);
