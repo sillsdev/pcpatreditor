@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 
 import org.reactfx.value.Val;
 import org.sil.pcpatreditor.Constants;
+import org.sil.pcpatreditor.MainApp;
 import org.sil.utility.view.ControllerUtilities;
 
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public class BookmarkFactory implements IntFunction<Node> {
 
 	public BookmarkFactory() {
 		bookmarkImage = ControllerUtilities.getIconImageFromURL("file:resources/images/bookmark.png",
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 	}
 
 	/**

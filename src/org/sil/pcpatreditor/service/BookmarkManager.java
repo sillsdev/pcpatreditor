@@ -15,6 +15,7 @@ import java.util.function.IntFunction;
 
 import org.fxmisc.richtext.CodeArea;
 import org.sil.pcpatreditor.Constants;
+import org.sil.pcpatreditor.MainApp;
 import org.sil.pcpatreditor.model.BookmarkFactory;
 import org.sil.utility.view.ControllerUtilities;
 
@@ -42,7 +43,7 @@ public class BookmarkManager {
 	public BookmarkManager() {
 		super();
 		bookmarkImage = ControllerUtilities.getIconImageFromURL(
-				"file:resources/images/bookmark.png", Constants.RESOURCE_SOURCE_LOCATION);
+				"file:resources/images/bookmark.png", Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
         numberFactory = null;
 	}
 

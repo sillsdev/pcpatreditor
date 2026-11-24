@@ -25,13 +25,19 @@ module org.sil.pcpatreditor {
 	requires jakarta.activation;
 	opens org.sil.pcpatreditor.model;
 
+	// JNA
+	requires com.sun.jna;
+	requires com.sun.jna.platform;
+
+	// LibJavaDev
+	requires transitive org.sil.utility;
+
 	// JUnit
 //	requires junit;
 
 	// Other modules/libraries
 	requires antlr;
 //	requires org.controlsfx.controls;
-	requires transitive libjavadev;
 	requires transitive richtextfx.fat;
 	requires javafx.base;
 	requires javafx.media;

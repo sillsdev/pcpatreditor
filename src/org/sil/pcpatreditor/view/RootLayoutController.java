@@ -1049,62 +1049,62 @@ public class RootLayoutController implements Initializable {
 	protected void createToolbarButtons(ResourceBundle bundle) {
 		tooltipToolbarFileNew = ControllerUtilities.createToolbarButtonWithImage("newAction.png",
 				buttonToolbarFileNew, tooltipToolbarFileNew, bundle.getString("tooltip.new"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarFileNew.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.new"));
 		tooltipToolbarFileOpen = ControllerUtilities.createToolbarButtonWithImage("openAction.png",
 				buttonToolbarFileOpen, tooltipToolbarFileOpen, bundle.getString("tooltip.open"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarFileOpen.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.open"));
 		tooltipToolbarFileSave = ControllerUtilities.createToolbarButtonWithImage("saveAction.png",
 				buttonToolbarFileSave, tooltipToolbarFileSave, bundle.getString("tooltip.save"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarFileSave.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.save"));
 		tooltipToolbarEditCut = ControllerUtilities.createToolbarButtonWithImage("cutAction.png",
 				buttonToolbarEditCut, tooltipToolbarEditCut, bundle.getString("tooltip.cut"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditCut.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.cut"));
 		tooltipToolbarEditCopy = ControllerUtilities.createToolbarButtonWithImage("copyAction.png",
 				buttonToolbarEditCopy, tooltipToolbarEditCopy, bundle.getString("tooltip.copy"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditCopy.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.copy"));
 		tooltipToolbarEditPaste = ControllerUtilities.createToolbarButtonWithImage(
 				"pasteAction.png", buttonToolbarEditPaste, tooltipToolbarEditPaste,
-				bundle.getString("tooltip.paste"), Constants.RESOURCE_SOURCE_LOCATION);
+				bundle.getString("tooltip.paste"), Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditPaste.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.paste"));
 		tooltipToolbarShowFeatureSystemContextMenu = ControllerUtilities.createToolbarButtonWithImage("showFeatureSystemContextMenu.png",
 				buttonToolbarShowFeatureSystemContextMenu, tooltipToolbarShowFeatureSystemContextMenu, bundle.getString("tooltip.showfeaturesystemcontextmenu"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarShowFeatureSystemContextMenu.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.showfeaturesystemcontextmenu"));
 		tooltipToolbarEditFindReplace = ControllerUtilities.createToolbarButtonWithImage("findReplaceAction.png",
 				buttonToolbarEditFindReplace, tooltipToolbarEditFindReplace, bundle.getString("tooltip.findreplace"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditFindReplace.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.findreplace"));
 		tooltipToolbarEditRuleNavigator = ControllerUtilities.createToolbarButtonWithImage("ruleNavigator.png",
 				buttonToolbarEditRuleNavigator, tooltipToolbarEditRuleNavigator, bundle.getString("tooltip.rulenavigator"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditRuleNavigator.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.rulenavigator"));
 		tooltipToolbarEditTemplateNavigator = ControllerUtilities.createToolbarButtonWithImage("templateNavigator.png",
 				buttonToolbarEditTemplateNavigator, tooltipToolbarEditTemplateNavigator, bundle.getString("tooltip.templatenavigator"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditTemplateNavigator.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.templatenavigator"));
 		tooltipToolbarEditUndo = ControllerUtilities.createToolbarButtonWithImage(
 				"undoAction.png", buttonToolbarEditUndo, tooltipToolbarEditUndo,
-				bundle.getString("tooltip.undo"), Constants.RESOURCE_SOURCE_LOCATION);
+				bundle.getString("tooltip.undo"), Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditUndo.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.undo"));
 		tooltipToolbarEditRedo = ControllerUtilities.createToolbarButtonWithImage(
 				"redoAction.png", buttonToolbarEditRedo, tooltipToolbarEditRedo,
-				bundle.getString("tooltip.redo"), Constants.RESOURCE_SOURCE_LOCATION);
+				bundle.getString("tooltip.redo"), Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarEditRedo.textProperty().bind(
 				RESOURCE_FACTORY.getStringBinding("tooltip.redo"));
 
 		tooltipToolbarToolRuleExtractor = ControllerUtilities.createToolbarButtonWithImage("ruleExtractor.png",
 				buttonToolbarToolRuleExtractor, tooltipToolbarToolRuleExtractor, bundle.getString("tooltip.ruleextractor"),
-				Constants.RESOURCE_SOURCE_LOCATION);
+				Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		tooltipToolbarToolRuleExtractor.textProperty().bind(RESOURCE_FACTORY.getStringBinding("tooltip.ruleextractor"));
 		toggleButtonShowMatchingItemWithArrowKeys.getStyleClass().add(kUnPressedStyle);
 		tooltipToolbarShowMatchingItemWithArrowKeys = new Tooltip(RESOURCE_FACTORY
@@ -1538,7 +1538,7 @@ public class RootLayoutController implements Initializable {
 		alert.setHeaderText(null);
 		alert.setContentText(sAboutContent);
 		Image silLogo = ControllerUtilities.getIconImageFromURL(
-				"file:resources/images/SILLogo.png", Constants.RESOURCE_SOURCE_LOCATION);
+				"file:resources/images/SILLogo.png", Constants.RESOURCE_SOURCE_LOCATION, MainApp.class);
 		alert.setGraphic(new ImageView(silLogo));
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(mainApp.getNewMainIconImage());
