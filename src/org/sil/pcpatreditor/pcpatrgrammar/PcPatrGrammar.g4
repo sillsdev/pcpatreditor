@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------
-// Copyright (c) 2021-2022 SIL International
+// Copyright (c) 2021-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -87,7 +87,7 @@ featureStructureName: ruleKW
                     ;
 
 featureStructureValue: featureStructure
-                     | atomicValue
+                     | atomicValue comment?
                      | 'Attribute order'
                      | 'be'
                      | 'in'
