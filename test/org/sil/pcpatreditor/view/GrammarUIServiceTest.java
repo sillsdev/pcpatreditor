@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -152,5 +152,15 @@ public class GrammarUIServiceTest {
 
 		checkMatchingRight(1,45);
 		checkMatchingRight(2,14);
+	}
+
+	@Test
+	public void processRightBracketTest() {
+		leftItem = '[';
+		rightItem = ']';
+
+		grammar.replaceText("[type:[pro-drop:-]]");
+		checkMatchingLeft(18, 0);
+		checkMatchingLeft(17, 6);
 	}
 }

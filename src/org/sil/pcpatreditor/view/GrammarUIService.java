@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 SIL International
+ * Copyright (c) 2021-2026 SIL International
  * This software is licensed under the LGPL, version 2.1 or later
  * (http://www.gnu.org/licenses/lgpl-2.1.html)
  */
@@ -158,7 +158,7 @@ public class GrammarUIService {
 		while (iIndex >= 0) {
 			if (sDescription.charAt(iIndex) == rightItem) {
 				if (iIndex > 0 && sDescription.charAt(iIndex-1) == '-') {
-					if (iIndex > 1 && sDescription.charAt(iIndex-2) != '<') {
+					if (rightItem == '>' && iIndex > 1 && sDescription.charAt(iIndex-2) != '<') {
 						// have conditional logical constraint (->) symbol; ignore it
 						iIndex--;
 						continue;
